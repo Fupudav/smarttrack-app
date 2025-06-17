@@ -1,7 +1,7 @@
 // SmartTrack Service Worker - Version intelligente
 const CACHE_NAME = 'smarttrack-v' + new Date().getTime();
 const urlsToCache = [
-  './smarttrack.html',
+  './smarttrack-v0.8.html',
   './manifest.json'
 ];
 
