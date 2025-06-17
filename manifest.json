@@ -2,7 +2,7 @@
   "name": "SmartTrack - Suivi Intelligent d'Entraînement",
   "short_name": "SmartTrack",
   "description": "Application de suivi d'entraînement avec élastiques SmartWorkout",
-  "start_url": "./smarttrack.html",
+  "start_url": "./smarttrack-v0.8.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#F2F2F7",
