@@ -3,6 +3,7 @@ const CACHE_NAME = 'smarttrack-v' + new Date().getTime();
 const urlsToCache = [
   './smarttrack-v0.8.html',
   './manifest.json'
+  './smarttrack-icon.png'
 ];
 
 // Installation du service worker
