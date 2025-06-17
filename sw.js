@@ -139,7 +139,7 @@ self.addEventListener('message', event => {
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'CHECK_UPDATE') {
     // Vérifier s'il y a une nouvelle version
-    fetch('./smarttrack.html', { cache: 'no-cache' })
+    fetch('./smarttrack-v0.8.html', { cache: 'no-cache' })
       .then(response => response.text())
       .then(html => {
         // Tu peux ajouter ici une logique pour détecter si le fichier a changé
