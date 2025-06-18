@@ -625,11 +625,10 @@
         <!-- Écran 2: Séance Live -->
         <div id="screen-live" class="screen">
             <div class="header">
-                <button class="btn btn-small btn-danger" onclick="actions.stopLiveSession()">⏹️ Arrêter</button>
+                <button class="btn btn-small btn-warning" onclick="actions.pauseLiveSession()">⏸️ Pause</button>
                 <div class="session-timer" id="live-timer">00:00</div>
-                <div></div>
+                <button class="btn btn-small btn-danger" onclick="actions.stopLiveSession()">⏹️ Arrêter</button>
             </div>
-            
             <div id="live-content"></div>
         </div>
 
@@ -935,6 +934,35 @@
             </div>
             <button class="btn btn-primary btn-full" onclick="actions.importData()">
                 📥 Importer
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal difficulté de séance -->
+    <div id="difficulty-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎯 Comment s'est passée votre séance ?</h3>
+            </div>
+            <p style="text-align: center; color: var(--text-secondary); margin: 16px 0;">
+                Cette information nous aide à suivre votre progression
+            </p>
+            <div style="display: grid; gap: 12px; margin: 20px 0;">
+                <button class="btn btn-success btn-full" onclick="actions.finishSessionWithDifficulty('Facile')" style="padding: 16px;">
+                    😊 Facile
+                    <div style="font-size: 12px; opacity: 0.8;">J'aurais pu faire plus</div>
+                </button>
+                <button class="btn btn-primary btn-full" onclick="actions.finishSessionWithDifficulty('Normale')" style="padding: 16px;">
+                    💪 Normale  
+                    <div style="font-size: 12px; opacity: 0.8;">Effort modéré, bien dosé</div>
+                </button>
+                <button class="btn btn-danger btn-full" onclick="actions.finishSessionWithDifficulty('Difficile')" style="padding: 16px;">
+                    🔥 Difficile
+                    <div style="font-size: 12px; opacity: 0.8;">J'ai donné le maximum</div>
+                </button>
+            </div>
+            <button class="btn btn-secondary btn-full" onclick="actions.finishSessionWithDifficulty(null)" style="margin-top: 8px;">
+                Passer
             </button>
         </div>
     </div>
@@ -2181,26 +2209,60 @@
 
             finishManualSession() {
                 if (appState.manualSession) {
-                    // S'assurer que la date est bien celle d'aujourd'hui
-                    appState.manualSession.endTime = Date.now();
-                    appState.manualSession.date = new Date().toISOString().split('T')[0];
+                    // Préparer la séance à sauvegarder
+                    appState.sessionToFinish = {
+                        ...appState.manualSession,
+                        endTime: Date.now(),
+                        date: new Date().toISOString().split('T')[0]
+                    };
                     
-                    appState.sessions.push(appState.manualSession);
+                    // Nettoyer les variables de session en cours
                     appState.manualSession = null;
                     appState.currentSession = null;
                     
-                    // Sauvegarder AVANT de changer d'écran
-                    this.saveData();
-                    
-                    this.showScreen('dashboard');
-                    this.showNotification('Séance sauvegardée !');
-                    
-                    // Forcer la mise à jour du calendrier après un petit délai
-                    setTimeout(() => {
-                        render();
-                        console.log('Sessions après sauvegarde:', appState.sessions.map(s => s.date));
-                    }, 50);
+                    // Afficher le modal de difficulté
+                    document.getElementById('difficulty-modal').classList.add('active');
                 }
+            },
+
+            // Fonction pour terminer la séance avec évaluation de difficulté
+            finishSessionWithDifficulty(difficulty) {
+                if (!appState.sessionToFinish) return;
+                
+                // Ajouter la difficulté à la séance
+                if (difficulty) {
+                    appState.sessionToFinish.difficulty = difficulty;
+                }
+                
+                // Sauvegarder la séance
+                appState.sessions.push(appState.sessionToFinish);
+                
+                // Nettoyer les variables temporaires
+                appState.sessionToFinish = null;
+                
+                // Fermer le modal
+                document.getElementById('difficulty-modal').classList.remove('active');
+                
+                // Sauvegarder et rediriger
+                this.saveData();
+                this.showScreen('dashboard');
+                
+                const difficultyEmoji = {
+                    'Facile': '😊',
+                    'Normale': '💪', 
+                    'Difficile': '🔥'
+                };
+                
+                this.showNotification(
+                    difficulty ? 
+                    `${difficultyEmoji[difficulty]} Séance ${difficulty.toLowerCase()} terminée ! 🎉` :
+                    'Séance terminée ! 🎉'
+                );
+                
+                // Forcer la mise à jour du calendrier
+                setTimeout(() => {
+                    render();
+                }, 50);
             },
 
             saveManualSet() {
@@ -2362,6 +2424,9 @@
                     currentExerciseIndex: 0,
                     currentSetIndex: 0,
                     isResting: false,
+                    isPreparing: true, // NOUVEAU : phase de préparation
+                    prepareStartTime: Date.now(),
+                    prepareDuration: 5000, // 5 secondes
                     restStartTime: null,
                     restDuration: 0
                 };
@@ -2369,6 +2434,51 @@
                 this.showScreen('live');
                 this.startSessionTimer();
                 render();
+            },
+
+            // Fonction pour mettre en pause la séance live
+            pauseLiveSession() {
+                if (appState.liveSession && !appState.liveSession.isPaused) {
+                    appState.liveSession.isPaused = true;
+                    appState.liveSession.pauseStartTime = Date.now();
+                    
+                    // Arrêter tous les timers
+                    this.cleanupTimers();
+                    if (exerciseTimer.isRunning) {
+                        exerciseTimer.pause();
+                    }
+                    
+                    render();
+                    this.showNotification('⏸️ Séance en pause');
+                }
+            },
+
+            // Fonction pour reprendre la séance live
+            resumeLiveSession() {
+                if (appState.liveSession && appState.liveSession.isPaused) {
+                    const pauseDuration = Date.now() - appState.liveSession.pauseStartTime;
+                    
+                    // Ajuster les temps de début pour compenser la pause
+                    appState.liveSession.startTime += pauseDuration;
+                    if (appState.liveSession.restStartTime) {
+                        appState.liveSession.restStartTime += pauseDuration;
+                    }
+                    if (appState.liveSession.prepareStartTime) {
+                        appState.liveSession.prepareStartTime += pauseDuration;
+                    }
+                    
+                    appState.liveSession.isPaused = false;
+                    delete appState.liveSession.pauseStartTime;
+                    
+                    // Redémarrer les timers
+                    this.startSessionTimer();
+                    if (exerciseTimer.isPaused) {
+                        exerciseTimer.start();
+                    }
+                    
+                    render();
+                    this.showNotification('▶️ Séance reprise');
+                }
             },
             
             startSessionTimer() {
@@ -2381,7 +2491,16 @@
                         const elapsed = Date.now() - appState.liveSession.startTime;
                         const timerElement = document.getElementById('live-timer');
                         if (timerElement) {
-                            timerElement.textContent = this.formatTime(elapsed);
+                            if (appState.liveSession.isPaused) {
+                                // Affichage en mode pause
+                                const pauseDuration = Math.floor((Date.now() - appState.liveSession.pauseStartTime) / 1000);
+                                timerElement.textContent = `⏸️ ${pauseDuration}s`;
+                                timerElement.style.color = 'var(--warning)';
+                            } else {
+                                // Affichage normal
+                                timerElement.textContent = this.formatTime(elapsed);
+                                timerElement.style.color = 'var(--primary)';
+                            }
                         }
                         
                         // Gérer le timer de repos
@@ -2389,10 +2508,66 @@
                             const restElapsed = Date.now() - appState.liveSession.restStartTime;
                             const restRemaining = Math.max(0, appState.liveSession.restDuration - restElapsed);
                             const restElement = document.querySelector('.rest-time');
+                            
                             if (restElement) {
                                 restElement.textContent = this.formatTime(restRemaining);
-                                if (restRemaining === 0) {
+                                
+                                if (restRemaining <= 5000) { // 5 dernières secondes
                                     restElement.style.color = 'var(--danger)';
+                                } else if (restRemaining <= 10000) { // 10 dernières secondes
+                                    restElement.style.color = 'var(--warning)';
+                                }
+                                
+                                // CORRECTION DU BUG : Passer automatiquement quand le repos est fini
+                                if (restRemaining === 0) {
+                                    appState.liveSession.isResting = false;
+                                    
+                                    // Vérifier si on a atteint le nombre de séries pour cet exercice
+                                    const currentExercise = appState.liveSession.exercises[appState.liveSession.currentExerciseIndex];
+                                    if (currentExercise.sets.length >= currentExercise.planned_sets) {
+                                        // Passer à l'exercice suivant
+                                        this.nextExercise();
+                                    } else {
+                                        // Continuer avec la série suivante du même exercice
+                                        render();
+                                    }
+                                }
+                            }
+                        }
+
+                        // Gérer le timer de préparation
+                        if (appState.liveSession.isPreparing) {
+                            const prepareElapsed = Date.now() - appState.liveSession.prepareStartTime;
+                            const prepareRemaining = Math.max(0, appState.liveSession.prepareDuration - prepareElapsed);
+                            const countdownElement = document.getElementById('countdown-display');
+                            
+                            if (countdownElement) {
+                                const secondsLeft = Math.ceil(prepareRemaining / 1000);
+                                countdownElement.textContent = secondsLeft;
+                                
+                                // Changer la couleur selon le temps restant
+                                if (secondsLeft <= 2) {
+                                    countdownElement.style.color = 'var(--danger)';
+                                } else if (secondsLeft <= 3) {
+                                    countdownElement.style.color = 'var(--warning)';
+                                } else {
+                                    countdownElement.style.color = 'var(--primary)';
+                                }
+                                
+                                // Sons aux dernières secondes (éviter les répétitions)
+                                if (secondsLeft <= 3 && secondsLeft > 0) {
+                                    const currentSecond = Math.floor(prepareRemaining / 1000);
+                                    const lastSecond = Math.floor((prepareRemaining + 1000) / 1000);
+                                    if (currentSecond !== lastSecond) {
+                                        exerciseTimer.playBeep(800, 200);
+                                    }
+                                }
+                                
+                                // Fin de la préparation
+                                if (prepareRemaining === 0) {
+                                    appState.liveSession.isPreparing = false;
+                                    exerciseTimer.playBeep(1000, 500); // Son de début plus long
+                                    render();
                                 }
                             }
                         }
@@ -2560,31 +2735,25 @@
             finishLiveSession() {
                 if (!appState.liveSession) return;
                 
-                // Sauvegarder la séance avec la date d'aujourd'hui
-                const sessionToSave = {
+                // Préparer la séance à sauvegarder
+                appState.sessionToFinish = {
                     ...appState.liveSession,
                     endTime: Date.now(),
-                    date: new Date().toISOString().split('T')[0] // S'assurer que la date est aujourd'hui
+                    date: new Date().toISOString().split('T')[0]
                 };
-  
-                appState.sessions.push(sessionToSave);
                 
-                // Nettoyer
+                // Nettoyer les timers
+                this.cleanupTimers();
+                if (exerciseTimer.isRunning) {
+                    exerciseTimer.stop();
+                }
+                
+                // Nettoyer les variables de session en cours
                 appState.liveSession = null;
                 appState.currentSession = null;
-                this.cleanupTimers();
                 
-                // Sauvegarder AVANT de changer d'écran
-                this.saveData();
-  
-                this.showScreen('dashboard');
-                this.showNotification('Séance terminée ! 🎉');
-                
-                // Forcer la mise à jour du calendrier après un petit délai
-                setTimeout(() => {
-                    render();
-                    console.log('Sessions après sauvegarde:', appState.sessions.map(s => s.date));
-                }, 50);
+                // Afficher le modal de difficulté
+                document.getElementById('difficulty-modal').classList.add('active');
             },
             
             stopLiveSession() {
@@ -3364,8 +3533,102 @@
             
             const exercise = appState.exercises.find(e => e.id === currentExercise.exercise_id);
             
+            // Gérer la phase de préparation avant le premier exercice
+            if (appState.liveSession.isPreparing) {
+                const firstExercise = exercise;
+                
+                liveContent.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <h2 style="margin-bottom: 24px; color: var(--primary);">🏁 Préparation</h2>
+                        <div id="countdown-display" style="font-size: 72px; font-weight: bold; color: var(--primary); margin: 24px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                            5
+                        </div>
+                        <h3 style="margin-bottom: 16px;">Premier exercice :</h3>
+                        <div style="font-size: 24px; font-weight: 600; margin: 16px 0; color: var(--text-primary);">
+                            ${firstExercise.name}
+                        </div>
+                        <div style="font-size: 16px; color: var(--text-secondary); background: var(--background); padding: 12px; border-radius: 8px; margin: 16px 0;">
+                            Préparez vos élastiques et votre position
+                        </div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">
+                            ${firstExercise.is_unilateral ? '🔄 Exercice unilatéral' : '⚖️ Exercice bilatéral'} • 
+                            ${firstExercise.default_rest_time}s de repos par défaut
+                        </div>
+                    </div>
+                `;
+                return; // Sortir de la fonction
+            }
+
+            if (appState.liveSession.isPaused) {
+                liveContent.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <div style="font-size: 48px; margin-bottom: 24px;">⏸️</div>
+                        <h2 style="color: var(--warning);">Séance en pause</h2>
+                        <p style="color: var(--text-secondary); margin: 16px 0;">
+                            Votre progression est sauvegardée
+                        </p>
+                        <div style="font-size: 14px; color: var(--text-secondary); margin: 16px 0;">
+                            Pause depuis ${Math.floor((Date.now() - appState.liveSession.pauseStartTime) / 1000)}s
+                        </div>
+                        <button class="btn btn-success btn-full" onclick="actions.resumeLiveSession()">
+                            ▶️ Reprendre la séance
+                        </button>
+                        <button class="btn btn-secondary btn-full" onclick="actions.stopLiveSession()" style="margin-top: 12px;">
+                            🏁 Terminer la séance
+                        </button>
+                    </div>
+                `;
+                return; // Sortir de la fonction
+            }
+
             if (appState.liveSession.isResting) {
                 // Phase de repos
+                const nextExerciseIndex = appState.liveSession.currentExerciseIndex + 1;
+                const isLastExercise = nextExerciseIndex >= appState.liveSession.exercises.length;
+                const nextExercise = !isLastExercise ? 
+                    appState.exercises.find(e => e.id === appState.liveSession.exercises[nextExerciseIndex].exercise_id) : null;
+                
+                // Récupérer les dernières performances du prochain exercice
+                let nextExerciseInfo = '';
+                if (nextExercise) {
+                    const lastPerf = actions.getLastPerformance(nextExercise.id);
+                    if (lastPerf) {
+                        nextExerciseInfo = `
+                            <div class="card" style="margin: 16px 0; padding: 16px; background: var(--surface); border: 2px solid var(--primary);">
+                                <h4 style="color: var(--primary); margin-bottom: 8px;">🔜 Prochain exercice</h4>
+                                <div style="font-size: 20px; font-weight: bold; margin-bottom: 8px;">
+                                    ${nextExercise.name}
+                                </div>
+                                <div style="font-size: 16px; color: var(--primary); font-weight: bold; background: var(--background); padding: 8px; border-radius: 8px;">
+                                    📊 Dernière fois : ${lastPerf.resistance}kg • ${lastPerf.reps} reps
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+                                    ${new Date(lastPerf.date).toLocaleDateString('fr-FR')}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        nextExerciseInfo = `
+                            <div class="card" style="margin: 16px 0; padding: 16px; background: var(--surface); border: 2px solid var(--primary);">
+                                <h4 style="color: var(--primary); margin-bottom: 8px;">🔜 Prochain exercice</h4>
+                                <div style="font-size: 20px; font-weight: bold; margin-bottom: 8px;">
+                                    ${nextExercise.name}
+                                </div>
+                                <div style="font-size: 14px; color: var(--text-secondary); background: var(--background); padding: 8px; border-radius: 8px;">
+                                    🆕 Premier essai pour cet exercice
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    nextExerciseInfo = `
+                        <div class="card" style="margin: 16px 0; padding: 16px; background: var(--secondary); color: white; text-align: center;">
+                            <h4 style="margin-bottom: 8px;">🏁 Dernier exercice terminé !</h4>
+                            <div style="font-size: 18px;">Félicitations ! 🎉</div>
+                        </div>
+                    `;
+                }
+
                 liveContent.innerHTML = `
                     <div class="rest-timer">
                         <h2>Temps de repos</h2>
@@ -3375,11 +3638,15 @@
                         </button>
                     </div>
                     
-                    <div class="next-exercise">
-                        <h4>À suivre :</h4>
-                        <p><strong>${exercise.name}</strong></p>
-                        <p>Série ${currentExercise.sets.length + 1} / ${currentExercise.planned_sets}</p>
+                    <div class="card" style="margin: 16px 0; padding: 12px; background: var(--background);">
+                        <h4>✅ Exercice terminé</h4>
+                        <div style="font-size: 16px; font-weight: bold;">${exercise.name}</div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">
+                            Série ${currentExercise.sets.length} / ${currentExercise.planned_sets}
+                        </div>
                     </div>
+                    
+                    ${nextExerciseInfo}
                 `;
             } else {
                 // Phase d'exercice
@@ -3477,10 +3744,28 @@
                                 <strong>${exercise.name}</strong> (${sessionEx.sets.length} séries)
                                 <div style="font-size: 14px; color: var(--text-secondary);">
                                     ${sessionEx.sets.map(set => {
-                                        if (exercise.is_unilateral) {
-                                            return `${set.left_reps || 0} reps (G) | ${set.right_reps || 0} reps (D) - ${set.total_resistance || 0}kg`;
+                                        if (set.exercise_mode === 'time') {
+                                            // Exercice en mode temps
+                                            if (exercise.is_unilateral) {
+                                                const leftResistance = typeof set.total_resistance === 'object' ? 
+                                                    (set.total_resistance.left || 0) : (set.total_resistance || 0);
+                                                const rightResistance = typeof set.total_resistance === 'object' ? 
+                                                    (set.total_resistance.right || 0) : (set.total_resistance || 0);
+                                                return `${set.duration || 0}s - ${leftResistance}kg (G) | ${rightResistance}kg (D)`;
+                                            } else {
+                                                return `${set.duration || 0}s - ${set.total_resistance || 0}kg`;
+                                            }
                                         } else {
-                                            return `${set.reps || 0} reps - ${set.total_resistance || 0}kg`;
+                                            // Exercice en mode répétitions (logique existante)
+                                            if (exercise.is_unilateral) {
+                                                const leftResistance = typeof set.total_resistance === 'object' ? 
+                                                    (set.total_resistance.left || 0) : (set.total_resistance || 0);
+                                                const rightResistance = typeof set.total_resistance === 'object' ? 
+                                                    (set.total_resistance.right || 0) : (set.total_resistance || 0);
+                                                return `${set.left_reps || 0} reps (G) | ${set.right_reps || 0} reps (D) - ${leftResistance}kg (G) | ${rightResistance}kg (D)`;
+                                            } else {
+                                                return `${set.reps || 0} reps - ${set.total_resistance || 0}kg`;
+                                            }
                                         }
                                     }).join(' • ')}
                                 </div>
@@ -3489,10 +3774,42 @@
                     }
                 });
                 
+                // Calculer la durée totale de la séance
+                const sessionDuration = session.endTime && session.startTime ? 
+                    Math.floor((session.endTime - session.startTime) / 1000 / 60) : 0;
+
+                // Calculer le volume total et le temps total d'exercice
+                let totalVolume = 0;
+                let totalExerciseTime = 0;
+
+                session.exercises.forEach(ex => {
+                    ex.sets.forEach(set => {
+                        if (set.exercise_mode === 'time') {
+                            // Pour les exercices en temps, compter la durée totale
+                            totalExerciseTime += (set.duration || 0);
+                        } else {
+                            // Pour les répétitions, compter le volume
+                            let resistance = 0;
+                            if (typeof set.total_resistance === 'object') {
+                                resistance = (set.total_resistance.left || 0) + (set.total_resistance.right || 0);
+                            } else {
+                                resistance = set.total_resistance || 0;
+                            }
+                            const reps = (set.reps || 0) + (set.left_reps || 0) + (set.right_reps || 0);
+                            totalVolume += (resistance * reps);
+                        }
+                    });
+                });
+
                 sessionDiv.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div style="flex: 1;">
                             <h3>${formattedDate}</h3>
+                            <div style="font-size: 14px; color: var(--text-secondary); margin: 4px 0;">
+                                ⏱️ ${sessionDuration}min • 📊 ${Math.round(totalVolume)}kg volume
+                                ${totalExerciseTime > 0 ? ` • 🔥 ${Math.floor(totalExerciseTime / 60)}min ${totalExerciseTime % 60}s actif` : ''}
+                                ${session.difficulty ? ` • ${session.difficulty === 'Facile' ? '😊' : session.difficulty === 'Normale' ? '💪' : '🔥'} ${session.difficulty}` : ''}
+                            </div>
                             ${session.notes ? `<p style="color: var(--text-secondary); margin: 8px 0;">${session.notes}</p>` : ''}
                             <details style="margin-top: 12px;">
                                 <summary style="cursor: pointer; font-weight: 500;">Voir les détails</summary>
