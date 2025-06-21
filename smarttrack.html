@@ -49,24 +49,121 @@
 
         /* === LAYOUT === */
         .app-container {
-            max-width: 428px;
+            max-width: 100vw;
             margin: 0 auto;
             min-height: 100vh;
             background: var(--background);
             display: flex;
             flex-direction: column;
+            width: 100%;
+            overflow-x: hidden;
         }
 
         .screen {
             display: none;
             flex: 1;
-            padding: 20px;
+            padding: 16px;
             animation: slideIn 0.3s ease-out;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .screen.active {
             display: flex;
             flex-direction: column;
+        }
+
+        /* Amélioration des items d'exercices */
+        .exercise-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--surface);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 80px;
+        }
+
+        .exercise-item > div:first-child {
+            flex: 1;
+            min-width: 250px;
+            word-wrap: break-word;
+        }
+
+        .exercise-item > div:last-child {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            min-width: 300px;
+        }
+
+        .exercise-item input[type="number"] {
+            min-width: 70px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .exercise-item span {
+            font-size: 12px;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        /* Amélioration responsive */
+        @media (max-width: 768px) {
+            .exercise-item {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px;
+            }
+        
+            .exercise-item > div:first-child {
+                min-width: 100%;
+                margin-bottom: 8px;
+            }
+        
+            .exercise-item > div:last-child {
+                justify-content: space-between;
+                min-width: 100%;
+            }
+        
+            .exercise-item input[type="number"] {
+                min-width: 60px;
+            }
+        }
+
+        /* Amélioration des cartes */
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 10px var(--shadow);
+            border: 1px solid var(--border);
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        /* Amélioration des grilles de stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        /* Amélioration des inputs de performance */
+            .performance-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 24px 0;
         }
 
         @keyframes slideIn {
@@ -2232,6 +2329,12 @@
             
             // Afficher le sélecteur d'exercices
             showExerciseSelector() {
+                // Fermer le modal existant s'il y en a un
+                const existingModal = document.getElementById('exercise-selector-modal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+                
                 if (!appState.templateInCreation) {
                     appState.templateInCreation = {
                         exercises: [],
@@ -2288,7 +2391,7 @@
                     <div class="modal-content" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
                         <div class="modal-header">
                             <h3>Sélectionner des exercices</h3>
-                            <button class="close-btn" onclick="actions.closeExerciseSelector()">×</button>
+                            <button class="close-btn" onclick="actions.closeExerciseSelector()" style="font-size: 24px; padding: 8px; background: none; border: none; cursor: pointer;">×</button>
                         </div>
                         <div style="margin: 16px 0;">
                             ${exercisesList}
@@ -2298,7 +2401,13 @@
                         </button>
                     </div>
                 `;
-            
+                    
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        actions.closeExerciseSelector();
+                    }
+                });
+
                 document.body.appendChild(modal);
             },
 
@@ -2316,9 +2425,16 @@
                         restTime: exercise.default_rest_time
                     });
                 
-                    // Rafraîchir le modal
-                    this.showExerciseSelector();
-                    // Rafraîchir l'affichage principal
+                    // Mettre à jour SEULEMENT le bouton de l'exercice ajouté (éviter la remontée)
+                    const button = document.querySelector(`button[onclick*="addToTemplate(${exerciseId})"]`);
+                    if (button) {
+                        button.textContent = '✓ Ajouté';
+                        button.className = 'btn btn-small btn-secondary';
+                        button.disabled = true;
+                        button.onclick = () => actions.removeFromTemplate(exerciseId);
+                    }
+
+                    // Rafraîchir l'affichage principal sans fermer le modal
                     this.renderSelectedExercises();
                 }
             },
@@ -2949,20 +3065,44 @@
                             const restElapsed = Date.now() - appState.liveSession.restStartTime;
                             const restRemaining = Math.max(0, appState.liveSession.restDuration - restElapsed);
                             const restElement = document.querySelector('.rest-time');
-                            
                             if (restElement) {
                                 restElement.textContent = this.formatTime(restRemaining);
-                                
-                                if (restRemaining <= 5000) { // 5 dernières secondes
+                            
+                                // Couleurs selon le temps restant
+                                if (restRemaining <= 5000) {
                                     restElement.style.color = 'var(--danger)';
-                                } else if (restRemaining <= 10000) { // 10 dernières secondes
+                                } else if (restRemaining <= 10000) {
+                                    restElement.style.color = 'var(--warning)';
+                                } else {
                                     restElement.style.color = 'var(--warning)';
                                 }
-                                
-                                // CORRECTION DU BUG : Passer automatiquement quand le repos est fini
+                            
+                                // Sons pour les dernières secondes (éviter les répétitions)
+                                const currentSecond = Math.floor(restRemaining / 1000);
+                                if (!appState.liveSession.lastRestSecond) {
+                                    appState.liveSession.lastRestSecond = currentSecond;
+                                }
+                            
+                                if (currentSecond !== appState.liveSession.lastRestSecond) {
+                                    if (currentSecond === 5 || currentSecond === 3 || currentSecond === 1) {
+                                        exerciseTimer.playBeep(800, 200);
+                                        if ('vibrate' in navigator) {
+                                            navigator.vibrate(100);
+                                        }
+                                    } else if (currentSecond === 0) {
+                                        exerciseTimer.playBeep(1000, 500);
+                                        if ('vibrate' in navigator) {
+                                            navigator.vibrate([200, 100, 200]);
+                                        }
+                                    }
+                                    appState.liveSession.lastRestSecond = currentSecond;
+                                }
+                            
+                                // Passer automatiquement quand le repos est fini
                                 if (restRemaining === 0) {
                                     appState.liveSession.isResting = false;
-                                    
+                                    appState.liveSession.lastRestSecond = null; // Reset
+                                
                                     // Vérifier si on a atteint le nombre de séries pour cet exercice
                                     const currentExercise = appState.liveSession.exercises[appState.liveSession.currentExerciseIndex];
                                     if (currentExercise.sets.length >= currentExercise.planned_sets) {
@@ -4355,11 +4495,27 @@
             }
 
             if (appState.liveSession.isResting) {
-                // Phase de repos
-                const nextExerciseIndex = appState.liveSession.currentExerciseIndex + 1;
-                const isLastExercise = nextExerciseIndex >= appState.liveSession.exercises.length;
-                const nextExercise = !isLastExercise ? 
-                    appState.exercises.find(e => e.id === appState.liveSession.exercises[nextExerciseIndex].exercise_id) : null;
+                // Phase de repos - CORRIGER LA LOGIQUE
+                const currentExercise = appState.liveSession.exercises[appState.liveSession.currentExerciseIndex];
+                const exercise = appState.exercises.find(e => e.id === currentExercise.exercise_id);
+                
+                // Déterminer si on est entre séries du même exercice ou entre exercices différents
+                const isRestBetweenSets = currentExercise.sets.length < currentExercise.planned_sets;
+                
+                let nextExerciseIndex, nextExercise, isLastExercise;
+                
+                if (isRestBetweenSets) {
+                    // Repos entre séries du même exercice
+                    nextExerciseIndex = appState.liveSession.currentExerciseIndex;
+                    nextExercise = exercise;
+                    isLastExercise = false;
+                } else {
+                    // Repos entre exercices différents
+                    nextExerciseIndex = appState.liveSession.currentExerciseIndex + 1;
+                    isLastExercise = nextExerciseIndex >= appState.liveSession.exercises.length;
+                    nextExercise = !isLastExercise ?
+                        appState.exercises.find(e => e.id === appState.liveSession.exercises[nextExerciseIndex].exercise_id) : null;
+                }
                 
                 // Récupérer les dernières performances du prochain exercice
                 let nextExerciseInfo = '';
@@ -4412,10 +4568,13 @@
                     </div>
                     
                     <div class="card" style="margin: 16px 0; padding: 12px; background: var(--background);">
-                        <h4>✅ Exercice terminé</h4>
+                        <h4>✅ ${isRestBetweenSets ? 'Série terminée' : 'Exercice terminé'}</h4>
                         <div style="font-size: 16px; font-weight: bold;">${exercise.name}</div>
                         <div style="font-size: 14px; color: var(--text-secondary);">
-                            Série ${currentExercise.sets.length} / ${currentExercise.planned_sets}
+                            ${isRestBetweenSets ? 
+                                `Série ${currentExercise.sets.length} / ${currentExercise.planned_sets} terminée` :
+                                `Toutes les séries terminées (${currentExercise.sets.length}/${currentExercise.planned_sets})`
+                            }
                         </div>
                     </div>
                     
@@ -4518,31 +4677,40 @@
                                 <div style="font-size: 14px; color: var(--text-secondary);">
                                     ${sessionEx.sets.map(set => {
                                         if (set.exercise_mode === 'time') {
-                                            // Exercice en mode temps
+                                            // Exercice en mode temps - ne pas afficher les résistances si elles sont à 0
                                             if (exercise.is_unilateral) {
-                                                // Pour les exercices unilatéraux, gérer les résistances par côté
                                                 let leftResistance, rightResistance;
                                                 if (typeof set.total_resistance === 'object' && set.total_resistance.left !== undefined) {
-                                                    leftResistance = set.total_resistance.left;
-                                                    rightResistance = set.total_resistance.right;
+                                                    leftResistance = set.total_resistance.left || 0;
+                                                    rightResistance = set.total_resistance.right || 0;
                                                 } else {
-                                                    // Compatibilité avec l'ancien format
                                                     leftResistance = set.total_resistance || 0;
                                                     rightResistance = set.total_resistance || 0;
                                                 }
-                                                return `${set.duration || 0}s - ${leftResistance}kg (G) | ${rightResistance}kg (D)`;
+                                            
+                                                // Afficher les résistances seulement si elles sont > 0
+                                                if (leftResistance > 0 || rightResistance > 0) {
+                                                    return `${set.duration || 0}s - ${leftResistance}kg (G) | ${rightResistance}kg (D)`;
+                                                } else {
+                                                    return `${set.duration || 0}s`;
+                                                }
                                             } else {
-                                                return `${set.duration || 0}s - ${set.total_resistance || 0}kg`;
+                                                const resistance = set.total_resistance || 0;
+                                                // Afficher la résistance seulement si elle est > 0
+                                                if (resistance > 0) {
+                                                    return `${set.duration || 0}s - ${resistance}kg`;
+                                                } else {
+                                                    return `${set.duration || 0}s`;
+                                                }
                                             }
                                         } else {
-                                            // Exercice en mode répétitions
+                                            // Exercice en mode répétitions (logique existante)
                                             if (exercise.is_unilateral) {
                                                 let leftResistance, rightResistance;
                                                 if (typeof set.total_resistance === 'object' && set.total_resistance.left !== undefined) {
-                                                    leftResistance = set.total_resistance.left;
-                                                    rightResistance = set.total_resistance.right;
+                                                    leftResistance = set.total_resistance.left || 0;
+                                                    rightResistance = set.total_resistance.right || 0;
                                                 } else {
-                                                    // Compatibilité avec l'ancien format
                                                     leftResistance = set.total_resistance || 0;
                                                     rightResistance = set.total_resistance || 0;
                                                 }
@@ -4568,11 +4736,24 @@
                 session.exercises.forEach(ex => {
                     const sessionExercise = appState.exercises.find(e => e.id === ex.exercise_id);
                     ex.sets.forEach(set => {
-                        if (set.exercise_mode === 'time') {
-                            // Pour les exercices en temps, compter la durée totale
-                            totalExerciseTime += (set.duration || 0);
-                        } else {
-                            // Pour les répétitions, compter le volume
+                        // Calculer le temps d'exercice selon le mode
+                        if (set.exercise_mode === 'time' && set.duration) {
+                            // Exercice en mode temps
+                            totalExerciseTime += set.duration;
+                        } else if (set.exercise_mode === 'reps' || !set.exercise_mode) {
+                            // Exercice en mode répétitions - estimer le temps
+                            let reps = 0;
+                            if (sessionExercise && sessionExercise.is_unilateral) {
+                                reps = (set.left_reps || 0) + (set.right_reps || 0);
+                            } else {
+                                reps = set.reps || 0;
+                            }
+                            // Estimer 2 secondes par répétition
+                            totalExerciseTime += (reps * 2);
+                        }
+                    
+                        // Calculer le volume pour les exercices en répétitions
+                        if (set.exercise_mode !== 'time' && set.type === 'work') {
                             let resistance = 0;
                             let reps = 0;
                     
@@ -4582,7 +4763,7 @@
                                     resistance = (set.total_resistance.left || 0) + (set.total_resistance.right || 0);
                                 } else {
                                     // Compatibilité avec l'ancien format
-                                    resistance = (set.total_resistance || 0) * 2; // Multiplier par 2 car c'était pour les deux côtés
+                                    resistance = (set.total_resistance || 0) * 2;
                                 }
                                 reps = (set.left_reps || 0) + (set.right_reps || 0);
                             } else {
@@ -5299,7 +5480,10 @@
         actions.renderTemplatesModal = function() {
             const modalContent = document.getElementById('templates-modal-content');
             modalContent.innerHTML = '';
-            
+
+            // Forcer le rechargement des modèles depuis le stockage
+            appState.templates = storage.load('templates', []);
+
             if (appState.templates.length > 0) {
                 appState.templates.forEach(template => {
                     const div = document.createElement('div');
@@ -5307,16 +5491,26 @@
                     div.style.cursor = 'pointer';
                     div.onclick = () => actions.loadTemplate(template.id);
                     
-                    const exerciseNames = template.exerciseIds
-                        .map(id => appState.exercises.find(e => e.id === id)?.name)
-                        .filter(name => name)
-                        .join(', ');
-                    
+                    let exerciseNames = '';
+                    if (template.exercises && template.exercises.length > 0) {
+                        // Nouveau format
+                        exerciseNames = template.exercises.map(exData => {
+                            const exercise = appState.exercises.find(e => e.id === exData.exerciseId);
+                            return exercise ? exercise.name : 'Exercice supprimé';
+                        }).join(', ');
+                    } else {
+                        // Ancien format
+                        exerciseNames = (template.exerciseIds || [])
+                            .map(id => appState.exercises.find(e => e.id === id)?.name)
+                            .filter(name => name)
+                            .join(', ');
+                    }
+                
                     div.innerHTML = `
                         <div>
                             <strong>${template.name}</strong>
                             <div style="font-size: 14px; color: var(--text-secondary);">
-                                ${exerciseNames}
+                                ${exerciseNames || 'Aucun exercice'}
                             </div>
                         </div>
                         <div>👆</div>
@@ -5324,7 +5518,7 @@
                     modalContent.appendChild(div);
                 });
             } else {
-                modalContent.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">Aucun modèle disponible</p>';
+            modalContent.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">Aucun modèle disponible</p>';
             }
         };
 
