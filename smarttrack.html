@@ -648,6 +648,31 @@
             display: none;
         }
     </style>
+    <script>
+        // Empêcher le pull-to-refresh par défaut
+        document.addEventListener('touchstart', handleTouchStart, { passive: true });
+        document.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+        let startY = null;
+
+        function handleTouchStart(evt) {
+            startY = evt.touches[0].clientY;
+        }
+
+        function handleTouchMove(evt) {
+            if (startY === null) return;
+            
+            const currentY = evt.touches[0].clientY;
+            const diff = currentY - startY;
+            
+            // Si on tire vers le bas depuis le haut de la page
+            if (diff > 0 && window.pageYOffset === 0) {
+                evt.preventDefault(); // Empêcher le refresh
+            }
+            
+            startY = null;
+        }
+    </script>
 </head>
 <body>
     <div class="app-container">
@@ -1027,7 +1052,7 @@
                 <div>🏠</div>
                 <div>Accueil</div>
             </div>
-            <div class="nav-item" onclick="actions.showScreen('preparation')">
+            <div class="nav-item" onclick="actions.goToSession()">
                 <div>⚡</div>
                 <div>Séance</div>
             </div>
@@ -2022,6 +2047,17 @@
                 render();
             },
             
+            // Fonction pour naviguer intelligemment vers la séance
+            goToSession() {
+                if (appState.liveSession) {
+                    // Si une séance live est en cours, aller directement à l'écran live
+                    this.showScreen('live');
+                } else {
+                    // Sinon, aller à l'écran de préparation
+                    this.showScreen('preparation');
+                }
+            },
+
             showSettings() {
                 appState.currentScreen = 'settings';
                 render();
@@ -3082,20 +3118,21 @@
                                 if (!appState.liveSession.lastRestSecond) {
                                     appState.liveSession.lastRestSecond = currentSecond;
                                 }
-                            
                                 if (currentSecond !== appState.liveSession.lastRestSecond) {
-                                    if (currentSecond === 5 || currentSecond === 3 || currentSecond === 1) {
+                                    appState.liveSession.lastRestSecond = currentSecond;
+                                    // Bip à chaque seconde pendant les 5 dernières secondes
+                                    if (currentSecond <= 5 && currentSecond > 0) {
                                         exerciseTimer.playBeep(800, 200);
                                         if ('vibrate' in navigator) {
                                             navigator.vibrate(100);
                                         }
                                     } else if (currentSecond === 0) {
+                                        // Son spécial pour la fin
                                         exerciseTimer.playBeep(1000, 500);
                                         if ('vibrate' in navigator) {
                                             navigator.vibrate([200, 100, 200]);
                                         }
                                     }
-                                    appState.liveSession.lastRestSecond = currentSecond;
                                 }
                             
                                 // Passer automatiquement quand le repos est fini
@@ -3347,11 +3384,16 @@
                 if (appState.liveSession.currentExerciseIndex >= appState.liveSession.exercises.length) {
                     this.finishLiveSession();
                 } else {
-                    // Ajouter un repos de 2 minutes entre les exercices
+                    // Repos avant le prochain exercice - utiliser le temps de repos du prochain exercice
                     appState.liveSession.isResting = true;
                     appState.liveSession.restStartTime = Date.now();
-                    const globalRestBetweenExercises = appState.liveSession.globalSettings?.restBetweenExercises || 120;
-                    appState.liveSession.restDuration = globalRestBetweenExercises * 1000;
+                    
+                    // Récupérer le temps de repos du prochain exercice
+                    const nextExerciseData = appState.liveSession.exercises[appState.liveSession.currentExerciseIndex + 1];
+                    const nextExercise = appState.exercises.find(e => e.id === nextExerciseData.exercise_id);
+                    const nextRestTime = nextExerciseData.rest_time || nextExercise.default_rest_time || 120;
+                    
+                    appState.liveSession.restDuration = nextRestTime * 1000;
                     render();
                 }
             },
@@ -3489,13 +3531,113 @@
                     return currentTotal > bestTotal ? current : best;
                 });
   
+                // Adapter le retour selon le mode de l'exercice
+                if (bestSet.exercise_mode === 'time') {
+                    return {
+                        date: lastSession.date,
+                        resistance: bestSet.total_resistance || 0,
+                        duration: bestSet.duration || 0,
+                        mode: 'time',
+                        elastics: bestSet.elastics || {}
+                    };
+                } else {
+                    return {
+                        date: lastSession.date,
+                        resistance: bestSet.total_resistance || 0,
+                        reps: exercise.is_unilateral ?
+                            `${bestSet.left_reps || 0}G/${bestSet.right_reps || 0}D` :
+                            (bestSet.reps || 0),
+                        mode: 'reps',
+                        elastics: bestSet.elastics || {}
+                    };
+                }
+            },
+
+            getLastPerformanceForSet(exerciseId, setNumber) {
+                const exercise = appState.exercises.find(e => e.id === exerciseId);
+                if (!exercise) return null;
+
+                // Trouver la dernière séance avec cet exercice
+                const sessionsWithExercise = appState.sessions
+                    .filter(session => session.exercises.some(ex => ex.exercise_id === exerciseId))
+                    .sort((a, b) => b.date.localeCompare(a.date));
+
+                if (sessionsWithExercise.length === 0) return null;
+
+                const lastSession = sessionsWithExercise[0];
+                const exerciseData = lastSession.exercises.find(ex => ex.exercise_id === exerciseId);
+
+                if (!exerciseData || exerciseData.sets.length < setNumber) return null;
+
+                // Récupérer la série spécifique (setNumber - 1 car les arrays commencent à 0)
+                const specificSet = exerciseData.sets[setNumber - 1];
+                if (!specificSet || specificSet.type !== 'work') return null;
+
+                // Adapter le retour selon le mode de l'exercice
+                if (specificSet.exercise_mode === 'time') {
+                    return {
+                        date: lastSession.date,
+                        resistance: specificSet.total_resistance || 0,
+                        duration: specificSet.duration || 0,
+                        mode: 'time',
+                        setNumber: setNumber,
+                        elastics: specificSet.elastics || {}
+                    };
+                } else {
+                    return {
+                        date: lastSession.date,
+                        resistance: specificSet.total_resistance || 0,
+                        reps: exercise.is_unilateral ?
+                            `${specificSet.left_reps || 0}G/${specificSet.right_reps || 0}D` :
+                            (specificSet.reps || 0),
+                        mode: 'reps',
+                        setNumber: setNumber,
+                        elastics: specificSet.elastics || {}
+                    };
+                }
+            },
+
+            getAllLastPerformances(exerciseId) {
+                const exercise = appState.exercises.find(e => e.id === exerciseId);
+                if (!exercise) return null;
+
+                // Trouver la dernière séance avec cet exercice
+                const sessionsWithExercise = appState.sessions
+                    .filter(session => session.exercises.some(ex => ex.exercise_id === exerciseId))
+                    .sort((a, b) => b.date.localeCompare(a.date));
+
+                if (sessionsWithExercise.length === 0) return null;
+
+                const lastSession = sessionsWithExercise[0];
+                const exerciseData = lastSession.exercises.find(ex => ex.exercise_id === exerciseId);
+
+                if (!exerciseData || exerciseData.sets.length === 0) return null;
+
+                // Récupérer toutes les séries de travail
+                const workSets = exerciseData.sets.filter(set => set.type === 'work');
+                if (workSets.length === 0) return null;
+
                 return {
                     date: lastSession.date,
-                    resistance: bestSet.total_resistance || 0,
-                    reps: exercise.is_unilateral ? 
-                        `${bestSet.left_reps || 0}G/${bestSet.right_reps || 0}D` : 
-                        (bestSet.reps || 0),
-                    elastics: bestSet.elastics || {}
+                    sets: workSets.map((set, index) => {
+                        if (set.exercise_mode === 'time') {
+                            return {
+                                setNumber: index + 1,
+                                resistance: set.total_resistance || 0,
+                                duration: set.duration || 0,
+                                mode: 'time'
+                            };
+                        } else {
+                            return {
+                                setNumber: index + 1,
+                                resistance: set.total_resistance || 0,
+                                reps: exercise.is_unilateral ?
+                                    `${set.left_reps || 0}G/${set.right_reps || 0}D` :
+                                    (set.reps || 0),
+                                mode: 'reps'
+                            };
+                        }
+                    })
                 };
             },
 
@@ -3539,11 +3681,11 @@
                         const barWidth = Math.max(10, ((data.weight - minWeight) / (maxWeight - minWeight)) * 80 + 20);
             
                         chartHtml += `
-                            <div style="display: flex; align-items: center; margin: 4px 0;">
-                                <div style="width: 60px; font-size: 10px;">${date}</div>
-                                <div style="width: ${barWidth}%; height: 15px; background: var(--primary); margin: 0 8px; border-radius: 2px;"></div>
-                                <div style="font-size: 10px;">${data.weight}kg</div>
-                            </div>
+                        <div style="display: flex; align-items: center; margin: 4px 0;">
+                            <div style="width: 60px; font-size: 10px;">${date}</div>
+                            <div style="width: ${barWidth}%; height: 15px; background: var(--primary); margin: 0 8px; border-radius: 2px;"></div>
+                            <div style="font-size: 10px;">${data.weight}kg</div>
+                        </div>
                         `;
                     });
                 }
@@ -4446,11 +4588,33 @@
             
             const exercise = appState.exercises.find(e => e.id === currentExercise.exercise_id);
             
+            // Calculer la progression
+            const currentExerciseNum = appState.liveSession.currentExerciseIndex + 1;
+            const totalExercises = appState.liveSession.exercises.length;
+            const progressPercentage = Math.round((currentExerciseNum / totalExercises) * 100);
+
+            // Générer la barre de progression
+            const progressBarHtml = `
+                <div style="background: var(--surface); padding: 16px; margin-bottom: 16px; border-radius: 12px; border: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 14px; font-weight: 600; color: var(--text-primary);">Progression de la séance</span>
+                        <span style="font-size: 14px; font-weight: 600; color: var(--primary);">${progressPercentage}%</span>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden;">
+                        <div style="height: 100%; background: var(--primary); width: ${progressPercentage}%; transition: width 0.3s ease;"></div>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; text-align: center;">
+                        Exercice ${currentExerciseNum} / ${totalExercises}
+                    </div>
+                </div>
+            `;
+
             // Gérer la phase de préparation avant le premier exercice
             if (appState.liveSession.isPreparing) {
                 const firstExercise = exercise;
                 
                 liveContent.innerHTML = `
+                    ${progressBarHtml}
                     <div style="text-align: center; padding: 40px 20px;">
                         <h2 style="margin-bottom: 24px; color: var(--primary);">🏁 Préparation</h2>
                         <div id="countdown-display" style="font-size: 72px; font-weight: bold; color: var(--primary); margin: 24px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
@@ -4474,6 +4638,7 @@
 
             if (appState.liveSession.isPaused) {
                 liveContent.innerHTML = `
+                    ${progressBarHtml}
                     <div style="text-align: center; padding: 40px 20px;">
                         <div style="font-size: 48px; margin-bottom: 24px;">⏸️</div>
                         <h2 style="color: var(--warning);">Séance en pause</h2>
@@ -4520,16 +4685,35 @@
                 // Récupérer les dernières performances du prochain exercice
                 let nextExerciseInfo = '';
                 if (nextExercise) {
-                    const lastPerf = actions.getLastPerformance(nextExercise.id);
+                    let lastPerf;
+                    if (isRestBetweenSets) {
+                        // Repos entre séries - récupérer la performance de la série suivante de la dernière séance
+                        const nextSetNumber = currentExercise.sets.length + 1;
+                        lastPerf = actions.getLastPerformanceForSet(currentExercise.exercise_id, nextSetNumber);
+                    } else {
+                        // Repos entre exercices - récupérer toutes les séries du prochain exercice
+                        lastPerf = actions.getAllLastPerformances(nextExercise.id);
+                    }
                     if (lastPerf) {
+                        let performanceDetails = '';
+                        if (lastPerf.sets) {
+                            // Affichage de toutes les séries (repos entre exercices)
+                            performanceDetails = lastPerf.sets.map(set => {
+                                return `Série ${set.setNumber}: ${set.resistance}kg • ${set.mode === 'time' ? `${set.duration}s` : `${set.reps} reps`}`;
+                            }).join('<br>');
+                        } else {
+                            // Affichage d'une seule série (repos entre séries du même exercice)
+                            performanceDetails = `${lastPerf.resistance}kg • ${lastPerf.mode === 'time' ? `${lastPerf.duration}s` : `${lastPerf.reps} reps`}`;
+                        }
+                        
                         nextExerciseInfo = `
                             <div class="card" style="margin: 16px 0; padding: 16px; background: var(--surface); border: 2px solid var(--primary);">
                                 <h4 style="color: var(--primary); margin-bottom: 8px;">🔜 Prochain exercice</h4>
                                 <div style="font-size: 20px; font-weight: bold; margin-bottom: 8px;">
                                     ${nextExercise.name}
                                 </div>
-                                <div style="font-size: 16px; color: var(--primary); font-weight: bold; background: var(--background); padding: 8px; border-radius: 8px;">
-                                    📊 Dernière fois : ${lastPerf.resistance}kg • ${lastPerf.reps} reps
+                                <div style="font-size: 14px; color: var(--primary); font-weight: bold; background: var(--background); padding: 8px; border-radius: 8px;">
+                                    📊 Dernière fois :<br>${performanceDetails}
                                 </div>
                                 <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
                                     ${new Date(lastPerf.date).toLocaleDateString('fr-FR')}
@@ -4559,6 +4743,7 @@
                 }
 
                 liveContent.innerHTML = `
+                    ${progressBarHtml}
                     <div class="rest-timer">
                         <h2>Temps de repos</h2>
                         <div class="rest-time">00:00</div>
@@ -4569,7 +4754,7 @@
                     
                     <div class="card" style="margin: 16px 0; padding: 12px; background: var(--background);">
                         <h4>✅ ${isRestBetweenSets ? 'Série terminée' : 'Exercice terminé'}</h4>
-                        <div style="font-size: 16px; font-weight: bold;">${exercise.name}</div>
+                        <div style="font-size: 16px; font-weight: bold;">${appState.exercises.find(e => e.id === currentExercise.exercise_id).name}</div>
                         <div style="font-size: 14px; color: var(--text-secondary);">
                             ${isRestBetweenSets ? 
                                 `Série ${currentExercise.sets.length} / ${currentExercise.planned_sets} terminée` :
@@ -4589,35 +4774,68 @@
                 
                 // Récupérer les dernières performances
                 const lastPerf = actions.getLastPerformance(exercise.id);
-                const nextExerciseIndex = appState.liveSession.currentExerciseIndex + 1;
-                const nextExercise = nextExerciseIndex < appState.liveSession.exercises.length ? 
-                    appState.exercises.find(e => e.id === appState.liveSession.exercises[nextExerciseIndex].exercise_id) : null;
-                const nextPerf = nextExercise ? actions.getLastPerformance(nextExercise.id) : null;
 
                 let perfRecap = '';
                 if (lastPerf) {
                     perfRecap += `
-                        <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
-                            <h5>🎯 Dernière performance :</h5>
-                            <div style="font-size: 14px;">
-                                ${lastPerf.resistance}kg • ${lastPerf.reps} reps (${new Date(lastPerf.date).toLocaleDateString('fr-FR')})
-                            </div>
-                        </div>
+                    <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
+                    <h5>🎯 Dernière performance :</h5>
+                    <div style="font-size: 14px;">
+                    ${lastPerf.resistance}kg • ${lastPerf.mode === 'time' ? `${lastPerf.duration}s` : `${lastPerf.reps} reps`} (${new Date(lastPerf.date).toLocaleDateString('fr-FR')})
+                    </div>
+                    </div>
                     `;
                 }
 
-                if (nextPerf && nextExercise) {
+                // Déterminer ce qui vient après cette série
+                const willHaveMoreSets = (currentExercise.sets.length + 1) < currentExercise.planned_sets;
+                if (willHaveMoreSets) {
+                    // Il reste des séries pour cet exercice
                     perfRecap += `
-                        <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
-                            <h5>🔜 Prochain : ${nextExercise.name}</h5>
-                            <div style="font-size: 14px;">
-                                Dernière fois : ${nextPerf.resistance}kg • ${nextPerf.reps} reps
-                            </div>
-                        </div>
+                    <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
+                    <h5>🔜 Après cette série :</h5>
+                    <div style="font-size: 14px;">
+                    Série ${currentExercise.sets.length + 2} de ${exercise.name}
+                    </div>
+                    </div>
                     `;
+                } else {
+                    // C'est la dernière série de cet exercice, afficher le prochain exercice
+                    const nextExerciseIndex = appState.liveSession.currentExerciseIndex + 1;
+                    const nextExercise = nextExerciseIndex < appState.liveSession.exercises.length ?
+                        appState.exercises.find(e => e.id === appState.liveSession.exercises[nextExerciseIndex].exercise_id) : null;
+                    const nextPerf = nextExercise ? actions.getLastPerformance(nextExercise.id) : null;
+                    
+                    if (nextPerf && nextExercise) {
+                        perfRecap += `
+                        <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
+                        <h5>🔜 Prochain exercice : ${nextExercise.name}</h5>
+                        <div style="font-size: 14px;">
+                        Dernière fois : ${nextPerf.resistance}kg • ${nextPerf.mode === 'time' ? `${nextPerf.duration}s` : `${nextPerf.reps} reps`}
+                        </div>
+                        </div>
+                        `;
+                    } else if (nextExercise) {
+                        perfRecap += `
+                        <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
+                        <h5>🔜 Prochain exercice : ${nextExercise.name}</h5>
+                        <div style="font-size: 14px;">
+                        🆕 Premier essai pour cet exercice
+                        </div>
+                        </div>
+                        `;
+                    } else {
+                        perfRecap += `
+                        <div class="card" style="margin: 12px 0; padding: 12px; background: var(--secondary); color: white;">
+                        <h5>🏁 Dernière série du dernier exercice !</h5>
+                        <div style="font-size: 14px;">Félicitations, vous terminez ! 🎉</div>
+                        </div>
+                        `;
+                    }
                 }
 
                 liveContent.innerHTML = `
+                    ${progressBarHtml}
                     <div class="current-exercise">
                         <div class="exercise-name">${exercise.name}</div>
                         <div class="set-counter">Série ${setNumber} / ${currentExercise.planned_sets}</div>
@@ -4891,16 +5109,7 @@
             let exerciseStatsHtml = '';
             if (!selectedExerciseId) {
                 exerciseStatsHtml = `
-                    <div class="card">
-                        <h3>📈 Statistiques par exercice</h3>
-                        <div class="input-group">
-                            <label>Sélectionner un exercice</label>
-                            <select id="stats-exercise-select" class="select" onchange="actions.updateStats(this.value)">
-                                <option value="">Choisir un exercice...</option>
-                            </select>
-                        </div>
-                        <p style="text-align: center; color: var(--text-secondary);">Sélectionnez un exercice pour voir les statistiques détaillées</p>
-                    </div>
+                    <p style="text-align: center; color: var(--text-secondary);">Sélectionnez un exercice pour voir les statistiques détaillées</p>
                 `;
             } else {
                 const exercise = appState.exercises.find(e => e.id === selectedExerciseId);
@@ -5040,7 +5249,7 @@
                 `;
             }
 
-            // Afficher les statistiques générales EN PREMIER, puis par exercice
+            // Afficher les statistiques générales EN PREMIER, puis la sélection, puis les stats par exercice
             statsContent.innerHTML = generalStatsHtml + exerciseStatsHtml;
             
             // Re-remplir le select dans la nouvelle section (si elle existe)
