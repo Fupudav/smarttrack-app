@@ -4845,6 +4845,10 @@
         function renderLiveSession() {
             const liveContent = document.getElementById('live-content');
             
+            // AJOUTEZ CES LIGNES DE DEBUG
+            console.log('Live session state:', appState.liveSession);
+            console.log('Current session:', appState.currentSession);
+
             if (!appState.liveSession) {
                 liveContent.innerHTML = '<p>Aucune séance en cours</p>';
                 return;
