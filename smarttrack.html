@@ -1517,6 +1517,22 @@
                 return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             }
             
+            // Calculer la progression basée sur les séries
+            calculateSessionProgress() {
+                if (!appState.liveSession || !appState.liveSession.exercises) return 0;
+                
+                let totalPlannedSets = 0;
+                let totalCompletedSets = 0;
+                
+                appState.liveSession.exercises.forEach(exerciseData => {
+                    totalPlannedSets += exerciseData.planned_sets || 0;
+                    totalCompletedSets += exerciseData.sets ? exerciseData.sets.length : 0;
+                });
+                
+                if (totalPlannedSets === 0) return 0;
+                return Math.round((totalCompletedSets / totalPlannedSets) * 100);
+            }
+
             // Ajouter du temps
             addTime(seconds) {
                 this.timeLeft += seconds;
@@ -5064,21 +5080,6 @@
                     `;
                 }
 
-                // Calculer la progression basée sur les séries
-                function calculateSessionProgress() {
-                    if (!appState.liveSession || !appState.liveSession.exercises) return 0;
-                    
-                    let totalPlannedSets = 0;
-                    let totalCompletedSets = 0;
-                    
-                    appState.liveSession.exercises.forEach(exerciseData => {
-                        totalPlannedSets += exerciseData.planned_sets || 0;
-                        totalCompletedSets += exerciseData.sets ? exerciseData.sets.length : 0;
-                    });
-                    
-                    if (totalPlannedSets === 0) return 0;
-                    return Math.round((totalCompletedSets / totalPlannedSets) * 100);
-                };
 
                 // Déterminer ce qui vient après cette série
                 const willHaveMoreSets = (currentExercise.sets.length + 1) < currentExercise.planned_sets;
