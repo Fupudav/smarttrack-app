@@ -3285,6 +3285,10 @@
                     prepareDuration: 5000, // 5 secondes
                     restStartTime: null,
                     restDuration: 0,
+                    exercises: appState.currentSession.exercises.map(ex => ({
+                        ...ex,
+                        sets: ex.sets || []  // IMPORTANT : s'assurer que sets existe
+                    })),
                     globalSettings: {
                         restBetweenExercises: appState.currentSession.globalSettings?.restBetweenExercises || 120,
                         restBetweenSets: appState.currentSession.globalSettings?.restBetweenSets || 90
