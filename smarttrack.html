@@ -1140,6 +1140,141 @@
             beige: { name: 'Beige', resistance: 5, color: '#F5F5DC', quantity: 1 }
         };
 
+        // === BASE DE DONNÉES DES RÉSISTANCES CONSEILLÉES ===
+        const RESISTANCE_RECOMMENDATIONS = {
+            // BICEPS
+            'Curl biceps': {
+                beginner: { min: 5, max: 15, elastics: ['Beige', 'Vert'] },
+                intermediate: { min: 15, max: 30, elastics: ['Vert', 'Bleu', 'Noir'] },
+                advanced: { min: 25, max: 50, elastics: ['Noir', 'Cyan'] }
+            },
+            'Curl biceps (poulie basse)': {
+                beginner: { min: 5, max: 15, elastics: ['Beige', 'Vert'] },
+                intermediate: { min: 15, max: 30, elastics: ['Vert', 'Bleu', 'Noir'] },
+                advanced: { min: 25, max: 50, elastics: ['Noir', 'Cyan'] }
+            },
+            'Curl biceps face à la porte': {
+                beginner: { min: 5, max: 15, elastics: ['Beige', 'Vert'] },
+                intermediate: { min: 15, max: 30, elastics: ['Vert', 'Bleu', 'Noir'] },
+                advanced: { min: 25, max: 50, elastics: ['Noir', 'Cyan'] }
+            },
+            'Curl marteau': {
+                beginner: { min: 5, max: 15, elastics: ['Beige', 'Vert'] },
+                intermediate: { min: 15, max: 30, elastics: ['Vert', 'Bleu', 'Noir'] },
+                advanced: { min: 25, max: 50, elastics: ['Noir', 'Cyan'] }
+            },
+            
+            // TRICEPS
+            'Extension triceps (poulie haute)': {
+                beginner: { min: 5, max: 15, elastics: ['Beige', 'Vert'] },
+                intermediate: { min: 15, max: 30, elastics: ['Vert', 'Bleu', 'Noir'] },
+                advanced: { min: 25, max: 50, elastics: ['Noir', 'Cyan'] }
+            },
+            'Extension triceps verticale': {
+                beginner: { min: 5, max: 10, elastics: ['Beige', 'Vert'] },
+                intermediate: { min: 10, max: 25, elastics: ['Vert', 'Bleu'] },
+                advanced: { min: 20, max: 40, elastics: ['Bleu', 'Noir', 'Cyan'] }
+            },
+            'Kickback triceps': {
+                beginner: { min: 5, max: 10, elastics: ['Beige'] },
+                intermediate: { min: 10, max: 20, elastics: ['Vert', 'Bleu'] },
+                advanced: { min: 15, max: 35, elastics: ['Bleu', 'Noir'] }
+            },
+            
+            // ÉPAULES
+            'Élévations latérales': {
+                beginner: { min: 5, max: 10, elastics: ['Beige'] },
+                intermediate: { min: 10, max: 20, elastics: ['Vert', 'Bleu'] },
+                advanced: { min: 15, max: 35, elastics: ['Bleu', 'Noir'] }
+            },
+            'Élévations frontales': {
+                beginner: { min: 5, max: 10, elastics: ['Beige'] },
+                intermediate: { min: 10, max: 20, elastics: ['Vert', 'Bleu'] },
+                advanced: { min: 15, max: 35, elastics: ['Bleu', 'Noir'] }
+            },
+            'Développé militaire assis': {
+                beginner: { min: 10, max: 20, elastics: ['Vert', 'Bleu'] },
+                intermediate: { min: 20, max: 40, elastics: ['Bleu', 'Noir'] },
+                advanced: { min: 35, max: 65, elastics: ['Noir', 'Cyan'] }
+            },
+            'Oiseau': {
+                beginner: { min: 5, max: 10, elastics: ['Beige'] },
+                intermediate: { min: 10, max: 20, elastics: ['Vert', 'Bleu'] },
+                advanced: { min: 15, max: 35, elastics: ['Bleu', 'Noir'] }
+            },
+            
+            // DOS
+            'Face Pull': {
+                beginner: { min: 10, max: 20, elastics: ['Vert', 'Bleu'] },
+                intermediate: { min: 20, max: 35, elastics: ['Bleu', 'Noir'] },
+                advanced: { min: 30, max: 55, elastics: ['Noir', 'Cyan'] }
+            },
+            'Tirage horizontal unilatéral': {
+                beginner: { min: 10, max: 20, elastics: ['Vert', 'Bleu'] },
+                intermediate: { min: 20, max: 35, elastics: ['Bleu', 'Noir'] },
+                advanced: { min: 30, max: 55, elastics: ['Noir', 'Cyan'] }
+            },
+            'Tirage vertical': {
+                beginner: { min: 15, max: 25, elastics: ['Bleu', 'Noir'] },
+                intermediate: { min: 25, max: 45, elastics: ['Noir', 'Cyan'] },
+                advanced: { min: 40, max: 70, elastics: ['Cyan x2'] }
+            },
+            'Rowing buste penché': {
+                beginner: { min: 15, max: 25, elastics: ['Bleu', 'Noir'] },
+                intermediate: { min: 25, max: 45, elastics: ['Noir', 'Cyan'] },
+                advanced: { min: 40, max: 70, elastics: ['Cyan x2'] }
+            },
+            
+            // PECTORAUX
+            'Développé debout (poulie moyenne)': {
+                beginner: { min: 10, max: 20, elastics: ['Vert', 'Bleu'] },
+                intermediate: { min: 20, max: 35, elastics: ['Bleu', 'Noir'] },
+                advanced: { min: 30, max: 55, elastics: ['Noir', 'Cyan'] }
+            },
+            'Développé incliné': {
+                beginner: { min: 10, max: 20, elastics: ['Vert', 'Bleu'] },
+                intermediate: { min: 20, max: 35, elastics: ['Bleu', 'Noir'] },
+                advanced: { min: 30, max: 55, elastics: ['Noir', 'Cyan'] }
+            },
+            'Écarté unilatéral': {
+                beginner: { min: 5, max: 15, elastics: ['Beige', 'Vert'] },
+                intermediate: { min: 15, max: 25, elastics: ['Vert', 'Bleu', 'Noir'] },
+                advanced: { min: 20, max: 40, elastics: ['Noir', 'Cyan'] }
+            },
+            'Pompes lestées': {
+                beginner: { min: 10, max: 25, elastics: ['Vert', 'Bleu'] },
+                intermediate: { min: 25, max: 45, elastics: ['Noir', 'Cyan'] },
+                advanced: { min: 40, max: 75, elastics: ['Cyan x2'] }
+            },
+            
+            // JAMBES
+            'Squat': {
+                beginner: { min: 20, max: 35, elastics: ['Noir', 'Cyan'] },
+                intermediate: { min: 35, max: 60, elastics: ['Cyan x2'] },
+                advanced: { min: 55, max: 95, elastics: ['Cyan x2 ou x3'] }
+            },
+            'Front squat': {
+                beginner: { min: 15, max: 30, elastics: ['Bleu', 'Noir'] },
+                intermediate: { min: 30, max: 50, elastics: ['Noir', 'Cyan'] },
+                advanced: { min: 45, max: 80, elastics: ['Cyan x2'] }
+            },
+            'Fentes': {
+                beginner: { min: 10, max: 20, elastics: ['Vert', 'Bleu'] },
+                intermediate: { min: 20, max: 35, elastics: ['Bleu', 'Noir'] },
+                advanced: { min: 30, max: 60, elastics: ['Noir', 'Cyan'] }
+            },
+            'Hip thrust': {
+                beginner: { min: 25, max: 40, elastics: ['Noir', 'Cyan'] },
+                intermediate: { min: 40, max: 65, elastics: ['Cyan x2'] },
+                advanced: { min: 60, max: 100, elastics: ['Cyan x3'] }
+            },
+            'Soulevé de terre': {
+                beginner: { min: 25, max: 40, elastics: ['Noir', 'Cyan'] },
+                intermediate: { min: 40, max: 70, elastics: ['Cyan x2'] },
+                advanced: { min: 65, max: 110, elastics: ['Cyan x3'] }
+            }
+        };
+
         // Base de données des exercices pré-définis SmartWorkout
         const PREDEFINED_EXERCISES = {
             echauffement: [
@@ -1459,7 +1594,17 @@
 
         // Fonction pour générer l'interface du timer
         function generateTimerInterface(exercise, prefix = '') {
-            const defaultDuration = exercise.default_duration || 30;
+            // Récupérer la durée personnalisée si elle existe
+            let defaultDuration = 30;
+            if (appState.liveSession) {
+                const currentExercise = appState.liveSession.exercises[appState.liveSession.currentExerciseIndex];
+                defaultDuration = currentExercise?.duration || exercise.default_duration || 30;
+            } else if (appState.manualSession) {
+                const currentExercise = appState.manualSession.exercises[appState.manualSession.currentExerciseIndex];
+                defaultDuration = currentExercise?.duration || exercise.default_duration || 30;
+            } else {
+                defaultDuration = exercise.default_duration || 30;
+            }
             
             return `
                 <div class="exercise-timer-container" style="text-align: center; margin: 20px 0; padding: 20px; background: var(--surface); border-radius: 16px; border: 2px solid var(--primary);">
@@ -1693,6 +1838,13 @@
                         onchange="actions.updateExerciseRestTime(${exercise.id}, this.value)"
                         title="Temps de repos en secondes">
                     <span style="font-size: 14px;">s repos</span>
+                    ${(exercise.exercise_mode === 'time' || exercise.exercise_mode === 'both') ? `
+                        <input type="number" value="${exerciseData.duration || exercise.default_duration || 30}" min="10" max="300"
+                            style="width: 60px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; margin-left: 8px;"
+                            onchange="actions.updateExerciseDuration(${exercise.id}, this.value)"
+                            title="Durée de l'exercice en secondes">
+                        <span style="font-size: 14px;">s durée</span>
+                    ` : ''}
                     
                     <div class="reorder-buttons">
                         <button class="btn btn-small btn-secondary" onclick="actions.moveExerciseUp(${originalIndex}, 'session')"
@@ -1875,6 +2027,55 @@
             return exercisesToAdd;
         }
 
+        // Fonction pour générer les conseils de résistance
+        function generateResistanceRecommendations(exerciseName) {
+            const recommendations = RESISTANCE_RECOMMENDATIONS[exerciseName];
+            if (!recommendations) {
+                return '<p style="font-size: 14px; color: var(--text-secondary);">Pas de recommandations disponibles pour cet exercice.</p>';
+            }
+            
+            let html = '<div style="background: var(--background); padding: 16px; border-radius: 8px; margin: 12px 0;">';
+            html += '<h5 style="color: var(--primary); margin-bottom: 12px;">💡 Conseils de résistance (première fois)</h5>';
+            
+            // Débutant
+            html += `
+                <div style="margin-bottom: 12px; padding: 12px; background: var(--surface); border-radius: 8px; border-left: 4px solid #34C759;">
+                    <div style="font-weight: 600; color: #34C759; margin-bottom: 4px;">🟢 Débutant</div>
+                    <div style="font-size: 14px;">
+                        <strong>${recommendations.beginner.min}-${recommendations.beginner.max}kg</strong> • 
+                        Élastiques : ${recommendations.beginner.elastics.join(' + ')}
+                    </div>
+                </div>
+            `;
+            
+            // Intermédiaire
+            html += `
+                <div style="margin-bottom: 12px; padding: 12px; background: var(--surface); border-radius: 8px; border-left: 4px solid #FF9500;">
+                    <div style="font-weight: 600; color: #FF9500; margin-bottom: 4px;">🟡 Intermédiaire</div>
+                    <div style="font-size: 14px;">
+                        <strong>${recommendations.intermediate.min}-${recommendations.intermediate.max}kg</strong> • 
+                        Élastiques : ${recommendations.intermediate.elastics.join(' + ')}
+                    </div>
+                </div>
+            `;
+            
+            // Confirmé
+            html += `
+                <div style="padding: 12px; background: var(--surface); border-radius: 8px; border-left: 4px solid #FF3B30;">
+                    <div style="font-weight: 600; color: #FF3B30; margin-bottom: 4px;">🔴 Confirmé</div>
+                    <div style="font-size: 14px;">
+                        <strong>${recommendations.advanced.min}-${recommendations.advanced.max}kg</strong> • 
+                        Élastiques : ${recommendations.advanced.elastics.join(' + ')}
+                    </div>
+                </div>
+            `;
+            
+            html += '<p style="font-size: 12px; color: var(--text-secondary); margin-top: 12px; font-style: italic;">Commencez léger et ajustez selon vos sensations !</p>';
+            html += '</div>';
+            
+            return html;
+        }
+
         // Fonction pour afficher les exemples d'exercices
         function showExerciseExamples(anchorType) {
             const examplesContainer = document.getElementById('exercise-examples');
@@ -2020,6 +2221,9 @@
                 this.loadData();
                 this.applyTheme();
                 this.setCurrentDate();
+                // Restaurer l'écran sauvegardé ou dashboard par défaut
+                const savedScreen = storage.load('currentScreen', 'dashboard');
+                appState.currentScreen = savedScreen;
                 render();
             },
             
@@ -2030,6 +2234,7 @@
                 appState.measurements = storage.load('measurements', []);
                 appState.records = storage.load('records', {});
                 appState.settings = storage.load('settings', { theme: 'light' });
+                appState.currentScreen = storage.load('currentScreen', 'dashboard');
             },
             
             saveData() {
@@ -2044,6 +2249,8 @@
             // Navigation
             showScreen(screenName) {
                 appState.currentScreen = screenName;
+                // Sauvegarder l'écran actuel
+                storage.save('currentScreen', screenName);
                 render();
             },
             
@@ -2314,7 +2521,8 @@
                     exercises: appState.templateInCreation.exercises.map(ex => ({
                         exerciseId: ex.exerciseId,
                         plannedSets: ex.plannedSets,
-                        restTime: ex.restTime
+                        restTime: ex.restTime,
+                        duration: ex.duration // Ajouter la durée
                     })),
                     globalSettings: {
                         restBetweenExercises,
@@ -2539,6 +2747,14 @@
                                             onchange="actions.updateTemplateExerciseRest(${index}, this.value)">
                                         <span style="font-size: 12px;">s repos</span>
                                     </div>
+                                    ${exercise.exercise_mode === 'time' || exercise.exercise_mode === 'both' ? `
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <input type="number" value="${exData.duration || exercise.default_duration || 30}" min="10" max="300"
+                                                style="width: 60px; padding: 4px; border: 1px solid var(--border); border-radius: 4px;"
+                                                onchange="actions.updateTemplateExerciseDuration(${index}, this.value)">
+                                            <span style="font-size: 12px;">s durée</span>
+                                        </div>
+                                    ` : ''}
                                     <div class="reorder-buttons">
                                         <button class="btn btn-small btn-secondary" onclick="actions.moveTemplateExerciseUp(${index})"
                                                 ${index === 0 ? 'disabled' : ''}>↑</button>
@@ -2568,6 +2784,14 @@
                 const rest = parseInt(restTime);
                 if (appState.templateInCreation && rest >= 30 && rest <= 600) {
                     appState.templateInCreation.exercises[index].restTime = rest;
+                }
+            },
+
+            // Mettre à jour la durée d'un exercice dans le modèle
+            updateTemplateExerciseDuration(index, duration) {
+                const durationNumber = parseInt(duration);
+                if (appState.templateInCreation && durationNumber >= 10 && durationNumber <= 300) {
+                    appState.templateInCreation.exercises[index].duration = durationNumber;
                 }
             },
 
@@ -2651,9 +2875,11 @@
                     return;
                 }
                 
+                const exercise = appState.exercises.find(e => e.id === exerciseId);
                 appState.currentSession.exercises.push({
                     exercise_id: exerciseId,
                     planned_sets: 3,
+                    duration: exercise?.default_duration || 30, // Ajouter la durée par défaut
                     sets: []
                 });
                 
@@ -2704,6 +2930,26 @@
                                 input.value = exercise.rest_time || 90;
                             }
                             this.showNotification('Temps de repos invalide (30-600s)');
+                        }
+                    }
+                }
+            },
+
+            updateExerciseDuration(exerciseId, duration) {
+                if (appState.currentSession) {
+                    const exercise = appState.currentSession.exercises.find(e => e.exercise_id === exerciseId);
+                    if (exercise) {
+                        const durationNumber = utils.validateNumber(duration, 10, 300);
+                        if (durationNumber >= 10) {
+                            exercise.duration = durationNumber;
+                        } else {
+                            // Remettre la valeur précédente si la validation échoue
+                            const input = document.querySelector(`input[onchange*="updateExerciseDuration(${exerciseId}"]`);
+                            if (input) {
+                                const defaultExercise = appState.exercises.find(e => e.id === exerciseId);
+                                input.value = exercise.duration || defaultExercise?.default_duration || 30;
+                            }
+                            this.showNotification('Durée invalide (10-300s)');
                         }
                     }
                 }
@@ -2937,6 +3183,11 @@
                     type: setType,
                     ...performance
                 });
+
+                // Vérification de sécurité pour éviter les bugs
+                if (!currentExercise.sets) {
+                    currentExercise.sets = [];
+                }
                 
                 // Vérifier les records
                 this.checkRecords(currentExercise.exercise_id, performance, setType);
@@ -3097,12 +3348,16 @@
                         }
                         
                         // Gérer le timer de repos
-                        if (appState.liveSession.isResting) {
+                        if (appState.liveSession.isResting && !appState.liveSession.isPaused) {
                             const restElapsed = Date.now() - appState.liveSession.restStartTime;
                             const restRemaining = Math.max(0, appState.liveSession.restDuration - restElapsed);
                             const restElement = document.querySelector('.rest-time');
                             if (restElement) {
-                                restElement.textContent = this.formatTime(restRemaining);
+                                // Forcer la mise à jour de l'affichage à chaque seconde
+                                const secondsRemaining = Math.ceil(restRemaining / 1000);
+                                const minutes = Math.floor(secondsRemaining / 60);
+                                const seconds = secondsRemaining % 60;
+                                restElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                             
                                 // Couleurs selon le temps restant
                                 if (restRemaining <= 5000) {
@@ -3115,10 +3370,7 @@
                             
                                 // Sons pour les dernières secondes (éviter les répétitions)
                                 const currentSecond = Math.floor(restRemaining / 1000);
-                                if (!appState.liveSession.lastRestSecond) {
-                                    appState.liveSession.lastRestSecond = currentSecond;
-                                }
-                                if (currentSecond !== appState.liveSession.lastRestSecond) {
+                                if (!appState.liveSession.lastRestSecond || appState.liveSession.lastRestSecond !== currentSecond) {
                                     appState.liveSession.lastRestSecond = currentSecond;
                                     // Bip à chaque seconde pendant les 5 dernières secondes
                                     if (currentSecond <= 5 && currentSecond > 0) {
@@ -3139,15 +3391,17 @@
                                 if (restRemaining === 0) {
                                     appState.liveSession.isResting = false;
                                     appState.liveSession.lastRestSecond = null; // Reset
-                                
-                                    // Vérifier si on a atteint le nombre de séries pour cet exercice
-                                    const currentExercise = appState.liveSession.exercises[appState.liveSession.currentExerciseIndex];
-                                    if (currentExercise.sets.length >= currentExercise.planned_sets) {
-                                        // Passer à l'exercice suivant
-                                        this.nextExercise();
-                                    } else {
-                                        // Continuer avec la série suivante du même exercice
+                                    
+                                    // CORRECTION : Vérifier que l'index est valide
+                                    if (appState.liveSession.currentExerciseIndex < appState.liveSession.exercises.length) {
+                                        const currentExercise = appState.liveSession.exercises[appState.liveSession.currentExerciseIndex];
+                                    
+                                        // Ne PAS passer automatiquement à l'exercice suivant ici
+                                        // C'est déjà géré dans validateSet()
                                         render();
+                                    } else {
+                                        // Index invalide, terminer la séance
+                                        this.finishLiveSession();
                                     }
                                 }
                             }
@@ -3363,6 +3617,7 @@
                     appState.liveSession.isResting = true;
                     appState.liveSession.restStartTime = Date.now();
                     const sessionExercise = appState.liveSession.exercises[appState.liveSession.currentExerciseIndex];
+                    // Utiliser UNIQUEMENT le temps de repos spécifique à l'exercice, pas les règles globales
                     const customRestTime = sessionExercise.rest_time || exercise.default_rest_time;
                     appState.liveSession.restDuration = customRestTime * 1000;
                     render();
@@ -3378,22 +3633,21 @@
             
             nextExercise() {
                 if (!appState.liveSession) return;
+                
                 appState.liveSession.currentExerciseIndex++;
                 appState.liveSession.currentSetIndex = 0;
                 
                 if (appState.liveSession.currentExerciseIndex >= appState.liveSession.exercises.length) {
                     this.finishLiveSession();
                 } else {
-                    // Repos avant le prochain exercice - utiliser le temps de repos du prochain exercice
+                    // Repos avant le prochain exercice - utiliser le temps de repos entre exercices
                     appState.liveSession.isResting = true;
                     appState.liveSession.restStartTime = Date.now();
                     
-                    // Récupérer le temps de repos du prochain exercice
-                    const nextExerciseData = appState.liveSession.exercises[appState.liveSession.currentExerciseIndex + 1];
-                    const nextExercise = appState.exercises.find(e => e.id === nextExerciseData.exercise_id);
-                    const nextRestTime = nextExerciseData.rest_time || nextExercise.default_rest_time || 120;
+                    // CORRECTION : Utiliser le temps de repos global entre exercices
+                    const restBetweenExercises = appState.liveSession.globalSettings?.restBetweenExercises || 120;
+                    appState.liveSession.restDuration = restBetweenExercises * 1000;
                     
-                    appState.liveSession.restDuration = nextRestTime * 1000;
                     render();
                 }
             },
@@ -3508,49 +3762,48 @@
             getLastPerformance(exerciseId) {
                 const exercise = appState.exercises.find(e => e.id === exerciseId);
                 if (!exercise) return null;
-                
+
                 // Trouver la dernière séance avec cet exercice
                 const sessionsWithExercise = appState.sessions
                     .filter(session => session.exercises.some(ex => ex.exercise_id === exerciseId))
                     .sort((a, b) => b.date.localeCompare(a.date));
-  
+
                 if (sessionsWithExercise.length === 0) return null;
-                
+
                 const lastSession = sessionsWithExercise[0];
                 const exerciseData = lastSession.exercises.find(ex => ex.exercise_id === exerciseId);
-                
+
                 if (!exerciseData || exerciseData.sets.length === 0) return null;
-                
-                // Récupérer le meilleur set de la dernière séance
+
+                // Récupérer TOUTES les séries de la dernière séance (pas seulement la meilleure)
                 const workSets = exerciseData.sets.filter(set => set.type === 'work');
                 if (workSets.length === 0) return null;
-  
-                const bestSet = workSets.reduce((best, current) => {
-                    const currentTotal = (current.total_resistance || 0) * (current.reps || Math.max(current.left_reps || 0, current.right_reps || 0));
-                    const bestTotal = (best.total_resistance || 0) * (best.reps || Math.max(best.left_reps || 0, best.right_reps || 0));
-                    return currentTotal > bestTotal ? current : best;
+
+                // Retourner toutes les séries avec leurs détails
+                const allSets = workSets.map(set => {
+                    if (exercise.is_unilateral) {
+                        return {
+                            left_reps: set.left_reps || 0,
+                            right_reps: set.right_reps || 0,
+                            resistance: set.total_resistance || 0,
+                            exercise_mode: set.exercise_mode || 'reps',
+                            duration: set.duration || 0
+                        };
+                    } else {
+                        return {
+                            reps: set.reps || 0,
+                            resistance: set.total_resistance || 0,
+                            exercise_mode: set.exercise_mode || 'reps',
+                            duration: set.duration || 0
+                        };
+                    }
                 });
-  
-                // Adapter le retour selon le mode de l'exercice
-                if (bestSet.exercise_mode === 'time') {
-                    return {
-                        date: lastSession.date,
-                        resistance: bestSet.total_resistance || 0,
-                        duration: bestSet.duration || 0,
-                        mode: 'time',
-                        elastics: bestSet.elastics || {}
-                    };
-                } else {
-                    return {
-                        date: lastSession.date,
-                        resistance: bestSet.total_resistance || 0,
-                        reps: exercise.is_unilateral ?
-                            `${bestSet.left_reps || 0}G/${bestSet.right_reps || 0}D` :
-                            (bestSet.reps || 0),
-                        mode: 'reps',
-                        elastics: bestSet.elastics || {}
-                    };
-                }
+
+                return {
+                    date: lastSession.date,
+                    sets: allSets,
+                    totalSets: allSets.length
+                };
             },
 
             getLastPerformanceForSet(exerciseId, setNumber) {
@@ -4049,6 +4302,7 @@
                                 exercise_id: exData.exerciseId,
                                 planned_sets: exData.plannedSets,
                                 rest_time: exData.restTime, // Temps de repos spécifique à l'exercice
+                                duration: exData.duration, // Durée personnalisée
                                 sets: []
                             });
                         });
@@ -4591,7 +4845,7 @@
             // Calculer la progression
             const currentExerciseNum = appState.liveSession.currentExerciseIndex + 1;
             const totalExercises = appState.liveSession.exercises.length;
-            const progressPercentage = Math.round((currentExerciseNum / totalExercises) * 100);
+            const progressPercentage = actions.calculateSessionProgress();
 
             // Générer la barre de progression
             const progressBarHtml = `
@@ -4604,7 +4858,7 @@
                         <div style="height: 100%; background: var(--primary); width: ${progressPercentage}%; transition: width 0.3s ease;"></div>
                     </div>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; text-align: center;">
-                        Exercice ${currentExerciseNum} / ${totalExercises}
+                        Exercice ${currentExerciseNum}/${totalExercises} • ${progressPercentage}% des séries
                     </div>
                 </div>
             `;
@@ -4668,18 +4922,21 @@
                 const isRestBetweenSets = currentExercise.sets.length < currentExercise.planned_sets;
                 
                 let nextExerciseIndex, nextExercise, isLastExercise;
-                
                 if (isRestBetweenSets) {
                     // Repos entre séries du même exercice
                     nextExerciseIndex = appState.liveSession.currentExerciseIndex;
                     nextExercise = exercise;
                     isLastExercise = false;
                 } else {
-                    // Repos entre exercices différents
-                    nextExerciseIndex = appState.liveSession.currentExerciseIndex + 1;
+                    // Repos entre exercices - PAS D'INCRÉMENTATION car déjà fait dans nextExercise()
+                    nextExerciseIndex = appState.liveSession.currentExerciseIndex;
                     isLastExercise = nextExerciseIndex >= appState.liveSession.exercises.length;
-                    nextExercise = !isLastExercise ?
-                        appState.exercises.find(e => e.id === appState.liveSession.exercises[nextExerciseIndex].exercise_id) : null;
+                    
+                    if (!isLastExercise && appState.liveSession.exercises[nextExerciseIndex]) {
+                        nextExercise = appState.exercises.find(e => e.id === appState.liveSession.exercises[nextExerciseIndex].exercise_id);
+                    } else {
+                        nextExercise = null;
+                    }
                 }
                 
                 // Récupérer les dernières performances du prochain exercice
@@ -4721,6 +4978,9 @@
                             </div>
                         `;
                     } else {
+                        // NOUVEAU CODE : Afficher les conseils de résistance
+                        const resistanceAdvice = generateResistanceRecommendations(nextExercise.name);
+                        
                         nextExerciseInfo = `
                             <div class="card" style="margin: 16px 0; padding: 16px; background: var(--surface); border: 2px solid var(--primary);">
                                 <h4 style="color: var(--primary); margin-bottom: 8px;">🔜 Prochain exercice</h4>
@@ -4730,6 +4990,7 @@
                                 <div style="font-size: 14px; color: var(--text-secondary); background: var(--background); padding: 8px; border-radius: 8px;">
                                     🆕 Premier essai pour cet exercice
                                 </div>
+                                ${resistanceAdvice}
                             </div>
                         `;
                     }
@@ -4777,27 +5038,59 @@
 
                 let perfRecap = '';
                 if (lastPerf) {
+                    let setsDisplay = '';
+                    if (lastPerf.sets && lastPerf.sets.length > 0) {
+                        setsDisplay = lastPerf.sets.map((set, index) => {
+                            if (set.exercise_mode === 'time') {
+                                return `Série ${index + 1}: ${set.duration}s${set.resistance > 0 ? ` - ${set.resistance}kg` : ''}`;
+                            } else if (exercise.is_unilateral) {
+                                return `Série ${index + 1}: ${set.left_reps}G/${set.right_reps}D - ${set.resistance}kg`;
+                            } else {
+                                return `Série ${index + 1}: ${set.reps} reps - ${set.resistance}kg`;
+                            }
+                        }).join(' • ');
+                    }
+                    
                     perfRecap += `
-                    <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
-                    <h5>🎯 Dernière performance :</h5>
-                    <div style="font-size: 14px;">
-                    ${lastPerf.resistance}kg • ${lastPerf.mode === 'time' ? `${lastPerf.duration}s` : `${lastPerf.reps} reps`} (${new Date(lastPerf.date).toLocaleDateString('fr-FR')})
-                    </div>
-                    </div>
+                        <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
+                            <h5>🎯 Dernière performance (${lastPerf.totalSets} séries) :</h5>
+                            <div style="font-size: 14px;">
+                                ${setsDisplay}
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+                                ${new Date(lastPerf.date).toLocaleDateString('fr-FR')}
+                            </div>
+                        </div>
                     `;
                 }
+
+                // Calculer la progression basée sur les séries
+                function calculateSessionProgress() {
+                    if (!appState.liveSession || !appState.liveSession.exercises) return 0;
+                    
+                    let totalPlannedSets = 0;
+                    let totalCompletedSets = 0;
+                    
+                    appState.liveSession.exercises.forEach(exerciseData => {
+                        totalPlannedSets += exerciseData.planned_sets || 0;
+                        totalCompletedSets += exerciseData.sets ? exerciseData.sets.length : 0;
+                    });
+                    
+                    if (totalPlannedSets === 0) return 0;
+                    return Math.round((totalCompletedSets / totalPlannedSets) * 100);
+                };
 
                 // Déterminer ce qui vient après cette série
                 const willHaveMoreSets = (currentExercise.sets.length + 1) < currentExercise.planned_sets;
                 if (willHaveMoreSets) {
                     // Il reste des séries pour cet exercice
                     perfRecap += `
-                    <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
-                    <h5>🔜 Après cette série :</h5>
-                    <div style="font-size: 14px;">
-                    Série ${currentExercise.sets.length + 2} de ${exercise.name}
-                    </div>
-                    </div>
+                        <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
+                            <h5>🔜 Après cette série :</h5>
+                            <div style="font-size: 14px;">
+                                Série ${currentExercise.sets.length + 2} de ${exercise.name}
+                            </div>
+                        </div>
                     `;
                 } else {
                     // C'est la dernière série de cet exercice, afficher le prochain exercice
@@ -4808,28 +5101,28 @@
                     
                     if (nextPerf && nextExercise) {
                         perfRecap += `
-                        <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
-                        <h5>🔜 Prochain exercice : ${nextExercise.name}</h5>
-                        <div style="font-size: 14px;">
-                        Dernière fois : ${nextPerf.resistance}kg • ${nextPerf.mode === 'time' ? `${nextPerf.duration}s` : `${nextPerf.reps} reps`}
-                        </div>
-                        </div>
+                            <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
+                                <h5>🔜 Prochain exercice : ${nextExercise.name}</h5>
+                                <div style="font-size: 14px;">
+                                    Dernière fois : ${nextPerf.resistance}kg • ${nextPerf.mode === 'time' ? `${nextPerf.duration}s` : `${nextPerf.reps} reps`}
+                                </div>
+                            </div>
                         `;
                     } else if (nextExercise) {
                         perfRecap += `
-                        <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
-                        <h5>🔜 Prochain exercice : ${nextExercise.name}</h5>
-                        <div style="font-size: 14px;">
-                        🆕 Premier essai pour cet exercice
-                        </div>
-                        </div>
+                            <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
+                                <h5>🔜 Prochain exercice : ${nextExercise.name}</h5>
+                                <div style="font-size: 14px;">
+                                    🆕 Premier essai pour cet exercice
+                                </div>
+                            </div>
                         `;
                     } else {
                         perfRecap += `
-                        <div class="card" style="margin: 12px 0; padding: 12px; background: var(--secondary); color: white;">
-                        <h5>🏁 Dernière série du dernier exercice !</h5>
-                        <div style="font-size: 14px;">Félicitations, vous terminez ! 🎉</div>
-                        </div>
+                            <div class="card" style="margin: 12px 0; padding: 12px; background: var(--secondary); color: white;">
+                                <h5>🏁 Dernière série du dernier exercice !</h5>
+                                <div style="font-size: 14px;">Félicitations, vous terminez ! 🎉</div>
+                            </div>
                         `;
                     }
                 }
@@ -5089,13 +5382,36 @@
             `;
 
             // SECTION EXISTANTE : STATISTIQUES PAR EXERCICE
-            // Remplir le select
+            // Remplir le select des exercices par groupes
             exerciseSelect.innerHTML = '<option value="">Choisir un exercice...</option>';
+            const groupedExercises = {};
             appState.exercises.forEach(exercise => {
-                const option = document.createElement('option');
-                option.value = exercise.id;
-                option.textContent = exercise.name;
-                exerciseSelect.appendChild(option);
+                const group = exercise.muscle_group || 'autres';
+                if (!groupedExercises[group]) {
+                    groupedExercises[group] = [];
+                }
+                groupedExercises[group].push(exercise);
+            });
+
+            // Ordre d'affichage des catégories (échauffement en premier)
+            const groupOrder = ['echauffement', 'biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes', 'autres'];
+            groupOrder.forEach(group => {
+                if (groupedExercises[group] && groupedExercises[group].length > 0) {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = `${group.charAt(0).toUpperCase() + group.slice(1)} (${groupedExercises[group].length})`;
+                    // Trier les exercices par nom dans chaque groupe
+                    groupedExercises[group].sort((a, b) => a.name.localeCompare(b.name));
+                    groupedExercises[group].forEach(exercise => {
+                        const option = document.createElement('option');
+                        option.value = exercise.id;
+                        // Ajouter l'indicateur de mode
+                        const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
+                            exercise.exercise_mode === 'both' ? '🔄' : '🔢';
+                        option.textContent = `${modeIcon} ${exercise.name}`;
+                        optgroup.appendChild(option);
+                    });
+                    exerciseSelect.appendChild(optgroup);
+                }
             });
 
             // Conserver la valeur sélectionnée si elle existe
@@ -5208,6 +5524,92 @@
                         </div>
                     `;
                 }
+                
+                // Récupérer les dernières séries effectuées
+                const lastSets = [];
+                const sessionsWithExercise = appState.sessions
+                    .filter(session => session.exercises.some(ex => ex.exercise_id === selectedExerciseId))
+                    .sort((a, b) => b.date.localeCompare(a.date));
+
+                // Collecter les dernières séries jusqu'à 5 maximum
+                for (const session of sessionsWithExercise) {
+                    const exerciseData = session.exercises.find(ex => ex.exercise_id === selectedExerciseId);
+                    if (exerciseData && exerciseData.sets.length > 0) {
+                        const workSets = exerciseData.sets.filter(set => set.type === 'work');
+                        for (const set of workSets) {
+                            if (lastSets.length < 5) {
+                                lastSets.push({
+                                    date: session.date,
+                                    ...set
+                                });
+                            }
+                        }
+                    }
+                    if (lastSets.length >= 5) break;
+                }
+
+                // Générer l'HTML des dernières séries
+                let lastSetsHtml = '';
+                if (lastSets.length > 0) {
+                    lastSetsHtml = `
+                        <div class="card">
+                            <h3>🔄 Dernières séries effectuées</h3>
+                            <div style="max-height: 200px; overflow-y: auto;">
+                                ${lastSets.map((set, index) => {
+                                    const date = new Date(set.date).toLocaleDateString('fr-FR', {
+                                        day: 'numeric',
+                                        month: 'short'
+                                    });
+                                    
+                                    let setInfo = '';
+                                    if (set.exercise_mode === 'time') {
+                                        if (exercise.is_unilateral) {
+                                            let leftResistance, rightResistance;
+                                            if (typeof set.total_resistance === 'object' && set.total_resistance.left !== undefined) {
+                                                leftResistance = set.total_resistance.left || 0;
+                                                rightResistance = set.total_resistance.right || 0;
+                                            } else {
+                                                leftResistance = set.total_resistance || 0;
+                                                rightResistance = set.total_resistance || 0;
+                                            }
+                                            setInfo = leftResistance > 0 || rightResistance > 0 ? 
+                                                `${set.duration || 0}s - ${leftResistance}kg (G) | ${rightResistance}kg (D)` :
+                                                `${set.duration || 0}s`;
+                                        } else {
+                                            const resistance = set.total_resistance || 0;
+                                            setInfo = resistance > 0 ? 
+                                                `${set.duration || 0}s - ${resistance}kg` :
+                                                `${set.duration || 0}s`;
+                                        }
+                                    } else {
+                                        if (exercise.is_unilateral) {
+                                            let leftResistance, rightResistance;
+                                            if (typeof set.total_resistance === 'object' && set.total_resistance.left !== undefined) {
+                                                leftResistance = set.total_resistance.left || 0;
+                                                rightResistance = set.total_resistance.right || 0;
+                                            } else {
+                                                leftResistance = set.total_resistance || 0;
+                                                rightResistance = set.total_resistance || 0;
+                                            }
+                                            setInfo = `${set.left_reps || 0} reps (G) | ${set.right_reps || 0} reps (D) - ${leftResistance}kg (G) | ${rightResistance}kg (D)`;
+                                        } else {
+                                            setInfo = `${set.reps || 0} reps - ${set.total_resistance || 0}kg`;
+                                        }
+                                    }
+                                    
+                                    return `
+                                    <div style="padding: 8px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <div style="font-weight: 500;">${setInfo}</div>
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">${date}</div>
+                                    </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
 
                 exerciseStatsHtml = `
                     <div class="card">
@@ -5221,6 +5623,7 @@
                     </div>
                     
                     ${statsCardsHtml}
+                    ${lastSetsHtml}
                     
                     <div class="card">
                         <h3>Évolution des performances</h3>
@@ -5252,21 +5655,6 @@
             // Afficher les statistiques générales EN PREMIER, puis la sélection, puis les stats par exercice
             statsContent.innerHTML = generalStatsHtml + exerciseStatsHtml;
             
-            // Re-remplir le select dans la nouvelle section (si elle existe)
-            const newExerciseSelect = document.getElementById('stats-exercise-select');
-            if (newExerciseSelect) {
-                newExerciseSelect.innerHTML = '<option value="">Choisir un exercice...</option>';
-                appState.exercises.forEach(exercise => {
-                    const option = document.createElement('option');
-                    option.value = exercise.id;
-                    option.textContent = exercise.name;
-                    newExerciseSelect.appendChild(option);
-                });
-                
-                if (currentValue) {
-                    newExerciseSelect.value = currentValue;
-                }
-            }
         }
 
         function renderBody() {
