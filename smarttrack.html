@@ -799,27 +799,6 @@
                     📋 Charger un modèle
                 </button>
             </div>
-            
-            <div class="card">
-                <h3>⏱️ Paramètres de repos de la séance</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <div class="input-group">
-                        <label>Repos entre exercices (secondes)</label>
-                        <input type="number" id="session-rest-between-exercises" class="input" 
-                            value="120" min="30" max="600" 
-                            onchange="actions.updateSessionRestSettings()">
-                    </div>
-                    <div class="input-group">
-                        <label>Repos entre séries (secondes)</label>
-                        <input type="number" id="session-rest-between-sets" class="input" 
-                            value="90" min="30" max="300"
-                            onchange="actions.updateSessionRestSettings()">
-                    </div>
-                </div>
-                <div style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
-                    💡 Ces paramètres s'appliquent à toute la séance et remplacent les valeurs des modèles
-                </div>
-            </div>
 
             <div class="card">
                 <h3>Ajouter un exercice</h3>
@@ -1483,9 +1462,15 @@
         const smartSearch = {
             // Fonction principale de recherche
             search(query, exercises = appState.exercises) {
-                if (!query || query.length < 2) {
+                if (!query || query.length < 1) {
                     return exercises;
                 }
+                
+                // Si la query est très courte (1 caractère), retourner tous les exercices
+                if (query.length < 2) {
+                    return exercises;
+                }
+                
                 query = query.toLowerCase().trim();
                 
                 // Vérifier le cache
@@ -1499,17 +1484,14 @@
                 
                 console.log('🔍 Recherche d\'exercices...');
                 this.addToHistory(query);
-            
+
                 const results = exercises.filter(exercise => {
                     return this.matchExercise(exercise, query);
                 });
-            
-                // Mettre en cache les résultats
+
+                // Mettre en cache les résultats et les retourner
                 const sortedResults = this.sortByRelevance(results, query);
                 return smartCache.set('exerciseSearch', cacheKey, sortedResults);
-
-                // Trier les résultats par pertinence
-                return this.sortByRelevance(results, query);
             },
         
             // Vérifier si un exercice correspond à la recherche
@@ -2894,13 +2876,6 @@
                 
                 // Nettoyer le modèle en création
                 appState.templateInCreation = null;
-                
-                // Remettre les valeurs par défaut des paramètres globaux
-                const restBetweenExercises = document.getElementById('template-rest-between-exercises');
-                const restBetweenSets = document.getElementById('template-rest-between-sets');
-                
-                if (restBetweenExercises) restBetweenExercises.value = '120';
-                if (restBetweenSets) restBetweenSets.value = '90';
                 
                 // Réafficher l'interface vide
                 const selectedExercisesContainer = document.getElementById('template-selected-exercises');
@@ -5347,11 +5322,17 @@
                         if (lastPerf.sets) {
                             // Affichage de toutes les séries (repos entre exercices)
                             performanceDetails = lastPerf.sets.map(set => {
-                                return `Série ${set.setNumber}: ${set.resistance}kg • ${set.mode === 'time' ? `${set.duration}s` : `${set.reps} reps`}`;
+                                const resistance = set.resistance || 0;
+                                const duration = set.duration || 0;
+                                const reps = set.reps || 0;
+                                return `Série ${set.setNumber}: ${resistance}kg • ${set.mode === 'time' ? `${duration}s` : `${reps} reps`}`;
                             }).join('<br>');
                         } else {
                             // Affichage d'une seule série (repos entre séries du même exercice)
-                            performanceDetails = `${lastPerf.resistance}kg • ${lastPerf.mode === 'time' ? `${lastPerf.duration}s` : `${lastPerf.reps} reps`}`;
+                            const resistance = lastPerf.resistance || 0;
+                            const duration = lastPerf.duration || 0;
+                            const reps = lastPerf.reps || '0';
+                            performanceDetails = `${resistance}kg • ${lastPerf.mode === 'time' ? `${duration}s` : `${reps} reps`}`;
                         }
                         
                         nextExerciseInfo = `
@@ -5476,11 +5457,14 @@
                     const nextPerf = nextExercise ? actions.getLastPerformance(nextExercise.id) : null;
                     
                     if (nextPerf && nextExercise) {
+                        const resistance = nextPerf.resistance || 0;
+                        const duration = nextPerf.duration || 0;
+                        const reps = nextPerf.reps || '0';
                         perfRecap += `
                             <div class="card" style="margin: 12px 0; padding: 12px; background: var(--background);">
                                 <h5>🔜 Prochain exercice : ${nextExercise.name}</h5>
                                 <div style="font-size: 14px;">
-                                    Dernière fois : ${nextPerf.resistance}kg • ${nextPerf.mode === 'time' ? `${nextPerf.duration}s` : `${nextPerf.reps} reps`}
+                                    Dernière fois : ${resistance}kg • ${nextPerf.mode === 'time' ? `${duration}s` : `${reps} reps`}
                                 </div>
                             </div>
                         `;
@@ -5764,7 +5748,7 @@
 
             // SECTION EXISTANTE : STATISTIQUES PAR EXERCICE
             // Remplir le select des exercices par groupes
-            exerciseSelect.innerHTML = '<option value="">Choisir un exercice...</option>';
+            exerciseSelect.innerHTML = '';
             const groupedExercises = {};
             appState.exercises.forEach(exercise => {
                 const group = exercise.muscle_group || 'autres';
@@ -6304,20 +6288,6 @@
                         <p style="text-align: center; color: var(--text-secondary);">Aucun exercice sélectionné</p>
                     </div>
                 </div>
-
-                <div id="template-global-settings" style="margin: 16px 0; display: none;">
-                    <h4>Paramètres globaux du modèle :</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div class="input-group">
-                            <label>Repos entre exercices (secondes)</label>
-                            <input type="number" id="template-rest-between-exercises" class="input" value="120" min="30" max="600">
-                        </div>
-                        <div class="input-group">
-                            <label>Repos entre séries (secondes)</label>
-                            <input type="number" id="template-rest-between-sets" class="input" value="90" min="30" max="300">
-                        </div>
-                    </div>
-                </div>
             `;
 
             // Initialiser la liste des exercices sélectionnés si elle existe
@@ -6789,7 +6759,7 @@
                 const query = e.target.value.trim();
                 currentSelection = -1;
                 
-                if (query.length < 2) {
+                if (query.length === 0) {
                     resultsContainer.style.display = 'none';
                     historyContainer.style.display = searchHistory.length > 0 ? 'block' : 'none';
                     return;
@@ -6804,10 +6774,16 @@
                 }, 200, 'search');
             });
         
-            // Événement focus - afficher l'historique
+            // Événement focus - afficher la liste complète ou l'historique
             searchInput.addEventListener('focus', () => {
-                if (!searchInput.value && searchHistory.length > 0) {
-                    historyContainer.style.display = 'block';
+                if (!searchInput.value) {
+                    if (searchHistory.length > 0) {
+                        historyContainer.style.display = 'block';
+                    } else {
+                        // Afficher tous les exercices si pas d'historique
+                        currentResults = smartSearch.search('');
+                        this.displaySearchResults(currentResults, '');
+                    }
                 }
             });
         
