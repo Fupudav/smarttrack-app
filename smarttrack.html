@@ -5638,12 +5638,10 @@
         }
 
         function renderStats() {
-            const exerciseSelect = document.getElementById('stats-exercise-select');
             const statsContent = document.getElementById('stats-content');
-
-            // NOUVELLE SECTION : STATISTIQUES GÉNÉRALES
-            const generalStats = actions.calculateGeneralStats();
             
+            // STATISTIQUES GÉNÉRALES (sans select)
+            const generalStats = actions.calculateGeneralStats();
             let generalStatsHtml = `
                 <div class="card">
                     <h3>📊 Statistiques générales</h3>
@@ -5673,18 +5671,17 @@
                             <div class="stat-label">Total séances</div>
                         </div>
                     </div>
-                
                     <div style="margin: 16px 0;">
                         <h4>🏆 Records personnels récents</h4>
                         <div style="max-height: 200px; overflow-y: auto;">
-                            ${generalStats.recentRecords.length > 0 ? 
+                            ${generalStats.recentRecords.length > 0 ?
                                 generalStats.recentRecords.map(record => `
                                     <div style="padding: 8px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
                                         <div>
                                             <strong>${record.exerciseName}</strong>
                                             <div style="font-size: 14px; color: var(--text-secondary);">
-                                                ${record.type === 'max_weight' ? 'Poids Max' : 
-                                                    record.type === 'max_reps' ? 'Reps Max' : '1RM Estimé'}: 
+                                                ${record.type === 'max_weight' ? 'Poids Max' :
+                                                record.type === 'max_reps' ? 'Reps Max' : '1RM Estimé'}:
                                                 ${record.value}${record.type === 'max_reps' ? '' : 'kg'}
                                             </div>
                                         </div>
@@ -5692,7 +5689,7 @@
                                             ${new Date(record.date).toLocaleDateString('fr-FR')}
                                         </div>
                                     </div>
-                                `).join('') : 
+                                `).join('') :
                                 '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">Aucun record récent</p>'
                             }
                         </div>
@@ -5700,61 +5697,75 @@
                 </div>
             `;
 
-            // SECTION EXISTANTE : STATISTIQUES PAR EXERCICE
-            // Remplir le select des exercices par groupes
-            exerciseSelect.innerHTML = '';
-            const groupedExercises = {};
-            appState.exercises.forEach(exercise => {
-                const group = exercise.muscle_group || 'autres';
-                if (!groupedExercises[group]) {
-                    groupedExercises[group] = [];
-                }
-                groupedExercises[group].push(exercise);
-            });
+            // STATISTIQUES PAR EXERCICE - Créer d'abord le HTML avec le select vide
+            let exerciseStatsHtml = `
+                <div class="card">
+                    <h3>📈 Statistiques par exercice</h3>
+                    <div class="input-group">
+                        <label>Sélectionner un exercice</label>
+                        <select id="stats-exercise-select" class="select" onchange="actions.updateStats(this.value)">
+                            <option value="">Choisir un exercice...</option>
+                        </select>
+                    </div>
+                </div>
+            `;
 
-            // Ordre d'affichage des catégories (échauffement en premier)
-            const groupOrder = ['echauffement', 'biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes', 'autres'];
-            groupOrder.forEach(group => {
-                if (groupedExercises[group] && groupedExercises[group].length > 0) {
-                    const optgroup = document.createElement('optgroup');
-                    optgroup.label = `${group.charAt(0).toUpperCase() + group.slice(1)} (${groupedExercises[group].length})`;
-                    // Trier les exercices par nom dans chaque groupe
-                    groupedExercises[group].sort((a, b) => a.name.localeCompare(b.name));
-                    groupedExercises[group].forEach(exercise => {
-                        const option = document.createElement('option');
-                        option.value = exercise.id;
-                        // Ajouter l'indicateur de mode
-                        const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
-                            exercise.exercise_mode === 'both' ? '🔄' : '🔢';
-                        option.textContent = `${modeIcon} ${exercise.name}`;
-                        optgroup.appendChild(option);
-                    });
-                    exerciseSelect.appendChild(optgroup);
-                }
-            });
+            // Afficher d'abord le HTML de base
+            statsContent.innerHTML = generalStatsHtml + exerciseStatsHtml;
 
-            // Conserver la valeur sélectionnée si elle existe
-            const currentValue = exerciseSelect.dataset.currentValue;
-            if (currentValue) {
-                exerciseSelect.value = currentValue;
+            // MAINTENANT remplir le select après qu'il soit dans le DOM
+            const exerciseSelect = document.getElementById('stats-exercise-select');
+            if (exerciseSelect) {
+                // Grouper les exercices par groupes musculaires
+                const groupedExercises = {};
+                appState.exercises.forEach(exercise => {
+                    const group = exercise.muscle_group || 'autres';
+                    if (!groupedExercises[group]) {
+                        groupedExercises[group] = [];
+                    }
+                    groupedExercises[group].push(exercise);
+                });
+
+                // Ordre d'affichage des catégories
+                const groupOrder = ['echauffement', 'biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes', 'autres'];
+                groupOrder.forEach(group => {
+                    if (groupedExercises[group] && groupedExercises[group].length > 0) {
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = `${group.charAt(0).toUpperCase() + group.slice(1)} (${groupedExercises[group].length})`;
+                        
+                        // Trier les exercices par nom dans chaque groupe
+                        groupedExercises[group].sort((a, b) => a.name.localeCompare(b.name));
+                        groupedExercises[group].forEach(exercise => {
+                            const option = document.createElement('option');
+                            option.value = exercise.id;
+                            // Ajouter l'indicateur de mode
+                            const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
+                                exercise.exercise_mode === 'both' ? '🔄' : '🔢';
+                            option.textContent = `${modeIcon} ${exercise.name}`;
+                            optgroup.appendChild(option);
+                        });
+                        exerciseSelect.appendChild(optgroup);
+                    }
+                });
+
+                // Conserver la valeur sélectionnée si elle existe
+                const currentValue = exerciseSelect.dataset.currentValue;
+                if (currentValue) {
+                    exerciseSelect.value = currentValue;
+                }
             }
 
-            const selectedExerciseId = parseInt(exerciseSelect.value);
-            
-            let exerciseStatsHtml = '';
-            if (!selectedExerciseId) {
-                exerciseStatsHtml = `
-                    <p style="text-align: center; color: var(--text-secondary);">Sélectionnez un exercice pour voir les statistiques détaillées</p>
-                `;
-            } else {
+            // Afficher les stats de l'exercice sélectionné
+            const selectedExerciseId = parseInt(exerciseSelect?.value || '0');
+            if (selectedExerciseId) {
                 const exercise = appState.exercises.find(e => e.id === selectedExerciseId);
                 const records = appState.records[selectedExerciseId] || [];
-
+                
                 // Calculer les records actuels
                 const maxWeight = actions.getCurrentRecord(selectedExerciseId, 'max_weight');
                 const maxReps = actions.getCurrentRecord(selectedExerciseId, 'max_reps');
                 const max1RM = actions.getCurrentRecord(selectedExerciseId, 'max_1rm');
-
+                
                 // Calculer le volume max
                 let maxVolume = 0;
                 appState.sessions.forEach(session => {
@@ -5781,8 +5792,6 @@
                 // Calculer le temps max pour les exercices en mode temps
                 let maxTime = 0;
                 let hasTimeMode = false;
-
-                // Vérifier si l'exercice a été utilisé en mode temps
                 appState.sessions.forEach(session => {
                     const sessionExercise = session.exercises.find(e => e.exercise_id === selectedExerciseId);
                     if (sessionExercise) {
@@ -5797,7 +5806,6 @@
 
                 // Générer les cartes de statistiques selon le mode de l'exercice
                 let statsCardsHtml = '';
-
                 if (hasTimeMode) {
                     // Pour les exercices utilisés en mode temps
                     statsCardsHtml = `
@@ -5843,7 +5851,7 @@
                         </div>
                     `;
                 }
-                
+
                 // Récupérer les dernières séries effectuées
                 const lastSets = [];
                 const sessionsWithExercise = appState.sessions
@@ -5879,7 +5887,6 @@
                                         day: 'numeric',
                                         month: 'short'
                                     });
-                                    
                                     let setInfo = '';
                                     if (set.exercise_mode === 'time') {
                                         if (exercise.is_unilateral) {
@@ -5891,12 +5898,12 @@
                                                 leftResistance = set.total_resistance || 0;
                                                 rightResistance = set.total_resistance || 0;
                                             }
-                                            setInfo = leftResistance > 0 || rightResistance > 0 ? 
+                                            setInfo = leftResistance > 0 || rightResistance > 0 ?
                                                 `${set.duration || 0}s - ${leftResistance}kg (G) | ${rightResistance}kg (D)` :
                                                 `${set.duration || 0}s`;
                                         } else {
                                             const resistance = set.total_resistance || 0;
-                                            setInfo = resistance > 0 ? 
+                                            setInfo = resistance > 0 ?
                                                 `${set.duration || 0}s - ${resistance}kg` :
                                                 `${set.duration || 0}s`;
                                         }
@@ -5915,14 +5922,13 @@
                                             setInfo = `${set.reps || 0} reps - ${set.total_resistance || 0}kg`;
                                         }
                                     }
-                                    
                                     return `
-                                    <div style="padding: 8px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                                        <div>
-                                            <div style="font-weight: 500;">${setInfo}</div>
+                                        <div style="padding: 8px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <div style="font-weight: 500;">${setInfo}</div>
+                                            </div>
+                                            <div style="font-size: 12px; color: var(--text-secondary);">${date}</div>
                                         </div>
-                                        <div style="font-size: 12px; color: var(--text-secondary);">${date}</div>
-                                    </div>
                                     `;
                                 }).join('')}
                             </div>
@@ -5930,27 +5936,16 @@
                     `;
                 }
 
-                exerciseStatsHtml = `
-                    <div class="card">
-                        <h3>📈 Statistiques par exercice</h3>
-                        <div class="input-group">
-                            <label>Sélectionner un exercice</label>
-                            <select id="stats-exercise-select" class="select" onchange="actions.updateStats(this.value)">
-                                <option value="">Choisir un exercice...</option>
-                            </select>
-                        </div>
-                    </div>
-                    
+                // Ajouter les statistiques détaillées de l'exercice
+                const detailedStatsHtml = `
                     ${statsCardsHtml}
                     ${lastSetsHtml}
-                    
                     <div class="card">
                         <h3>Évolution des performances</h3>
                         <div class="chart-container" id="stats-chart">
                             ${actions.generateSimpleChart(selectedExerciseId, exercise.name)}
                         </div>
                     </div>
-                    
                     <div class="card">
                         <h3>Historique des records</h3>
                         <div id="records-history">
@@ -5959,8 +5954,8 @@
                                     <div style="padding: 8px; border-bottom: 1px solid var(--border);">
                                         <strong>${new Date(record.date).toLocaleDateString('fr-FR')}</strong> -
                                         ${record.type === 'max_weight' ? 'Poids Max' :
-                                            record.type === 'max_reps' ? 'Reps Max' : 
-                                            record.type === 'max_time' ? 'Temps Max' : '1RM Estimé'}:
+                                        record.type === 'max_reps' ? 'Reps Max' :
+                                        record.type === 'max_time' ? 'Temps Max' : '1RM Estimé'}:
                                         <span style="color: var(--primary);">${record.value}${record.type === 'max_reps' ? '' : record.type === 'max_time' ? 's' : 'kg'}</span>
                                     </div>
                                 `).join('')
@@ -5969,11 +5964,45 @@
                         </div>
                     </div>
                 `;
-            }
 
-            // Afficher les statistiques générales EN PREMIER, puis la sélection, puis les stats par exercice
-            statsContent.innerHTML = generalStatsHtml + exerciseStatsHtml;
-            
+                // Ajouter les statistiques détaillées après les statistiques générales
+                statsContent.innerHTML = generalStatsHtml + exerciseStatsHtml + detailedStatsHtml;
+                
+                // Re-remplir le select car le DOM a été modifié
+                const newExerciseSelect = document.getElementById('stats-exercise-select');
+                if (newExerciseSelect) {
+                    newExerciseSelect.innerHTML = '<option value="">Choisir un exercice...</option>';
+                    
+                    // Re-créer les options
+                    groupOrder.forEach(group => {
+                        if (groupedExercises[group] && groupedExercises[group].length > 0) {
+                            const optgroup = document.createElement('optgroup');
+                            optgroup.label = `${group.charAt(0).toUpperCase() + group.slice(1)} (${groupedExercises[group].length})`;
+                            
+                            groupedExercises[group].forEach(exercise => {
+                                const option = document.createElement('option');
+                                option.value = exercise.id;
+                                const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
+                                    exercise.exercise_mode === 'both' ? '🔄' : '🔢';
+                                option.textContent = `${modeIcon} ${exercise.name}`;
+                                optgroup.appendChild(option);
+                            });
+                            newExerciseSelect.appendChild(optgroup);
+                        }
+                    });
+                    
+                    // Restaurer la valeur sélectionnée
+                    newExerciseSelect.value = selectedExerciseId;
+                }
+            } else {
+                // Aucun exercice sélectionné
+                const noSelectionHtml = `
+                    <p style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                        Sélectionnez un exercice pour voir les statistiques détaillées
+                    </p>
+                `;
+                statsContent.innerHTML = generalStatsHtml + exerciseStatsHtml + noSelectionHtml;
+            }
         }
 
         function renderBody() {
