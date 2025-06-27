@@ -3170,40 +3170,9 @@
             },
             
             addExerciseToSession() {
-                const select = document.getElementById('exercise-select');
-                const exerciseId = parseInt(select.value);
-                
-                if (!exerciseId || isNaN(exerciseId)) {
-                    this.showNotification('Sélectionnez un exercice');
-                    return;
-                }
-                
-                if (!appState.currentSession) {
-                    appState.currentSession = {
-                        date: new Date().toISOString().split('T')[0],
-                        notes: '',
-                        exercises: []
-                    };
-                }
-                
-                // Vérifier si l'exercice n'est pas déjà dans la liste
-                const exists = appState.currentSession.exercises.find(e => e.exercise_id === exerciseId);
-                if (exists) {
-                    this.showNotification('Cet exercice est déjà dans la liste');
-                    return;
-                }
-                
-                const exercise = appState.exercises.find(e => e.id === exerciseId);
-                appState.currentSession.exercises.push({
-                    exercise_id: exerciseId,
-                    planned_sets: 3,
-                    duration: exercise?.default_duration || 30, // Ajouter la durée par défaut
-                    sets: []
-                });
-                
-                select.value = '';
-                render();
-                this.showNotification('Exercice ajouté !');
+                // Cette fonction n'est plus utilisée avec le nouveau système de recherche
+                // Elle est remplacée par selectExercise() dans le système de recherche
+                this.showNotification('Utilisez la recherche ci-dessus pour ajouter un exercice');
             },
             
             removeExerciseFromSession(exerciseId) {
@@ -4628,52 +4597,67 @@
             
             loadTemplate(templateId) {
                 const template = appState.templates.find(t => t.id === templateId);
-                if (template) {
-                    if (!appState.currentSession) {
-                        appState.currentSession = {
-                            date: new Date().toISOString().split('T')[0],
-                            notes: '',
-                            exercises: []
-                        };
-                    }
+                if (!template) {
+                    this.showNotification('Modèle introuvable');
+                    return;
+                }
+                
+                if (!appState.currentSession) {
+                    appState.currentSession = {
+                        date: new Date().toISOString().split('T')[0],
+                        notes: '',
+                        exercises: [],
+                        globalSettings: {
+                            restBetweenExercises: 120,
+                            restBetweenSets: 90
+                        }
+                    };
+                }
 
-                    // Remplacer tous les exercices par ceux du modèle
-                    appState.currentSession.exercises = [];
-                    
-                    if (template.exercises && template.exercises.length > 0) {
-                        // Nouveau format avec ordre et paramètres détaillés
-                        template.exercises.forEach(exData => {
+                // Remplacer tous les exercices par ceux du modèle
+                appState.currentSession.exercises = [];
+                
+                if (template.exercises && template.exercises.length > 0) {
+                    // Nouveau format avec ordre et paramètres détaillés
+                    template.exercises.forEach(exData => {
+                        const exercise = appState.exercises.find(e => e.id === exData.exerciseId);
+                        if (exercise) {
                             appState.currentSession.exercises.push({
                                 exercise_id: exData.exerciseId,
-                                planned_sets: exData.plannedSets,
-                                rest_time: exData.restTime, // Temps de repos spécifique à l'exercice
-                                duration: exData.duration, // Durée personnalisée
+                                planned_sets: exData.plannedSets || 3,
+                                rest_time: exData.restTime || exercise.default_rest_time || 90,
+                                duration: exData.duration || exercise.default_duration || 30,
                                 sets: []
                             });
-                        });
-                    
-                        // Appliquer les paramètres globaux s'ils existent
-                        if (template.globalSettings) {
-                            appState.currentSession.globalSettings = {
-                                restBetweenExercises: template.globalSettings.restBetweenExercises,
-                                restBetweenSets: template.globalSettings.restBetweenSets
-                            };
                         }
-                    } else {
-                        // Compatibilité avec l'ancien format
-                        (template.exerciseIds || []).forEach(exerciseId => {
+                    });
+                
+                    // Appliquer les paramètres globaux s'ils existent
+                    if (template.globalSettings) {
+                        appState.currentSession.globalSettings = {
+                            restBetweenExercises: template.globalSettings.restBetweenExercises || 120,
+                            restBetweenSets: template.globalSettings.restBetweenSets || 90
+                        };
+                    }
+                } else {
+                    // Compatibilité avec l'ancien format
+                    (template.exerciseIds || []).forEach(exerciseId => {
+                        const exercise = appState.exercises.find(e => e.id === exerciseId);
+                        if (exercise) {
                             appState.currentSession.exercises.push({
                                 exercise_id: exerciseId,
                                 planned_sets: 3,
+                                rest_time: exercise.default_rest_time || 90,
+                                duration: exercise.default_duration || 30,
                                 sets: []
                             });
-                        });
-                    }
-
-                    this.closeModal('templates-modal');
-                    render();
-                    this.showNotification(`Modèle "${template.name}" chargé ! (${appState.currentSession.exercises.length} exercices)`);
+                        }
+                    });
                 }
+
+                this.closeModal('templates-modal');
+                render();
+                this.showNotification(`Modèle "${template.name}" chargé ! (${appState.currentSession.exercises.length} exercices)`);
             },
             
             // Éditer un modèle existant
@@ -5094,34 +5078,6 @@
             // Initialiser la recherche d'exercices
             actions.initializeExerciseSearch();
             
-            const groupedExercises = {};
-            appState.exercises.forEach(exercise => {
-                const group = exercise.muscle_group || 'autres';
-                if (!groupedExercises[group]) {
-                    groupedExercises[group] = [];
-                }
-                groupedExercises[group].push(exercise);
-            });
-            
-            // Ordre d'affichage des catégories (échauffement en premier)
-            const groupOrder = ['echauffement', 'biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes', 'autres'];
-            groupOrder.forEach(group => {
-                if (groupedExercises[group] && groupedExercises[group].length > 0) {
-                    const optgroup = document.createElement('optgroup');
-                    optgroup.label = `${group.charAt(0).toUpperCase() + group.slice(1)} (${groupedExercises[group].length})`;
-                    groupedExercises[group].forEach(exercise => {
-                        const option = document.createElement('option');
-                        option.value = exercise.id;
-                        // Ajouter l'indicateur de mode
-                        const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' : 
-                                        exercise.exercise_mode === 'both' ? '🔄' : '🔢';
-                        option.textContent = `${modeIcon} ${exercise.name}`;
-                        optgroup.appendChild(option);
-                    });
-                    exerciseSelect.appendChild(optgroup);
-                }
-            });
-            
             // Afficher les exercices planifiés AVEC SECTIONS
             const plannedDiv = document.getElementById('planned-exercises');
             plannedDiv.innerHTML = '';
@@ -5149,7 +5105,6 @@
                     warmupTitle.textContent = '🔥 Échauffement';
                     warmupTitle.className = 'exercise-section-title warmup';
                     plannedDiv.appendChild(warmupTitle);
-                    
                     warmupExercises.forEach((exerciseData, sectionIndex) => {
                         plannedDiv.appendChild(createExerciseItem(exerciseData, sectionIndex, 'warmup'));
                     });
@@ -5161,7 +5116,6 @@
                     mainTitle.textContent = '💪 Entraînement Principal';
                     mainTitle.className = 'exercise-section-title main';
                     plannedDiv.appendChild(mainTitle);
-                    
                     mainExercises.forEach((exerciseData, sectionIndex) => {
                         plannedDiv.appendChild(createExerciseItem(exerciseData, sectionIndex, 'main'));
                     });
@@ -5174,11 +5128,11 @@
                 document.getElementById('start-live-btn').style.display = 'none';
                 document.getElementById('save-manual-btn').style.display = 'none';
             }
+            
             // Charger les paramètres de repos existants dans les champs
             if (appState.currentSession && appState.currentSession.globalSettings) {
                 const restBetweenExercisesInput = document.getElementById('session-rest-between-exercises');
                 const restBetweenSetsInput = document.getElementById('session-rest-between-sets');
-                
                 if (restBetweenExercisesInput) {
                     restBetweenExercisesInput.value = appState.currentSession.globalSettings.restBetweenExercises || 120;
                 }
@@ -6884,33 +6838,45 @@
         };
 
         actions.selectExercise = function(exercise) {
-            // Ajouter l'exercice à la session (comme avant)
+            // Ajouter l'exercice à la session
             if (!appState.currentSession) {
                 appState.currentSession = {
                     date: new Date().toISOString().split('T')[0],
                     notes: '',
-                    exercises: []
+                    exercises: [],
+                    globalSettings: {
+                        restBetweenExercises: 120,
+                        restBetweenSets: 90
+                    }
                 };
             }
-        
+            
             // Vérifier si l'exercice n'est pas déjà dans la liste
             const exists = appState.currentSession.exercises.find(e => e.exercise_id === exercise.id);
             if (exists) {
                 this.showNotification('Cet exercice est déjà dans la liste');
                 return;
             }
-        
+            
             const fullExercise = appState.exercises.find(e => e.id === exercise.id);
+            if (!fullExercise) {
+                this.showNotification('Exercice introuvable');
+                return;
+            }
+            
             appState.currentSession.exercises.push({
                 exercise_id: exercise.id,
                 planned_sets: 3,
+                rest_time: fullExercise.default_rest_time || 90,
                 duration: fullExercise?.default_duration || 30,
                 sets: []
             });
-        
+            
             // Réinitialiser la recherche
-            document.getElementById('exercise-search').value = '';
-            document.getElementById('exercise-search-results').style.display = 'none';
+            const searchInput = document.getElementById('exercise-search');
+            const resultsContainer = document.getElementById('exercise-search-results');
+            if (searchInput) searchInput.value = '';
+            if (resultsContainer) resultsContainer.style.display = 'none';
             
             render();
             this.showNotification(`Exercice "${exercise.name}" ajouté !`);
