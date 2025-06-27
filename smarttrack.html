@@ -171,31 +171,6 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* === LAZY LOADING INDICATOR === */
-        .loading-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
-        }
-
-        .loading-spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid var(--border);
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 16px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         /* === NAVIGATION === */
         .nav-bar {
             background: var(--surface);
@@ -776,10 +751,12 @@
                 <h1>SmartTrack</h1>
                 <button class="btn btn-small btn-secondary" onclick="actions.showSettings()">⚙️</button>
             </div>
+            
             <div class="card">
                 <h3>Calendrier de Régularité</h3>
                 <div id="calendar-grid" class="calendar-grid"></div>
             </div>
+            
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-value" id="total-sessions">0</div>
@@ -790,6 +767,7 @@
                     <div class="stat-label">Série Actuelle</div>
                 </div>
             </div>
+            
             <button class="btn btn-primary btn-full" onclick="actions.startNewSession()">
                 🚀 Démarrer une séance vide
             </button>
@@ -798,8 +776,347 @@
             </button>
         </div>
 
-        <!-- Container pour les écrans chargés dynamiquement -->
-        <div id="dynamic-screens"></div>
+        <!-- Écran 1: Préparation de Séance -->
+        <div id="screen-preparation" class="screen">
+            <div class="header">
+                <button class="btn btn-small btn-secondary" onclick="actions.showScreen('dashboard')">← Retour</button>
+                <h1>Préparation</h1>
+                <div></div>
+            </div>
+            
+            <div class="card">
+                <div class="input-group">
+                    <label>Date de la séance</label>
+                    <input type="date" id="session-date" class="input" onchange="actions.updateSessionDate(this.value)">
+                </div>
+                
+                <div class="input-group">
+                    <label>Notes de séance</label>
+                    <textarea id="session-notes" class="textarea" placeholder="Notes optionnelles..." onchange="actions.updateSessionNotes(this.value)"></textarea>
+                </div>
+                
+                <button class="btn btn-secondary btn-full" onclick="actions.showTemplates()">
+                    📋 Charger un modèle
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3>⏱️ Paramètres de repos de la séance</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="input-group">
+                        <label>Repos entre exercices (secondes)</label>
+                        <input type="number" id="session-rest-between-exercises" class="input" 
+                            value="120" min="30" max="600" 
+                            onchange="actions.updateSessionRestSettings()">
+                    </div>
+                    <div class="input-group">
+                        <label>Repos entre séries (secondes)</label>
+                        <input type="number" id="session-rest-between-sets" class="input" 
+                            value="90" min="30" max="300"
+                            onchange="actions.updateSessionRestSettings()">
+                    </div>
+                </div>
+                <div style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
+                    💡 Ces paramètres s'appliquent à toute la séance et remplacent les valeurs des modèles
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Ajouter un exercice</h3>
+                <div class="input-group">
+                    <label>Rechercher un exercice</label>
+                    <div style="position: relative;">
+                        <input type="text" id="exercise-search" class="input" placeholder="Tapez le nom d'un exercice ou groupe musculaire..." autocomplete="off">
+                        <div id="exercise-search-results" class="search-results" style="display: none;"></div>
+                    </div>
+                    <div id="search-history" style="margin-top: 8px; display: none;"></div>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="actions.addExerciseToSession()">
+                    ➕ Ajouter à la séance
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3>Exercices prévus</h3>
+                <div id="planned-exercises"></div>
+            </div>
+            
+            <button class="btn btn-success btn-full" onclick="actions.startLiveSession()" id="start-live-btn" style="display: none;">
+                🚀 Démarrer la Séance Live
+            </button>
+
+            <button class="btn btn-secondary btn-full" onclick="actions.saveSessionManually()" id="save-manual-btn" style="display: none;">
+                💾 Sauvegarder sans Live
+            </button>
+        </div>
+
+        <!-- Écran 2: Séance Live -->
+        <div id="screen-live" class="screen">
+            <div class="header">
+                <button class="btn btn-small btn-warning" onclick="actions.pauseLiveSession()">⏸️ Pause</button>
+                <div class="session-timer" id="live-timer">00:00</div>
+                <button class="btn btn-small btn-danger" onclick="actions.stopLiveSession()">⏹️ Arrêter</button>
+            </div>
+            <div id="live-content"></div>
+        </div>
+
+        <!-- Écran 3: Historique -->
+        <div id="screen-history" class="screen">
+            <div class="header">
+                <h1>Historique</h1>
+                <div class="stat-value" id="history-count">0</div>
+            </div>
+            
+            <div id="sessions-list"></div>
+        </div>
+
+        <!-- Écran 4: Statistiques -->
+        <div id="screen-stats" class="screen">
+            <div class="header">
+                <h1>Statistiques</h1>
+            </div>
+            
+            <div class="card">
+                <div class="input-group">
+                    <label>Sélectionner un exercice</label>
+                    <select id="stats-exercise-select" class="select" onchange="actions.updateStats(this.value)">
+                        <option value="">Choisir un exercice...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="stats-content"></div>
+        </div>
+
+        <!-- Écran 5: Suivi Corporel -->
+        <div id="screen-body" class="screen">
+            <div class="header">
+                <h1>Mensurations</h1>
+            </div>
+            
+            <div class="card">
+                <h3>Nouvelle mensuration</h3>
+                <div class="input-group">
+                    <label>Date</label>
+                    <input type="date" id="measurement-date" class="input">
+                </div>
+                <div class="input-group">
+                    <label>Taille (cm)</label>
+                    <input type="number" id="measurement-height" class="input" step="0.5" min="100" max="250">
+                </div>
+                <div class="input-group">
+                    <label>Poids (kg)</label>
+                    <input type="number" id="measurement-weight" class="input" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>Tour de taille (cm)</label>
+                    <input type="number" id="measurement-waist" class="input" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label>Tour de poitrine (cm)</label>
+                    <input type="number" id="measurement-chest" class="input" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label>Tour de bras (cm)</label>
+                    <input type="number" id="measurement-arm" class="input" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label>Tour de cuisse (cm)</label>
+                    <input type="number" id="measurement-thigh" class="input" step="0.5">
+                </div>
+                <button class="btn btn-primary btn-full" onclick="actions.addMeasurement()">
+                    ➕ Ajouter la mensuration
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3>Évolution des mensurations</h3>
+                <div class="chart-container">
+                    📊 Graphiques d'évolution des mensurations
+                </div>
+            </div>
+            
+            <div id="measurements-list"></div>
+        </div>
+
+        <!-- Écran 6: Gestion des Exercices -->
+        <div id="screen-exercises" class="screen">
+            <div class="header">
+                <button class="btn btn-small btn-secondary" onclick="actions.showSettings()">← Retour</button>
+                <h1>Exercices</h1>
+                <div></div>
+            </div>
+            
+            <div class="card">
+                <h3 id="exercise-form-title">Nouvel exercice</h3>
+                
+                <div class="input-group">
+                    <label>Nom de l'exercice</label>
+                    <input type="text" id="exercise-name" class="input" placeholder="Ex: Développé couché">
+                </div>
+                
+                <!-- NOUVEAU: Catégorie principale -->
+                <div class="input-group">
+                    <label>Catégorie</label>
+                    <select id="exercise-category" class="select">
+                        <option value="strength">Renforcement</option>
+                        <option value="warmup">Échauffement</option>
+                    </select>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="exercise-unilateral" class="checkbox">
+                    <label for="exercise-unilateral">Exercice unilatéral</label>
+                </div>
+                
+                <!-- NOUVEAU: Mode d'exercice -->
+                <div class="input-group">
+                    <label>Mode d'exécution</label>
+                    <select id="exercise-mode" class="select" onchange="toggleExerciseMode()">
+                        <option value="reps">Répétitions</option>
+                        <option value="time">Temps</option>
+                        <option value="both">Répétitions ou Temps</option>
+                    </select>
+                </div>
+                
+                <!-- NOUVEAU: Durée par défaut (affiché si mode temps) -->
+                <div class="input-group" id="duration-group" style="display: none;">
+                    <label>Durée par défaut (secondes)</label>
+                    <input type="number" id="exercise-duration" class="input" value="30" min="10" max="300">
+                </div>
+                
+                <div class="input-group">
+                    <label>Temps de repos par défaut (secondes)</label>
+                    <input type="number" id="exercise-rest" class="input" value="90">
+                </div>
+                
+                <div class="input-group">
+                    <label>Groupe musculaire</label>
+                    <select id="exercise-muscle-group" class="select">
+                        <option value="echauffement">Échauffement</option>
+                        <option value="biceps">Biceps</option>
+                        <option value="triceps">Triceps</option>
+                        <option value="epaules">Épaules</option>
+                        <option value="dos">Dos</option>
+                        <option value="pectoraux">Pectoraux</option>
+                        <option value="jambes">Jambes</option>
+                        <option value="autres">Autres</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>Point d'ancrage</label>
+                    <select id="exercise-anchor" class="select" onchange="showExerciseExamples(this.value)">
+                        <option value="none">🏃 Sans ancrage (élastique libre)</option>
+                        <option value="door-middle">🚪 Porte - hauteur moyenne</option>
+                        <option value="door-high">🚪⬆️ Porte - position haute</option>
+                        <option value="door-low">🚪⬇️ Porte - position basse</option>
+                        <option value="floor">🦵 Sol/Pieds (marcher dessus)</option>
+                        <option value="body">🔄 Corps (élastique autour)</option>
+                        <option value="external">🌳 Ancrage extérieur</option>
+                    </select>
+                    <div id="exercise-examples" style="margin-top: 8px; padding: 8px; background: var(--background); border-radius: 6px; font-size: 12px; color: var(--text-secondary); display: none;">
+                        <strong>Exemples d'exercices :</strong>
+                        <div id="examples-list"></div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary btn-full" onclick="actions.saveExercise()" id="save-exercise-btn">
+                    ➕ Ajouter l'exercice
+                </button>
+                <button class="btn btn-secondary btn-full" onclick="actions.loadPredefinedExercises()" id="load-predefined-btn">
+                    📚 Charger les exercices SmartWorkout
+                </button>
+                <button class="btn btn-secondary btn-full" onclick="actions.cancelExerciseEdit()" id="cancel-exercise-btn" style="display: none;">
+                    ❌ Annuler
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3>Mes exercices</h3>
+                <div id="exercises-list"></div>
+            </div>
+        </div>
+
+        <!-- Écran 7: Gestion des Modèles -->
+        <div id="screen-templates" class="screen">
+            <div class="header">
+                <button class="btn btn-small btn-secondary" onclick="actions.showSettings()">← Retour</button>
+                <h1>Modèles</h1>
+                <div></div>
+            </div>
+            
+            <div class="card">
+                <h3>Nouveau modèle</h3>
+                <div class="input-group">
+                    <label>Nom du modèle</label>
+                    <input type="text" id="template-name" class="input" placeholder="Ex: Push Day">
+                </div>
+                <div class="input-group">
+                    <label>Exercices</label>
+                    <div id="template-exercises-checkboxes"></div>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="actions.saveTemplate()">
+                    ➕ Créer le modèle
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3>Mes modèles</h3>
+                <div id="templates-list"></div>
+            </div>
+        </div>
+
+        <!-- Écran 8: Paramètres -->
+        <div id="screen-settings" class="screen">
+            <div class="header">
+                <button class="btn btn-small btn-secondary" onclick="actions.showScreen('dashboard')">← Retour</button>
+                <h1>Paramètres</h1>
+                <div></div>
+            </div>
+            
+            <div class="card">
+                <h3>Apparence</h3>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="dark-theme" class="checkbox" onchange="actions.toggleTheme()">
+                    <label for="dark-theme">Thème sombre</label>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Données</h3>
+                <button class="btn btn-secondary btn-full" onclick="actions.exportData()">
+                    📤 Exporter les données
+                </button>
+                <button class="btn btn-secondary btn-full" onclick="actions.showImportModal()">
+                    📥 Importer les données
+                </button>
+                <button class="btn btn-danger btn-full" onclick="actions.clearAllData()">
+                    🗑️ Effacer toutes les données
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3>Gestion</h3>
+                <button class="btn btn-secondary btn-full" onclick="actions.showScreen('exercises')">
+                    💪 Gérer les exercices
+                </button>
+                <button class="btn btn-secondary btn-full" onclick="actions.showScreen('templates')">
+                    📋 Gérer les modèles
+                </button>
+            </div>
+        </div>
+
+        <!-- Écran 9: Saisie Manuelle -->
+        <div id="screen-manual-entry" class="screen">
+            <div class="header">
+                <button class="btn btn-small btn-secondary" onclick="actions.showScreen('preparation')">← Retour</button>
+                <h1>Saisie Manuelle</h1>
+                <div></div>
+            </div>
+            
+            <div id="manual-entry-content"></div>
+        </div>
 
         <!-- Navigation -->
         <nav class="nav-bar">
@@ -2134,479 +2451,6 @@
             }
         };
 
-        // === LAZY LOADING DES ÉCRANS ===
-        const screenTemplates = {
-            preparation: () => `
-                <div id="screen-preparation" class="screen active">
-                    <div class="header">
-                        <button class="btn btn-small btn-secondary" onclick="actions.showScreen('dashboard')">← Retour</button>
-                        <h1>Préparation</h1>
-                        <div></div>
-                    </div>
-                    <div class="card">
-                        <div class="input-group">
-                            <label>Date de la séance</label>
-                            <input type="date" id="session-date" class="input" onchange="actions.updateSessionDate(this.value)">
-                        </div>
-                        <div class="input-group">
-                            <label>Notes de séance</label>
-                            <textarea id="session-notes" class="textarea" placeholder="Notes optionnelles..." onchange="actions.updateSessionNotes(this.value)"></textarea>
-                        </div>
-                        <button class="btn btn-secondary btn-full" onclick="actions.showTemplates()">
-                            📋 Charger un modèle
-                        </button>
-                    </div>
-                    <div class="card">
-                        <h3>⏱️ Paramètres de repos de la séance</h3>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                            <div class="input-group">
-                                <label>Repos entre exercices (secondes)</label>
-                                <input type="number" id="session-rest-between-exercises" class="input" value="120" min="30" max="600" onchange="actions.updateSessionRestSettings()">
-                            </div>
-                            <div class="input-group">
-                                <label>Repos entre séries (secondes)</label>
-                                <input type="number" id="session-rest-between-sets" class="input" value="90" min="30" max="300" onchange="actions.updateSessionRestSettings()">
-                            </div>
-                        </div>
-                        <div style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
-                            💡 Ces paramètres s'appliquent à toute la séance et remplacent les valeurs des modèles
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3>Ajouter un exercice</h3>
-                        <div class="input-group">
-                            <label>Rechercher un exercice</label>
-                            <div style="position: relative;">
-                                <input type="text" id="exercise-search" class="input" placeholder="Tapez le nom d'un exercice ou groupe musculaire..." autocomplete="off">
-                                <div id="exercise-search-results" class="search-results" style="display: none;"></div>
-                            </div>
-                            <div id="search-history" style="margin-top: 8px; display: none;"></div>
-                        </div>
-                        <button class="btn btn-primary btn-full" onclick="actions.addExerciseToSession()">
-                            ➕ Ajouter à la séance
-                        </button>
-                    </div>
-                    <div class="card">
-                        <h3>Exercices prévus</h3>
-                        <div id="planned-exercises"></div>
-                    </div>
-                    <button class="btn btn-success btn-full" onclick="actions.startLiveSession()" id="start-live-btn" style="display: none;">
-                        🚀 Démarrer la Séance Live
-                    </button>
-                    <button class="btn btn-secondary btn-full" onclick="actions.saveSessionManually()" id="save-manual-btn" style="display: none;">
-                        💾 Sauvegarder sans Live
-                    </button>
-                </div>`,
-                
-            live: () => `
-                <div id="screen-live" class="screen active">
-                    <div class="header">
-                        <button class="btn btn-small btn-warning" onclick="actions.pauseLiveSession()">⏸️ Pause</button>
-                        <div class="session-timer" id="live-timer">00:00</div>
-                        <button class="btn btn-small btn-danger" onclick="actions.stopLiveSession()">⏹️ Arrêter</button>
-                    </div>
-                    <div id="live-content"></div>
-                </div>`,
-            
-            history: () => `
-                <div id="screen-history" class="screen active">
-                    <div class="header">
-                        <h1>Historique</h1>
-                        <div class="stat-value" id="history-count">0</div>
-                    </div>
-                    <div id="sessions-list"></div>
-                </div>`,
-            
-            stats: () => `
-                <div id="screen-stats" class="screen active">
-                    <div class="header">
-                        <h1>Statistiques</h1>
-                    </div>
-                    <div class="card">
-                        <div class="input-group">
-                            <label>Sélectionner un exercice</label>
-                            <select id="stats-exercise-select" class="select" onchange="actions.updateStats(this.value)">
-                                <option value="">Choisir un exercice...</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div id="stats-content"></div>
-                </div>`,
-            
-            body: () => `
-                <div id="screen-body" class="screen active">
-                    <div class="header">
-                        <h1>Mensurations</h1>
-                    </div>
-                    <div class="card">
-                        <h3>Nouvelle mensuration</h3>
-                        <div class="input-group">
-                            <label>Date</label>
-                            <input type="date" id="measurement-date" class="input">
-                        </div>
-                        <div class="input-group">
-                            <label>Taille (cm)</label>
-                            <input type="number" id="measurement-height" class="input" step="0.5" min="100" max="250">
-                        </div>
-                        <div class="input-group">
-                            <label>Poids (kg)</label>
-                            <input type="number" id="measurement-weight" class="input" step="0.1">
-                        </div>
-                        <div class="input-group">
-                            <label>Tour de taille (cm)</label>
-                            <input type="number" id="measurement-waist" class="input" step="0.5">
-                        </div>
-                        <div class="input-group">
-                            <label>Tour de poitrine (cm)</label>
-                            <input type="number" id="measurement-chest" class="input" step="0.5">
-                        </div>
-                        <div class="input-group">
-                            <label>Tour de bras (cm)</label>
-                            <input type="number" id="measurement-arm" class="input" step="0.5">
-                        </div>
-                        <div class="input-group">
-                            <label>Tour de cuisse (cm)</label>
-                            <input type="number" id="measurement-thigh" class="input" step="0.5">
-                        </div>
-                        <button class="btn btn-primary btn-full" onclick="actions.addMeasurement()">
-                            ➕ Ajouter la mensuration
-                        </button>
-                    </div>
-                    <div class="card">
-                        <h3>Évolution des mensurations</h3>
-                        <div class="chart-container">
-                            📊 Graphiques d'évolution des mensurations
-                        </div>
-                    </div>
-                    <div id="measurements-list"></div>
-                </div>`,
-            
-            exercises: () => `
-                <div id="screen-exercises" class="screen active">
-                    <div class="header">
-                        <button class="btn btn-small btn-secondary" onclick="actions.showSettings()">← Retour</button>
-                        <h1>Exercices</h1>
-                        <div></div>
-                    </div>
-                    <div class="card">
-                        <h3 id="exercise-form-title">Nouvel exercice</h3>
-                        <div class="input-group">
-                            <label>Nom de l'exercice</label>
-                            <input type="text" id="exercise-name" class="input" placeholder="Ex: Développé couché">
-                        </div>
-                        <div class="input-group">
-                            <label>Catégorie</label>
-                            <select id="exercise-category" class="select">
-                                <option value="strength">Renforcement</option>
-                                <option value="warmup">Échauffement</option>
-                            </select>
-                        </div>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="exercise-unilateral" class="checkbox">
-                            <label for="exercise-unilateral">Exercice unilatéral</label>
-                        </div>
-                        <div class="input-group">
-                            <label>Mode d'exécution</label>
-                            <select id="exercise-mode" class="select" onchange="toggleExerciseMode()">
-                                <option value="reps">Répétitions</option>
-                                <option value="time">Temps</option>
-                                <option value="both">Répétitions ou Temps</option>
-                            </select>
-                        </div>
-                        <div class="input-group" id="duration-group" style="display: none;">
-                            <label>Durée par défaut (secondes)</label>
-                            <input type="number" id="exercise-duration" class="input" value="30" min="10" max="300">
-                        </div>
-                        <div class="input-group">
-                            <label>Temps de repos par défaut (secondes)</label>
-                            <input type="number" id="exercise-rest" class="input" value="90">
-                        </div>
-                        <div class="input-group">
-                            <label>Groupe musculaire</label>
-                            <select id="exercise-muscle-group" class="select">
-                                <option value="echauffement">Échauffement</option>
-                                <option value="biceps">Biceps</option>
-                                <option value="triceps">Triceps</option>
-                                <option value="epaules">Épaules</option>
-                                <option value="dos">Dos</option>
-                                <option value="pectoraux">Pectoraux</option>
-                                <option value="jambes">Jambes</option>
-                                <option value="autres">Autres</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label>Point d'ancrage</label>
-                            <select id="exercise-anchor" class="select" onchange="showExerciseExamples(this.value)">
-                                <option value="none">🏃 Sans ancrage (élastique libre)</option>
-                                <option value="door-middle">🚪 Porte - hauteur moyenne</option>
-                                <option value="door-high">🚪⬆️ Porte - position haute</option>
-                                <option value="door-low">🚪⬇️ Porte - position basse</option>
-                                <option value="floor">🦵 Sol/Pieds (marcher dessus)</option>
-                                <option value="body">🔄 Corps (élastique autour)</option>
-                                <option value="external">🌳 Ancrage extérieur</option>
-                            </select>
-                            <div id="exercise-examples" style="margin-top: 8px; padding: 8px; background: var(--background); border-radius: 6px; font-size: 12px; color: var(--text-secondary); display: none;">
-                                <strong>Exemples d'exercices :</strong>
-                                <div id="examples-list"></div>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary btn-full" onclick="actions.saveExercise()" id="save-exercise-btn">
-                            ➕ Ajouter l'exercice
-                        </button>
-                        <button class="btn btn-secondary btn-full" onclick="actions.loadPredefinedExercises()" id="load-predefined-btn">
-                            📚 Charger les exercices SmartWorkout
-                        </button>
-                        <button class="btn btn-secondary btn-full" onclick="actions.cancelExerciseEdit()" id="cancel-exercise-btn" style="display: none;">
-                            ❌ Annuler
-                        </button>
-                    </div>
-                    <div class="card">
-                        <h3>Mes exercices</h3>
-                        <div id="exercises-list"></div>
-                    </div>
-                </div>`,
-            
-            templates: () => `
-                <div id="screen-templates" class="screen active">
-                    <div class="header">
-                        <button class="btn btn-small btn-secondary" onclick="actions.showSettings()">← Retour</button>
-                        <h1>Modèles</h1>
-                        <div></div>
-                    </div>
-                    <div class="card">
-                        <h3>Nouveau modèle</h3>
-                        <div class="input-group">
-                            <label>Nom du modèle</label>
-                            <input type="text" id="template-name" class="input" placeholder="Ex: Push Day">
-                        </div>
-                        <div class="input-group">
-                            <label>Exercices</label>
-                            <div id="template-exercises-checkboxes"></div>
-                        </div>
-                        <button class="btn btn-primary btn-full" onclick="actions.saveTemplate()">
-                            ➕ Créer le modèle
-                        </button>
-                    </div>
-                    <div class="card">
-                        <h3>Mes modèles</h3>
-                        <div id="templates-list"></div>
-                    </div>
-                </div>`,
-            
-            settings: () => `
-                <div id="screen-settings" class="screen active">
-                    <div class="header">
-                        <button class="btn btn-small btn-secondary" onclick="actions.showScreen('dashboard')">← Retour</button>
-                        <h1>Paramètres</h1>
-                        <div></div>
-                    </div>
-                    <div class="card">
-                        <h3>Apparence</h3>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="dark-theme" class="checkbox" onchange="actions.toggleTheme()">
-                            <label for="dark-theme">Thème sombre</label>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3>Données</h3>
-                        <button class="btn btn-secondary btn-full" onclick="actions.exportData()">
-                            📤 Exporter les données
-                        </button>
-                        <button class="btn btn-secondary btn-full" onclick="actions.showImportModal()">
-                            📥 Importer les données
-                        </button>
-                        <button class="btn btn-danger btn-full" onclick="actions.clearAllData()">
-                            🗑️ Effacer toutes les données
-                        </button>
-                    </div>
-                    <div class="card">
-                        <h3>Gestion</h3>
-                        <button class="btn btn-secondary btn-full" onclick="actions.showScreen('exercises')">
-                            💪 Gérer les exercices
-                        </button>
-                        <button class="btn btn-secondary btn-full" onclick="actions.showScreen('templates')">
-                            📋 Gérer les modèles
-                        </button>
-                    </div>
-                </div>`,
-            
-            'manual-entry': () => `
-                <div id="screen-manual-entry" class="screen active">
-                    <div class="header">
-                        <button class="btn btn-small btn-secondary" onclick="actions.showScreen('preparation')">← Retour</button>
-                        <h1>Saisie Manuelle</h1>
-                        <div></div>
-                    </div>
-                    <div id="manual-entry-content"></div>
-                </div>`
-        };
-
-        const loadedScreens = new Set(['dashboard']);
-        const screenLoadPromises = new Map();
-
-        function loadScreen(screenName) {
-            if (loadedScreens.has(screenName)) {
-                return Promise.resolve();
-            }
-        
-            // Éviter les chargements multiples simultanés
-            if (screenLoadPromises.has(screenName)) {
-                return screenLoadPromises.get(screenName);
-            }
-        
-            const promise = new Promise((resolve) => {
-                // Simuler un petit délai pour le lazy loading
-                setTimeout(() => {
-                    const container = document.getElementById('dynamic-screens');
-                    const template = screenTemplates[screenName];
-                    
-                    if (template) {
-                        container.innerHTML += template();
-                        loadedScreens.add(screenName);
-                        
-                        // Initialiser les fonctionnalités spécifiques à l'écran
-                        initializeScreen(screenName);
-                        
-                        console.log(`✅ Écran '${screenName}' chargé dynamiquement`);
-                    } else {
-                        console.warn(`⚠️ Aucun template trouvé pour l'écran '${screenName}'`);
-                    }
-                    
-                    screenLoadPromises.delete(screenName);
-                    resolve();
-                }, 50); // Délai de 50ms pour simuler le chargement
-            });
-        
-            screenLoadPromises.set(screenName, promise);
-            return promise;
-        }
-
-        function initializeScreen(screenName) {
-            switch(screenName) {
-                case 'preparation':
-                    // Initialiser la date de session à aujourd'hui
-                    const sessionDate = document.getElementById('session-date');
-                    if (sessionDate && !sessionDate.value) {
-                        sessionDate.value = new Date().toISOString().split('T')[0];
-                    }
-                
-                    // Initialiser la session si elle n'existe pas
-                    if (!appState.currentSession) {
-                        appState.currentSession = {
-                            date: new Date().toISOString().split('T')[0],
-                            notes: '',
-                            exercises: [],
-                            globalSettings: {
-                                restBetweenExercises: 120,
-                                restBetweenSets: 90
-                            }
-                        };
-                    }
-                
-                    // Initialiser les paramètres de repos
-                    const restBetweenExercises = document.getElementById('session-rest-between-exercises');
-                    const restBetweenSets = document.getElementById('session-rest-between-sets');
-                    if (restBetweenExercises && appState.currentSession.globalSettings) {
-                        restBetweenExercises.value = appState.currentSession.globalSettings.restBetweenExercises || 120;
-                    }
-                    if (restBetweenSets && appState.currentSession.globalSettings) {
-                        restBetweenSets.value = appState.currentSession.globalSettings.restBetweenSets || 90;
-                    }
-                
-                    // Initialiser la recherche d'exercices
-                    if (typeof actions.initializeExerciseSearch === 'function') {
-                        setTimeout(() => actions.initializeExerciseSearch(), 100);
-                    }
-                    break;
-                
-                case 'exercises':
-                    // Fonction toggleExerciseMode déjà définie globalement
-                    break;
-                
-                case 'settings':
-                    // Appliquer le thème lors du chargement des paramètres
-                    if (typeof actions.applyTheme === 'function') {
-                        actions.applyTheme();
-                    }
-                    break;
-                
-                case 'body':
-                    // Définir la date par défaut à aujourd'hui pour les mensurations
-                    const measurementDate = document.getElementById('measurement-date');
-                    if (measurementDate && !measurementDate.value) {
-                        measurementDate.value = new Date().toISOString().split('T')[0];
-                    }
-                    break;
-                
-                case 'stats':
-                    // Peupler le select des exercices par groupes
-                    const exerciseSelect = document.getElementById('stats-exercise-select');
-                    if (exerciseSelect && appState.exercises) {
-                        exerciseSelect.innerHTML = '<option value="">Choisir un exercice...</option>';
-                        const groupedExercises = {};
-                        appState.exercises.forEach(exercise => {
-                            const group = exercise.muscle_group || 'autres';
-                            if (!groupedExercises[group]) {
-                                groupedExercises[group] = [];
-                            }
-                            groupedExercises[group].push(exercise);
-                        });
-                        
-                        const groupOrder = ['echauffement', 'biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes', 'autres'];
-                        groupOrder.forEach(group => {
-                            if (groupedExercises[group] && groupedExercises[group].length > 0) {
-                                const optgroup = document.createElement('optgroup');
-                                optgroup.label = `${group.charAt(0).toUpperCase() + group.slice(1)} (${groupedExercises[group].length})`;
-                                groupedExercises[group].forEach(exercise => {
-                                    const option = document.createElement('option');
-                                    option.value = exercise.id;
-                                    const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
-                                        exercise.exercise_mode === 'both' ? '🔄' : '🔢';
-                                    option.textContent = `${modeIcon} ${exercise.name}`;
-                                    optgroup.appendChild(option);
-                                });
-                                exerciseSelect.appendChild(optgroup);
-                            }
-                        });
-                    }
-                    break;
-                
-                case 'templates':
-                    // Initialiser l'interface de création de modèles
-                    const checkboxContainer = document.getElementById('template-exercises-checkboxes');
-                    if (checkboxContainer) {
-                        checkboxContainer.innerHTML = `
-                            <div style="margin-bottom: 16px;">
-                                <button class="btn btn-secondary btn-full" onclick="actions.showExerciseSelector()" id="show-exercise-selector-btn">
-                                    ➕ Ajouter des exercices au modèle
-                                </button>
-                            </div>
-                            <div id="selected-exercises-container" style="margin: 16px 0;">
-                                <h4>Exercices sélectionnés :</h4>
-                                <div id="template-selected-exercises" style="min-height: 50px; padding: 16px; border: 2px dashed var(--border); border-radius: 8px; background: var(--background);">
-                                    <p style="text-align: center; color: var(--text-secondary);">Aucun exercice sélectionné</p>
-                                </div>
-                            </div>
-                            <div id="template-global-settings" style="margin: 16px 0; display: none;">
-                                <h4>Paramètres globaux du modèle :</h4>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                                    <div class="input-group">
-                                        <label>Repos entre exercices (secondes)</label>
-                                        <input type="number" id="template-rest-between-exercises" class="input" value="120" min="30" max="600">
-                                    </div>
-                                    <div class="input-group">
-                                        <label>Repos entre séries (secondes)</label>
-                                        <input type="number" id="template-rest-between-sets" class="input" value="90" min="30" max="300">
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    break;
-                
-            }
-        }
-        
         // === FONCTIONS UTILITAIRES DE VALIDATION ===
         const utils = {
             validateNumber(value, min = 0, max = 999) {
@@ -2664,12 +2508,10 @@
             
             // Navigation
             showScreen(screenName) {
-                // Charger l'écran si nécessaire
-                loadScreen(screenName).then(() => {
-                    appState.currentScreen = screenName;
-                    storage.save('currentScreen', screenName);
-                    render();
-                });
+                appState.currentScreen = screenName;
+                // Sauvegarder l'écran actuel
+                storage.save('currentScreen', screenName);
+                render();
             },
             
             // Fonction pour naviguer intelligemment vers la séance
