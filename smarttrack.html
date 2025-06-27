@@ -647,6 +647,75 @@
         .conditional-input.hidden {
             display: none;
         }
+
+        /* === RECHERCHE EXERCICES === */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border: 2px solid var(--primary);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .search-result-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-result-item:hover, .search-result-item.highlighted {
+            background: var(--primary);
+            color: white;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .search-result-details {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .search-history-item {
+            display: inline-block;
+            background: var(--background);
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            transition: background-color 0.2s;
+        }
+
+        .search-history-item:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .search-no-results {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
     </style>
     <script>
         // Empêcher le pull-to-refresh par défaut
@@ -755,9 +824,12 @@
             <div class="card">
                 <h3>Ajouter un exercice</h3>
                 <div class="input-group">
-                    <select id="exercise-select" class="select">
-                        <option value="">Sélectionner un exercice...</option>
-                    </select>
+                    <label>Rechercher un exercice</label>
+                    <div style="position: relative;">
+                        <input type="text" id="exercise-search" class="input" placeholder="Tapez le nom d'un exercice ou groupe musculaire..." autocomplete="off">
+                        <div id="exercise-search-results" class="search-results" style="display: none;"></div>
+                    </div>
+                    <div id="search-history" style="margin-top: 8px; display: none;"></div>
                 </div>
                 <button class="btn btn-primary btn-full" onclick="actions.addExerciseToSession()">
                     ➕ Ajouter à la séance
@@ -1127,6 +1199,17 @@
         </div>
     </div>
 
+    <!-- Modal d'édition de séance -->
+    <div id="edit-session-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3>✏️ Modifier la séance</h3>
+                <button class="close-btn" onclick="actions.closeModal('edit-session-modal')">×</button>
+            </div>
+            <div id="edit-session-content"></div>
+        </div>
+    </div>
+
     <!-- Notification -->
     <div id="notification" class="notification"></div>
 
@@ -1378,6 +1461,182 @@
                 { name: 'Kickback triceps (poulie basse)', anchor: 'door-low', unilateral: false },
                 { name: 'Kickback triceps unilatéral', anchor: 'door-low', unilateral: true }
             ]
+        };
+
+        // Base de données des synonymes pour la recherche intelligente
+        const EXERCISE_SYNONYMS = {
+            'biceps': ['bicep', 'bras', 'curl', 'flexion'],
+            'triceps': ['tricep', 'extension', 'bras'],
+            'epaules': ['épaule', 'shoulder', 'deltoide', 'deltoïde', 'lateral', 'frontal'],
+            'dos': ['back', 'tirage', 'rowing', 'pull', 'traction'],
+            'pectoraux': ['pec', 'chest', 'poitrine', 'développé', 'ecarté'],
+            'jambes': ['leg', 'cuisse', 'squat', 'fente', 'mollet'],
+            'echauffement': ['warmup', 'warm', 'prep', 'preparation', 'chauffe'],
+            'abdos': ['abdominal', 'core', 'gainage', 'planche'],
+            'cardio': ['course', 'vélo', 'rameur', 'endurance']
+        };
+
+        // Historique des recherches (stocké en localStorage)
+        let searchHistory = [];
+
+        // Fonctions de recherche intelligente
+        const smartSearch = {
+            // Fonction principale de recherche
+            search(query, exercises = appState.exercises) {
+                if (!query || query.length < 2) {
+                    return exercises;
+                }
+            
+                query = query.toLowerCase().trim();
+                this.addToHistory(query);
+            
+                const results = exercises.filter(exercise => {
+                    return this.matchExercise(exercise, query);
+                });
+            
+                // Trier les résultats par pertinence
+                return this.sortByRelevance(results, query);
+            },
+        
+            // Vérifier si un exercice correspond à la recherche
+            matchExercise(exercise, query) {
+                const searchTerms = query.split(' ').filter(term => term.length > 1);
+            
+                return searchTerms.every(term => {
+                    // Recherche dans le nom
+                    if (exercise.name.toLowerCase().includes(term)) return true;
+                    
+                    // Recherche dans le groupe musculaire
+                    if (exercise.muscle_group && exercise.muscle_group.toLowerCase().includes(term)) return true;
+                    
+                    // Recherche avec tolérance aux fautes de frappe (distance de Levenshtein simplifiée)
+                    if (this.fuzzyMatch(exercise.name.toLowerCase(), term)) return true;
+                    
+                    // Recherche dans les synonymes
+                    if (this.matchSynonyms(exercise.muscle_group, term)) return true;
+                    
+                    // Recherche dans le type d'ancrage
+                    if (exercise.anchor_point && this.matchAnchor(exercise.anchor_point, term)) return true;
+                    
+                    return false;
+                });
+            },
+        
+            // Correspondance floue pour les fautes de frappe
+            fuzzyMatch(text, term) {
+                if (term.length < 3) return false;
+            
+                // Recherche avec 1 caractère de différence maximum
+                for (let i = 0; i <= text.length - term.length; i++) {
+                    const substring = text.substring(i, i + term.length);
+                    if (this.levenshteinDistance(substring, term) <= 1) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+        
+            // Distance de Levenshtein simplifiée
+            levenshteinDistance(str1, str2) {
+                if (str1.length !== str2.length) return 999;
+                let diff = 0;
+                for (let i = 0; i < str1.length; i++) {
+                    if (str1[i] !== str2[i]) diff++;
+                }
+                return diff;
+            },
+        
+            // Correspondance avec les synonymes
+            matchSynonyms(muscleGroup, term) {
+                if (!muscleGroup || !EXERCISE_SYNONYMS[muscleGroup]) return false;
+                
+                return EXERCISE_SYNONYMS[muscleGroup].some(synonym => 
+                    synonym.toLowerCase().includes(term) || term.includes(synonym.toLowerCase())
+                );
+            },
+        
+            // Correspondance avec les points d'ancrage
+            matchAnchor(anchorPoint, term) {
+                const anchorTerms = {
+                    'door': ['porte', 'door'],
+                    'floor': ['sol', 'pied', 'floor'],
+                    'body': ['corps', 'body'],
+                    'none': ['libre', 'sans', 'none'],
+                    'external': ['extérieur', 'externe', 'external']
+                };
+                
+                for (const [anchor, terms] of Object.entries(anchorTerms)) {
+                    if (anchorPoint.includes(anchor) && terms.some(t => term.includes(t))) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+        
+            // Trier par pertinence
+            sortByRelevance(results, query) {
+                return results.sort((a, b) => {
+                    const scoreA = this.calculateRelevanceScore(a, query);
+                    const scoreB = this.calculateRelevanceScore(b, query);
+                    return scoreB - scoreA;
+                });
+            },
+        
+            // Calculer le score de pertinence
+            calculateRelevanceScore(exercise, query) {
+                let score = 0;
+                const lowerQuery = query.toLowerCase();
+                const lowerName = exercise.name.toLowerCase();
+                
+                // Correspondance exacte dans le nom = score max
+                if (lowerName.includes(lowerQuery)) score += 100;
+                
+                // Correspondance au début du nom
+                if (lowerName.startsWith(lowerQuery)) score += 50;
+                
+                // Correspondance dans le groupe musculaire
+                if (exercise.muscle_group && exercise.muscle_group.toLowerCase().includes(lowerQuery)) {
+                    score += 30;
+                }
+                
+                // Bonus pour les exercices populaires
+                const popularExercises = ['curl', 'squat', 'développé', 'tirage', 'fente'];
+                if (popularExercises.some(pop => lowerName.includes(pop))) score += 10;
+                
+                return score;
+            },
+        
+            // Ajouter à l'historique
+            addToHistory(query) {
+                // Éviter les doublons
+                searchHistory = searchHistory.filter(item => item.query !== query);
+                
+                // Ajouter en première position
+                searchHistory.unshift({
+                    query: query,
+                    timestamp: Date.now()
+                });
+                
+                // Limiter à 10 recherches
+                if (searchHistory.length > 10) {
+                    searchHistory = searchHistory.slice(0, 10);
+                }
+                
+                // Sauvegarder dans localStorage
+                storage.save('searchHistory', searchHistory);
+            },
+        
+            // Charger l'historique
+            loadHistory() {
+                searchHistory = storage.load('searchHistory', []);
+                return searchHistory;
+            },
+        
+            // Effacer l'historique
+            clearHistory() {
+                searchHistory = [];
+                storage.remove('searchHistory');
+            }
         };
 
         class ExerciseTimer {
@@ -4749,9 +5008,8 @@
         }
 
         function renderPreparation() {
-            // Remplir le select des exercices par groupes
-            const exerciseSelect = document.getElementById('exercise-select');
-            exerciseSelect.innerHTML = '<option value="">Sélectionner un exercice...</option>';
+            // Initialiser la recherche d'exercices
+            this.initializeExerciseSearch();
             
             const groupedExercises = {};
             appState.exercises.forEach(exercise => {
@@ -5314,9 +5572,14 @@
                                 <div style="margin-top: 12px;">${exercisesHtml}</div>
                             </details>
                         </div>
-                        <button class="btn btn-small btn-danger" onclick="actions.deleteSession(${session.id})" style="margin-left: 12px;">
-                            🗑️
-                        </button>
+                        <div style="display: flex; gap: 8px; margin-left: 12px;">
+                            <button class="btn btn-small btn-secondary" onclick="actions.editSession(${session.id})" title="Modifier la séance">
+                                ✏️
+                            </button>
+                            <button class="btn btn-small btn-danger" onclick="actions.deleteSession(${session.id})" title="Supprimer la séance">
+                                🗑️
+                            </button>
+                        </div>
                     </div>
                 `;
                 
@@ -6136,6 +6399,477 @@
                 render();
                 this.showNotification('Séance supprimée');
             }
+        };
+
+        // Édition des séances
+        actions.editSession = function(sessionId) {
+            const session = appState.sessions.find(s => s.id === sessionId);
+            if (!session) {
+                this.showNotification('Séance introuvable');
+                return;
+            }
+            
+            appState.editingSession = { ...session }; // Copie pour éviter les modifications directes
+            this.renderEditSessionModal();
+            document.getElementById('edit-session-modal').classList.add('active');
+        };
+
+        actions.renderEditSessionModal = function() {
+            const content = document.getElementById('edit-session-content');
+            const session = appState.editingSession;
+            
+            let exercisesHtml = '';
+            session.exercises.forEach((sessionEx, exerciseIndex) => {
+                const exercise = appState.exercises.find(e => e.id === sessionEx.exercise_id);
+                if (!exercise) return;
+                
+                let setsHtml = '';
+                sessionEx.sets.forEach((set, setIndex) => {
+                    setsHtml += this.renderEditableSet(set, exercise, exerciseIndex, setIndex);
+                });
+                
+                exercisesHtml += `
+                    <div class="card" style="margin-bottom: 16px;">
+                        <h4>${exercise.name}</h4>
+                        <div style="margin-bottom: 12px;">
+                            <button class="btn btn-small btn-secondary" onclick="actions.addSetToExercise(${exerciseIndex})">
+                                ➕ Ajouter une série
+                            </button>
+                        </div>
+                        ${setsHtml}
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = `
+                <div class="input-group">
+                    <label>Date de la séance</label>
+                    <input type="date" id="edit-session-date" class="input" value="${session.date}">
+                </div>
+                
+                <div class="input-group">
+                    <label>Notes de séance</label>
+                    <textarea id="edit-session-notes" class="textarea" placeholder="Notes optionnelles...">${session.notes || ''}</textarea>
+                </div>
+                
+                <div class="input-group" ${session.difficulty ? '' : 'style="display: none;"'}>
+                    <label>Difficulté ressentie</label>
+                    <select id="edit-session-difficulty" class="select">
+                        <option value="">Non définie</option>
+                        <option value="Facile" ${session.difficulty === 'Facile' ? 'selected' : ''}>😊 Facile</option>
+                        <option value="Normale" ${session.difficulty === 'Normale' ? 'selected' : ''}>💪 Normale</option>
+                        <option value="Difficile" ${session.difficulty === 'Difficile' ? 'selected' : ''}>🔥 Difficile</option>
+                    </select>
+                </div>
+                
+                <h3>Exercices et performances</h3>
+                ${exercisesHtml}
+                
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button class="btn btn-success" onclick="actions.saveSessionEdits()" style="flex: 1;">
+                        💾 Sauvegarder les modifications
+                    </button>
+                    <button class="btn btn-secondary" onclick="actions.cancelSessionEdit()" style="flex: 1;">
+                        ❌ Annuler
+                    </button>
+                </div>
+            `;
+        };
+
+        actions.renderEditableSet = function(set, exercise, exerciseIndex, setIndex) {
+            const setId = `exercise-${exerciseIndex}-set-${setIndex}`;
+            
+            let performanceInputs = '';
+            if (set.exercise_mode === 'time') {
+                performanceInputs = `
+                    <div class="input-group">
+                        <label>Durée (secondes)</label>
+                        <input type="number" id="${setId}-duration" class="input" value="${set.duration || 0}" min="0" max="600">
+                    </div>
+                `;
+            } else {
+                if (exercise.is_unilateral) {
+                    performanceInputs = `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="input-group">
+                                <label>Reps Gauche</label>
+                                <input type="number" id="${setId}-left-reps" class="input" value="${set.left_reps || 0}" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label>Reps Droite</label>
+                                <input type="number" id="${setId}-right-reps" class="input" value="${set.right_reps || 0}" min="0">
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    performanceInputs = `
+                        <div class="input-group">
+                            <label>Répétitions</label>
+                            <input type="number" id="${setId}-reps" class="input" value="${set.reps || 0}" min="0">
+                        </div>
+                    `;
+                }
+            }
+            
+            // Gestion de la résistance (simplifiée pour l'édition)
+            let resistanceInput = '';
+            if (exercise.exercise_type === 'elastics') {
+                const resistance = exercise.is_unilateral ? 
+                    (typeof set.total_resistance === 'object' ? 
+                        (set.total_resistance.left || 0) + (set.total_resistance.right || 0) : 
+                        (set.total_resistance || 0) * 2) :
+                    (set.total_resistance || 0);
+                
+                resistanceInput = `
+                    <div class="input-group">
+                        <label>Résistance totale (kg)</label>
+                        <input type="number" id="${setId}-resistance" class="input" value="${resistance}" min="0" step="0.5">
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="card" style="margin: 8px 0; padding: 12px; background: var(--background);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h5>Série ${setIndex + 1}</h5>
+                        <button class="btn btn-small btn-danger" onclick="actions.removeSetFromExercise(${exerciseIndex}, ${setIndex})" title="Supprimer cette série">
+                            🗑️
+                        </button>
+                    </div>
+                
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px;">
+                        ${performanceInputs}
+                        ${resistanceInput}
+                        <div class="input-group">
+                            <label>Type</label>
+                            <select id="${setId}-type" class="select">
+                                <option value="work" ${set.type === 'work' ? 'selected' : ''}>Travail</option>
+                                <option value="warmup" ${set.type === 'warmup' ? 'selected' : ''}>Échauffement</option>
+                                <option value="dropset" ${set.type === 'dropset' ? 'selected' : ''}>Dégressif</option>
+                                <option value="failure" ${set.type === 'failure' ? 'selected' : ''}>Échec</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        actions.addSetToExercise = function(exerciseIndex) {
+            const session = appState.editingSession;
+            const sessionExercise = session.exercises[exerciseIndex];
+            const exercise = appState.exercises.find(e => e.id === sessionExercise.exercise_id);
+            
+            // Créer une nouvelle série basée sur le type d'exercice
+            const newSet = {
+                type: 'work',
+                exercise_mode: exercise.exercise_mode || 'reps'
+            };
+            
+            if (exercise.is_unilateral) {
+                newSet.left_reps = 0;
+                newSet.right_reps = 0;
+            } else {
+                newSet.reps = 0;
+            }
+            
+            if (exercise.exercise_mode === 'time') {
+                newSet.duration = exercise.default_duration || 30;
+            }
+            
+            newSet.total_resistance = 0;
+            
+            sessionExercise.sets.push(newSet);
+            this.renderEditSessionModal();
+        };
+
+        actions.removeSetFromExercise = function(exerciseIndex, setIndex) {
+            if (confirm('Supprimer cette série ?')) {
+                appState.editingSession.exercises[exerciseIndex].sets.splice(setIndex, 1);
+                this.renderEditSessionModal();
+            }
+        };
+
+        actions.saveSessionEdits = function() {
+            const session = appState.editingSession;
+            
+            // Récupérer les données du formulaire
+            session.date = document.getElementById('edit-session-date').value;
+            session.notes = document.getElementById('edit-session-notes').value;
+            
+            const difficultySelect = document.getElementById('edit-session-difficulty');
+            if (difficultySelect) {
+                session.difficulty = difficultySelect.value || null;
+            }
+            
+            // Récupérer toutes les modifications de performances
+            session.exercises.forEach((sessionEx, exerciseIndex) => {
+                const exercise = appState.exercises.find(e => e.id === sessionEx.exercise_id);
+                
+                sessionEx.sets.forEach((set, setIndex) => {
+                    const setId = `exercise-${exerciseIndex}-set-${setIndex}`;
+                
+                    // Type de série
+                    const typeInput = document.getElementById(`${setId}-type`);
+                    if (typeInput) set.type = typeInput.value;
+                
+                    // Performances selon le mode
+                    if (set.exercise_mode === 'time') {
+                        const durationInput = document.getElementById(`${setId}-duration`);
+                        if (durationInput) set.duration = parseInt(durationInput.value) || 0;
+                    } else {
+                        if (exercise.is_unilateral) {
+                            const leftRepsInput = document.getElementById(`${setId}-left-reps`);
+                            const rightRepsInput = document.getElementById(`${setId}-right-reps`);
+                            if (leftRepsInput) set.left_reps = parseInt(leftRepsInput.value) || 0;
+                            if (rightRepsInput) set.right_reps = parseInt(rightRepsInput.value) || 0;
+                        } else {
+                            const repsInput = document.getElementById(`${setId}-reps`);
+                            if (repsInput) set.reps = parseInt(repsInput.value) || 0;
+                        }
+                    }
+                
+                    // Résistance
+                    const resistanceInput = document.getElementById(`${setId}-resistance`);
+                    if (resistanceInput) {
+                        const totalResistance = parseFloat(resistanceInput.value) || 0;
+                        if (exercise.is_unilateral) {
+                            // Pour les exercices unilatéraux, diviser équitablement
+                            set.total_resistance = {
+                                left: totalResistance / 2,
+                                right: totalResistance / 2
+                            };
+                        } else {
+                            set.total_resistance = totalResistance;
+                        }
+                    }
+                });
+            });
+            
+            // Sauvegarder dans l'état principal
+            const sessionIndex = appState.sessions.findIndex(s => s.id === session.id);
+            if (sessionIndex !== -1) {
+                appState.sessions[sessionIndex] = session;
+                this.saveData();
+                this.closeModal('edit-session-modal');
+                render();
+                this.showNotification('✅ Séance modifiée avec succès !');
+            }
+        };
+
+        actions.cancelSessionEdit = function() {
+            appState.editingSession = null;
+            this.closeModal('edit-session-modal');
+        };
+
+        // Initialisation de la recherche d'exercices
+        actions.initializeExerciseSearch = function() {
+            const searchInput = document.getElementById('exercise-search');
+            const resultsContainer = document.getElementById('exercise-search-results');
+            const historyContainer = document.getElementById('search-history');
+            
+            if (!searchInput) return;
+            
+            let currentSelection = -1;
+            let currentResults = [];
+            
+            // Charger l'historique
+            smartSearch.loadHistory();
+            this.updateSearchHistory();
+            
+            // Événement de saisie
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.trim();
+                currentSelection = -1;
+                
+                if (query.length < 2) {
+                    resultsContainer.style.display = 'none';
+                    historyContainer.style.display = searchHistory.length > 0 ? 'block' : 'none';
+                    return;
+                }
+                
+                historyContainer.style.display = 'none';
+                currentResults = smartSearch.search(query);
+                this.displaySearchResults(currentResults, query);
+            });
+        
+            // Événement focus - afficher l'historique
+            searchInput.addEventListener('focus', () => {
+                if (!searchInput.value && searchHistory.length > 0) {
+                    historyContainer.style.display = 'block';
+                }
+            });
+        
+            // Événement blur - masquer les résultats (avec délai pour permettre les clics)
+            searchInput.addEventListener('blur', () => {
+                setTimeout(() => {
+                    resultsContainer.style.display = 'none';
+                    historyContainer.style.display = 'none';
+                }, 200);
+            });
+        
+            // Navigation au clavier
+            searchInput.addEventListener('keydown', (e) => {
+                if (resultsContainer.style.display === 'none') return;
+                
+                switch(e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        currentSelection = Math.min(currentSelection + 1, currentResults.length - 1);
+                        this.highlightResult(currentSelection);
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        currentSelection = Math.max(currentSelection - 1, -1);
+                        this.highlightResult(currentSelection);
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (currentSelection >= 0 && currentResults[currentSelection]) {
+                            this.selectExercise(currentResults[currentSelection]);
+                        }
+                        break;
+                    case 'Escape':
+                        e.preventDefault();
+                        resultsContainer.style.display = 'none';
+                        searchInput.blur();
+                        break;
+                }
+            });
+        };
+
+        actions.displaySearchResults = function(results, query) {
+            const resultsContainer = document.getElementById('exercise-search-results');
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="search-no-results">
+                        Aucun exercice trouvé pour "${query}"
+                        <div style="margin-top: 8px; font-size: 11px;">
+                            💡 Essayez avec des mots-clés comme "biceps", "squat", "porte"...
+                        </div>
+                    </div>
+                `;
+                resultsContainer.style.display = 'block';
+                return;
+            }
+        
+            let html = '';
+            results.forEach((exercise, index) => {
+                const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
+                                 exercise.exercise_mode === 'both' ? '🔄' : '🔢';
+            
+                const anchorText = {
+                    'none': 'Sans ancrage',
+                    'door-middle': 'Porte (milieu)',
+                    'door-high': 'Porte (haut)', 
+                    'door-low': 'Porte (bas)',
+                    'floor': 'Sol/Pieds',
+                    'body': 'Corps',
+                    'external': 'Extérieur'
+                };
+            
+                html += `
+                    <div class="search-result-item" onclick="actions.selectExercise({id: ${exercise.id}, name: '${exercise.name.replace(/'/g, "\\'")}'})" data-index="${index}">
+                        <div>
+                            <div class="search-result-name">${modeIcon} ${exercise.name}</div>
+                            <div class="search-result-details">
+                                ${exercise.muscle_group} • ${exercise.is_unilateral ? 'Unilatéral' : 'Bilatéral'} • ${anchorText[exercise.anchor_point] || 'Non défini'}
+                            </div>
+                        </div>
+                        <div style="font-size: 20px;">+</div>
+                    </div>
+                `;
+            });
+        
+            resultsContainer.innerHTML = html;
+            resultsContainer.style.display = 'block';
+        };
+
+        actions.highlightResult = function(index) {
+            const items = document.querySelectorAll('.search-result-item');
+            items.forEach(item => item.classList.remove('highlighted'));
+            
+            if (index >= 0 && items[index]) {
+                items[index].classList.add('highlighted');
+                items[index].scrollIntoView({ block: 'nearest' });
+            }
+        };
+
+        actions.selectExercise = function(exercise) {
+            // Ajouter l'exercice à la session (comme avant)
+            if (!appState.currentSession) {
+                appState.currentSession = {
+                    date: new Date().toISOString().split('T')[0],
+                    notes: '',
+                    exercises: []
+                };
+            }
+        
+            // Vérifier si l'exercice n'est pas déjà dans la liste
+            const exists = appState.currentSession.exercises.find(e => e.exercise_id === exercise.id);
+            if (exists) {
+                this.showNotification('Cet exercice est déjà dans la liste');
+                return;
+            }
+        
+            const fullExercise = appState.exercises.find(e => e.id === exercise.id);
+            appState.currentSession.exercises.push({
+                exercise_id: exercise.id,
+                planned_sets: 3,
+                duration: fullExercise?.default_duration || 30,
+                sets: []
+            });
+        
+            // Réinitialiser la recherche
+            document.getElementById('exercise-search').value = '';
+            document.getElementById('exercise-search-results').style.display = 'none';
+            
+            render();
+            this.showNotification(`Exercice "${exercise.name}" ajouté !`);
+        };
+
+        actions.updateSearchHistory = function() {
+            const historyContainer = document.getElementById('search-history');
+            if (!historyContainer) return;
+            
+            if (searchHistory.length === 0) {
+                historyContainer.style.display = 'none';
+                return;
+            }
+            
+            let html = '<div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Recherches récentes :</div>';
+            searchHistory.slice(0, 5).forEach(item => {
+                html += `
+                    <span class="search-history-item" onclick="actions.useHistorySearch('${item.query}')">
+                        ${item.query}
+                    </span>
+                `;
+            });
+            
+            html += `
+                <span class="search-history-item" onclick="actions.clearSearchHistory()" style="background: var(--danger); color: white;">
+                    ✕ Effacer
+                </span>
+            `;
+            
+            historyContainer.innerHTML = html;
+        };
+
+        actions.useHistorySearch = function(query) {
+            const searchInput = document.getElementById('exercise-search');
+            if (searchInput) {
+                searchInput.value = query;
+                searchInput.focus();
+                // Déclencher la recherche
+                const event = new Event('input', { bubbles: true });
+                searchInput.dispatchEvent(event);
+            }
+        };
+
+        actions.clearSearchHistory = function() {
+            smartSearch.clearHistory();
+            this.updateSearchHistory();
+            this.showNotification('Historique de recherche effacé');
         };
 
         // === INITIALISATION ===
