@@ -1486,14 +1486,28 @@
                 if (!query || query.length < 2) {
                     return exercises;
                 }
-            
                 query = query.toLowerCase().trim();
+                
+                // Vérifier le cache
+                const cacheKey = { query, exercisesCount: exercises.length };
+                const cached = smartCache.get('exerciseSearch', cacheKey);
+                if (cached) {
+                    console.log('🔍 Résultats de recherche récupérés du cache');
+                    this.addToHistory(query);
+                    return cached;
+                }
+                
+                console.log('🔍 Recherche d\'exercices...');
                 this.addToHistory(query);
             
                 const results = exercises.filter(exercise => {
                     return this.matchExercise(exercise, query);
                 });
             
+                // Mettre en cache les résultats
+                const sortedResults = this.sortByRelevance(results, query);
+                return smartCache.set('exerciseSearch', cacheKey, sortedResults);
+
                 // Trier les résultats par pertinence
                 return this.sortByRelevance(results, query);
             },
@@ -2451,6 +2465,71 @@
             }
         };
 
+        // === CACHE INTELLIGENT ===
+        const smartCache = {
+            // Cache pour les calculs coûteux
+            cache: new Map(),
+            
+            // Générer une clé de cache
+            generateKey(type, params) {
+                return `${type}_${JSON.stringify(params)}`;
+            },
+        
+            // Récupérer du cache
+            get(type, params) {
+                const key = this.generateKey(type, params);
+                return this.cache.get(key);
+            },
+        
+            // Stocker en cache
+            set(type, params, value) {
+                const key = this.generateKey(type, params);
+                this.cache.set(key, value);
+                
+                // Limiter la taille du cache (garder les 100 entrées les plus récentes)
+                if (this.cache.size > 100) {
+                    const firstKey = this.cache.keys().next().value;
+                    this.cache.delete(firstKey);
+                }
+                
+                return value;
+            },
+        
+            // Invalider le cache pour un type donné
+            invalidate(type) {
+                const keysToDelete = [];
+                for (let key of this.cache.keys()) {
+                    if (key.startsWith(type + '_')) {
+                        keysToDelete.push(key);
+                    }
+                }
+                keysToDelete.forEach(key => this.cache.delete(key));
+            },
+        
+            // Nettoyer tout le cache
+            clear() {
+                this.cache.clear();
+            }
+        };
+
+        // === DEBOUNCING POUR OPTIMISER LES APPELS FRÉQUENTS ===
+        const debounceManager = {
+            timers: new Map(),
+        
+            debounce(func, delay = 300, key = 'default') {
+                if (this.timers.has(key)) {
+                    clearTimeout(this.timers.get(key));
+                }
+            
+                const timer = setTimeout(() => {
+                    func();
+                    this.timers.delete(key);
+                }, delay);
+            
+                this.timers.set(key, timer);
+            }
+        };
+
         // === FONCTIONS UTILITAIRES DE VALIDATION ===
         const utils = {
             validateNumber(value, min = 0, max = 999) {
@@ -2498,6 +2577,10 @@
             },
             
             saveData() {
+                // Invalider les caches liés aux données modifiées
+                smartCache.invalidate('generalStats');
+                smartCache.invalidate('calendar');
+                smartCache.invalidate('exerciseSearch');
                 storage.save('exercises', appState.exercises);
                 storage.save('sessions', appState.sessions);
                 storage.save('templates', appState.templates);
@@ -4419,9 +4502,18 @@
 
             // Calculer les statistiques générales
             calculateGeneralStats() {
+                // Vérifier le cache d'abord
+                const cacheKey = { sessionsCount: appState.sessions.length, today: new Date().toISOString().split('T')[0] };
+                const cached = smartCache.get('generalStats', cacheKey);
+                if (cached) {
+                    console.log('📊 Stats générales récupérées du cache');
+                    return cached;
+                }
+                
+                console.log('📊 Calcul des stats générales...');
                 const now = new Date();
                 const today = now.toISOString().split('T')[0];
-            
+
                 // Calculer le début de la semaine (lundi)
                 const startOfWeek = new Date(now);
                 const dayOfWeek = now.getDay();
@@ -4429,21 +4521,21 @@
                 startOfWeek.setDate(now.getDate() - daysToMonday);
                 startOfWeek.setHours(0, 0, 0, 0);
                 const weekStart = startOfWeek.toISOString().split('T')[0];
-                
+
                 // Calculer le début du mois
                 const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
                 const monthStart = startOfMonth.toISOString().split('T')[0];
-                
+
                 // Statistiques cette semaine
-                const sessionsThisWeek = appState.sessions.filter(session => 
+                const sessionsThisWeek = appState.sessions.filter(session =>
                     session.date >= weekStart && session.date <= today
                 );
-            
+
                 // Statistiques ce mois
-                const sessionsThisMonth = appState.sessions.filter(session => 
+                const sessionsThisMonth = appState.sessions.filter(session =>
                     session.date >= monthStart && session.date <= today
                 );
-                
+
                 // Calculer le volume total cette semaine
                 let totalVolumeThisWeek = 0;
                 sessionsThisWeek.forEach(session => {
@@ -4453,7 +4545,6 @@
                             if (set.type === 'work' && set.exercise_mode !== 'time') {
                                 let resistance = 0;
                                 let reps = 0;
-                        
                                 if (exercise && exercise.is_unilateral) {
                                     if (typeof set.total_resistance === 'object' && set.total_resistance.left !== undefined) {
                                         resistance = (set.total_resistance.left || 0) + (set.total_resistance.right || 0);
@@ -4465,13 +4556,12 @@
                                     resistance = set.total_resistance || 0;
                                     reps = set.reps || 0;
                                 }
-                        
                                 totalVolumeThisWeek += (resistance * reps);
                             }
                         });
                     });
                 });
-            
+
                 // Calculer le volume total ce mois
                 let totalVolumeThisMonth = 0;
                 sessionsThisMonth.forEach(session => {
@@ -4481,7 +4571,6 @@
                             if (set.type === 'work' && set.exercise_mode !== 'time') {
                                 let resistance = 0;
                                 let reps = 0;
-                        
                                 if (exercise && exercise.is_unilateral) {
                                     if (typeof set.total_resistance === 'object' && set.total_resistance.left !== undefined) {
                                         resistance = (set.total_resistance.left || 0) + (set.total_resistance.right || 0);
@@ -4493,13 +4582,12 @@
                                     resistance = set.total_resistance || 0;
                                     reps = set.reps || 0;
                                 }
-                        
                                 totalVolumeThisMonth += (resistance * reps);
                             }
                         });
                     });
                 });
-            
+
                 // Calculer la durée moyenne des séances
                 let totalDuration = 0;
                 let sessionsWithDuration = 0;
@@ -4509,14 +4597,13 @@
                         sessionsWithDuration++;
                     }
                 });
-                const averageSessionDuration = sessionsWithDuration > 0 ? 
+                const averageSessionDuration = sessionsWithDuration > 0 ?
                     Math.round(totalDuration / sessionsWithDuration / 1000 / 60) : 0;
-            
+
                 // Récupérer les records récents (derniers 30 jours)
                 const thirtyDaysAgo = new Date();
                 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
                 const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0];
-            
                 const recentRecords = [];
                 Object.keys(appState.records).forEach(exerciseId => {
                     const exercise = appState.exercises.find(e => e.id == exerciseId);
@@ -4532,19 +4619,22 @@
                         });
                     }
                 });
-            
+
                 // Trier les records récents par date (plus récent en premier)
                 recentRecords.sort((a, b) => b.date.localeCompare(a.date));
-                
-                return {
+
+                const result = {
                     sessionsThisWeek: sessionsThisWeek.length,
                     totalVolumeThisWeek: Math.round(totalVolumeThisWeek),
                     sessionsThisMonth: sessionsThisMonth.length,
                     totalVolumeThisMonth: Math.round(totalVolumeThisMonth),
                     averageSessionDuration,
                     totalSessions: appState.sessions.length,
-                    recentRecords: recentRecords.slice(0, 10) // Limiter à 10 records récents
+                    recentRecords: recentRecords.slice(0, 10)
                 };
+
+                // Mettre en cache et retourner
+                return smartCache.set('generalStats', cacheKey, result);
             },
             
             // Modals
@@ -4908,6 +4998,21 @@
                 `;
             }
   
+            // Vérifier le cache du calendrier
+            const calendarCacheKey = { 
+                month: currentMonth, 
+                year: currentYear, 
+                sessionsCount: appState.sessions.length 
+            };
+            const cachedCalendar = smartCache.get('calendar', calendarCacheKey);
+
+            if (cachedCalendar) {
+                console.log('📅 Calendrier récupéré du cache');
+                calendarGrid.innerHTML = cachedCalendar;
+                return;
+            }
+
+            console.log('📅 Génération du calendrier...');
             // Créer le calendrier
             calendarGrid.innerHTML = '';
             calendarGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
@@ -4977,6 +5082,9 @@
                 calendarGrid.appendChild(dayElement);
             }
   
+            // Mettre en cache le HTML du calendrier
+            smartCache.set('calendar', calendarCacheKey, calendarGrid.innerHTML);
+
             // Statistiques
             document.getElementById('total-sessions').textContent = appState.sessions.length;
             
@@ -6676,7 +6784,7 @@
             smartSearch.loadHistory();
             this.updateSearchHistory();
             
-            // Événement de saisie
+            // Événement de saisie avec debouncing
             searchInput.addEventListener('input', (e) => {
                 const query = e.target.value.trim();
                 currentSelection = -1;
@@ -6688,8 +6796,12 @@
                 }
                 
                 historyContainer.style.display = 'none';
-                currentResults = smartSearch.search(query);
-                this.displaySearchResults(currentResults, query);
+                
+                // Utiliser le debouncing pour éviter trop d'appels
+                debounceManager.debounce(() => {
+                    currentResults = smartSearch.search(query);
+                    this.displaySearchResults(currentResults, query);
+                }, 200, 'search');
             });
         
             // Événement focus - afficher l'historique
