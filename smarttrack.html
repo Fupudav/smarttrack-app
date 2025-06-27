@@ -178,9 +178,25 @@
             padding: 10px 0;
             display: flex;
             justify-content: space-around;
-            position: sticky;
+            position: fixed;
             bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
             z-index: 100;
+            box-shadow: 0 -2px 10px var(--shadow);
+        }
+
+        /* Compensation pour le menu fixe en bas */
+        .screen {
+            padding-bottom: 80px; /* Espace pour le menu de navigation */
+        }
+
+        /* Ajuster le padding existant */
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 80px;
         }
 
         .nav-item {
@@ -658,10 +674,17 @@
             border: 2px solid var(--primary);
             border-top: none;
             border-radius: 0 0 12px 12px;
-            max-height: 300px;
+            max-height: 60vh;
             overflow-y: auto;
             z-index: 1000;
             box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        /* Ajustement responsive pour petits écrans */
+        @media (max-width: 768px) {
+            .search-results {
+                max-height: 50vh;
+            }
         }
 
         .search-result-item {
@@ -2373,6 +2396,34 @@
             }
         };
 
+        // === GESTION DE L'HISTORIQUE DE NAVIGATION ===
+        let navigationHistory = ['dashboard'];
+        let isNavigatingBack = false;
+
+        // Fonction pour ajouter un écran à l'historique
+        function addToNavigationHistory(screenName) {
+            if (!isNavigatingBack && screenName !== navigationHistory[navigationHistory.length - 1]) {
+                navigationHistory.push(screenName);
+                // Limiter l'historique à 10 écrans pour éviter les fuites mémoire
+                if (navigationHistory.length > 10) {
+                    navigationHistory = navigationHistory.slice(-10);
+                }
+            }
+            isNavigatingBack = false;
+        }
+
+        // Fonction pour naviguer vers l'écran précédent
+        function navigateBack() {
+            if (navigationHistory.length > 1) {
+                navigationHistory.pop(); // Enlever l'écran actuel
+                const previousScreen = navigationHistory[navigationHistory.length - 1];
+                isNavigatingBack = true;
+                actions.showScreen(previousScreen);
+                return true; // Navigation interne effectuée
+            }
+            return false; // Pas d'écran précédent, laisser le comportement par défaut
+        }
+
         // === STOCKAGE LOCAL AVEC VERSIONING ===
         const STORAGE_VERSION = 'v1';
         const STORAGE_PREFIX = `smarttrack_${STORAGE_VERSION}_`;
@@ -2573,6 +2624,9 @@
             
             // Navigation
             showScreen(screenName) {
+                // Ajouter à l'historique de navigation
+                addToNavigationHistory(screenName);
+            
                 appState.currentScreen = screenName;
                 // Sauvegarder l'écran actuel
                 storage.save('currentScreen', screenName);
@@ -6959,6 +7013,37 @@
         document.addEventListener('DOMContentLoaded', () => {
             console.log('SmartTrack - Initialisation de l\'application');
             actions.init();
+        
+            // === GESTION DU BOUTON RETOUR ===
+            window.addEventListener('popstate', (event) => {
+                event.preventDefault();
+                const canGoBack = navigateBack();
+                if (!canGoBack) {
+                    // Si on est sur le dashboard et qu'il n'y a nulle part où aller, on peut quitter
+                    if (appState.currentScreen === 'dashboard') {
+                        // Demander confirmation avant de quitter
+                        if (confirm('Voulez-vous vraiment quitter SmartTrack ?')) {
+                            window.history.back();
+                        } else {
+                            // Rester dans l'application
+                            window.history.pushState(null, '', window.location.href);
+                        }
+                    }
+                }
+            });
+
+            // Intercepter aussi la tentative de fermeture/actualisation
+            window.addEventListener('beforeunload', (event) => {
+                // Ne demander confirmation que s'il y a une séance en cours
+                if (appState.liveSession || appState.manualSession) {
+                    event.preventDefault();
+                    event.returnValue = 'Une séance est en cours. Êtes-vous sûr de vouloir quitter ?';
+                    return event.returnValue;
+                }
+            });
+
+            // Ajouter un état initial à l'historique du navigateur
+            window.history.pushState(null, '', window.location.href);
         });
 
         // Fermeture des modals en cliquant à l'extérieur
