@@ -910,6 +910,140 @@
             color: var(--text-secondary);
         }
 
+        /* === SYSTÈME DE TAGS AVANCÉ === */
+        .tag-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .tag-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tag-item.selected {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .tag-item.removable {
+            padding-right: 4px;
+        }
+
+        .tag-item .remove-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 10px;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 4px;
+            opacity: 0.7;
+        }
+
+        .tag-item .remove-btn:hover {
+            opacity: 1;
+        }
+
+        /* Couleurs des tags */
+        .tag-blue { background: #007AFF20; color: #007AFF; border: 1px solid #007AFF40; }
+        .tag-green { background: #34C75920; color: #34C759; border: 1px solid #34C75940; }
+        .tag-orange { background: #FF950020; color: #FF9500; border: 1px solid #FF950040; }
+        .tag-purple { background: #AF52DE20; color: #AF52DE; border: 1px solid #AF52DE40; }
+        .tag-red { background: #FF3B3020; color: #FF3B30; border: 1px solid #FF3B3040; }
+        .tag-gray { background: #8E8E9320; color: #8E8E93; border: 1px solid #8E8E9340; }
+
+        /* Filtres avancés */
+        .advanced-filters-panel {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 300px; }
+        }
+
+        .filter-combination {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            padding: 8px;
+            background: var(--surface);
+            border-radius: 6px;
+        }
+
+        .filter-operator {
+            background: var(--primary);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .tag-suggestion {
+            display: inline-block;
+            padding: 4px 8px;
+            margin: 2px;
+            background: var(--background);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-suggestion:hover {
+            background: var(--primary);
+            color: white;
+            border-style: solid;
+        }
+
+        .tags-input-container {
+            position: relative;
+        }
+
+        .tags-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .tag-suggestion-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tag-suggestion-item:hover {
+            background: var(--background);
+        }
+
+        .tag-suggestion-item:last-child {
+            border-bottom: none;
+        }
+
         /* === NOTIFICATION === */
         .notification {
             position: fixed;
@@ -1604,10 +1738,73 @@
                             <option value="external">🌳 Extérieur</option>
                         </select>
                     </div>
+                    <div class="input-group">
+                        <label>Tags</label>
+                        <select id="tags-filter" class="select" onchange="actions.filterExerciseDatabase()">
+                            <option value="">Tous les tags</option>
+                            <option value="isolation">🎯 Isolation</option>
+                            <option value="composé">🏗️ Composé</option>
+                            <option value="force">💪 Force</option>
+                            <option value="masse">📈 Masse</option>
+                            <option value="endurance">⏱️ Endurance</option>
+                            <option value="fonctionnel">🔄 Fonctionnel</option>
+                            <option value="équilibre">⚖️ Équilibre</option>
+                            <option value="posture">🧘 Posture</option>
+                            <option value="cardio">❤️ Cardio</option>
+                            <option value="gainage">🛡️ Gainage</option>
+                        </select>
+                    </div>
                 </div>
                 <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
                     <button class="btn btn-small btn-secondary" onclick="actions.clearExerciseFilters()">🗑️ Effacer filtres</button>
                     <button class="btn btn-small btn-primary" onclick="actions.showExerciseFavorites()">⭐ Favoris</button>
+                    <button class="btn btn-small btn-secondary" onclick="actions.showTagsManager()">🏷️ Gérer tags</button>
+                    <button class="btn btn-small btn-secondary" onclick="actions.toggleAdvancedFilters()" id="advanced-filters-btn">
+                        🔧 Filtres avancés
+                    </button>
+                </div>
+
+                <!-- Filtres avancés (masqués par défaut) -->
+                <div id="advanced-filters" style="display: none; margin-top: 16px; padding: 16px; background: var(--background); border-radius: 8px; border: 1px solid var(--border);">
+                    <h5 style="margin-bottom: 12px; color: var(--primary);">🔧 Filtrage avancé</h5>
+                    
+                    <div class="input-group">
+                        <label>Tags personnalisés</label>
+                        <div id="custom-tags-container" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 30px; padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface);">
+                            <span style="color: var(--text-secondary); font-size: 12px;" id="no-custom-tags">Aucun tag personnalisé</span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-top: 12px;">
+                        <div class="input-group">
+                            <label>Durée par défaut</label>
+                            <select id="duration-filter" class="select" onchange="actions.filterExerciseDatabase()">
+                                <option value="">Toutes durées</option>
+                                <option value="short">⚡ Court (≤30s)</option>
+                                <option value="medium">🕐 Moyen (30-60s)</option>
+                                <option value="long">⏰ Long (>60s)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Mode d'exécution</label>
+                            <select id="mode-filter" class="select" onchange="actions.filterExerciseDatabase()">
+                                <option value="">Tous modes</option>
+                                <option value="reps">🔢 Répétitions</option>
+                                <option value="time">⏱️ Temps</option>
+                                <option value="both">🔄 Mixte</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Type d'exercice</label>
+                            <select id="type-filter" class="select" onchange="actions.filterExerciseDatabase()">
+                                <option value="">Tous types</option>
+                                <option value="unilateral">🔄 Unilatéral</option>
+                                <option value="bilateral">⚖️ Bilatéral</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1787,6 +1984,58 @@
                         ✅ Utiliser cette image
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Gestionnaire de Tags -->
+    <div id="tags-manager-modal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3>🏷️ Gestionnaire de Tags</h3>
+                <button class="close-btn" onclick="actions.closeModal('tags-manager-modal')">×</button>
+            </div>
+        
+            <div style="margin-bottom: 24px;">
+                <h4>➕ Créer un nouveau tag</h4>
+                <div style="display: flex; gap: 12px; align-items: end;">
+                    <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                        <label>Nom du tag</label>
+                        <input type="text" id="new-tag-name" class="input" placeholder="Ex: explosivité, récupération..." maxlength="20">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>Couleur</label>
+                        <select id="new-tag-color" class="select">
+                            <option value="blue">🔵 Bleu</option>
+                            <option value="green">🟢 Vert</option>
+                            <option value="orange">🟠 Orange</option>
+                            <option value="purple">🟣 Violet</option>
+                            <option value="red">🔴 Rouge</option>
+                            <option value="gray">⚫ Gris</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="actions.createCustomTag()">Créer</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <h4>🏷️ Tags personnalisés existants</h4>
+                <div id="existing-custom-tags" style="min-height: 60px; padding: 16px; background: var(--background); border-radius: 8px; border: 1px solid var(--border);">
+                    <p style="color: var(--text-secondary); text-align: center; margin: 0;">Aucun tag personnalisé créé</p>
+                </div>
+            </div>
+
+            <div>
+                <h4>📊 Statistiques d'utilisation</h4>
+                <div id="tags-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
+                    <!-- Stats générées dynamiquement -->
+                </div>
+            </div>
+
+            <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);">
+                <button class="btn btn-secondary" onclick="actions.exportTags()">📤 Exporter tags</button>
+                <button class="btn btn-secondary" onclick="actions.importTags()" style="margin-left: 8px;">📥 Importer tags</button>
+                <button class="btn btn-danger" onclick="actions.resetAllTags()" style="float: right;">🗑️ Réinitialiser tout</button>
             </div>
         </div>
     </div>
@@ -3173,6 +3422,7 @@
             init() {
                 this.loadData();
                 this.initializeMediaSystem();
+                this.initializeTagsSystem();
                 this.applyTheme();
                 this.setCurrentDate();
                 // Restaurer l'écran sauvegardé ou dashboard par défaut
@@ -3192,6 +3442,9 @@
                 appState.mediaLibrary = storage.load('mediaLibrary', []);
                 appState.exerciseFavorites = storage.load('exerciseFavorites', []);
                 console.log('📚 Médias chargés:', appState.mediaLibrary?.length || 0, 'images');
+                appState.customTags = storage.load('customTags', []);
+                appState.exerciseTags = storage.load('exerciseTags', {});
+                console.log('🏷️ Tags chargés:', appState.customTags?.length || 0, 'tags personnalisés');
             },
             
             saveData() {
@@ -3207,6 +3460,8 @@
                 storage.save('settings', appState.settings);
                 storage.save('mediaLibrary', appState.mediaLibrary || []);
                 storage.save('exerciseFavorites', appState.exerciseFavorites || []);
+                storage.save('customTags', appState.customTags || []);
+                storage.save('exerciseTags', appState.exerciseTags || {});
             },
             
             // Navigation
@@ -5950,7 +6205,11 @@
                 const muscleFilter = document.getElementById('muscle-filter')?.value || '';
                 const difficultyFilter = document.getElementById('difficulty-filter')?.value || '';
                 const anchorFilter = document.getElementById('anchor-filter')?.value || '';
-            
+                const tagsFilter = document.getElementById('tags-filter')?.value || '';
+                const durationFilter = document.getElementById('duration-filter')?.value || '';
+                const modeFilter = document.getElementById('mode-filter')?.value || '';
+                const typeFilter = document.getElementById('type-filter')?.value || '';
+                
                 // Obtenir la liste des exercices étendus avec les données d'entraînement
                 const extendedExercises = this.getExtendedExerciseDatabase();
                 
@@ -5961,7 +6220,7 @@
                         exercise.name.toLowerCase().includes(searchTerm) ||
                         exercise.muscle_group.toLowerCase().includes(searchTerm) ||
                         (exercise.tags && exercise.tags.some(tag => tag.toLowerCase().includes(searchTerm)));
-                
+                    
                     // Filtre groupe musculaire
                     const matchesMuscle = !muscleFilter || exercise.muscle_group === muscleFilter;
                     
@@ -5973,10 +6232,53 @@
                         (anchorFilter === 'door' && exercise.anchor_point.includes('door')) ||
                         exercise.anchor_point === anchorFilter;
                     
-                    return matchesSearch && matchesMuscle && matchesDifficulty && matchesAnchor;
+                    // Filtre tags prédéfinis
+                    const matchesTags = !tagsFilter || (exercise.tags && exercise.tags.includes(tagsFilter));
+                    
+                    // Filtre durée par défaut
+                    const matchesDuration = !durationFilter || this.matchesDurationFilter(exercise, durationFilter);
+                    
+                    // Filtre mode d'exécution
+                    const matchesMode = !modeFilter || exercise.exercise_mode === modeFilter;
+                    
+                    // Filtre type (unilatéral/bilatéral)
+                    const matchesType = !typeFilter || this.matchesTypeFilter(exercise, typeFilter);
+                    
+                    // Filtre tags personnalisés actifs
+                    const matchesCustomTags = this.matchesCustomTagsFilter(exercise);
+                    
+                    return matchesSearch && matchesMuscle && matchesDifficulty && matchesAnchor && 
+                        matchesTags && matchesDuration && matchesMode && matchesType && matchesCustomTags;
                 });
-            
+                
                 this.renderExerciseResults(filteredExercises);
+            },
+
+            matchesDurationFilter(exercise, filter) {
+                const duration = exercise.default_duration || 30;
+                switch(filter) {
+                    case 'short': return duration <= 30;
+                    case 'medium': return duration > 30 && duration <= 60;
+                    case 'long': return duration > 60;
+                    default: return true;
+                }
+            },
+
+            matchesTypeFilter(exercise, filter) {
+                switch(filter) {
+                    case 'unilateral': return exercise.is_unilateral;
+                    case 'bilateral': return !exercise.is_unilateral;
+                    default: return true;
+                }
+            },
+
+            matchesCustomTagsFilter(exercise) {
+                if (!appState.activeCustomTagFilters || appState.activeCustomTagFilters.length === 0) {
+                    return true;
+                }
+                
+                const exerciseTags = appState.exerciseTags?.[exercise.id] || [];
+                return appState.activeCustomTagFilters.every(tag => exerciseTags.includes(tag));
             },
 
             getExtendedExerciseDatabase() {
@@ -6629,7 +6931,25 @@
                 document.getElementById('muscle-filter').value = '';
                 document.getElementById('difficulty-filter').value = '';
                 document.getElementById('anchor-filter').value = '';
+                document.getElementById('tags-filter').value = '';
+                
+                // Nettoyer les filtres avancés
+                if (document.getElementById('duration-filter')) {
+                    document.getElementById('duration-filter').value = '';
+                }
+                if (document.getElementById('mode-filter')) {
+                    document.getElementById('mode-filter').value = '';
+                }
+                if (document.getElementById('type-filter')) {
+                    document.getElementById('type-filter').value = '';
+                }
+                
+                // Nettoyer les tags personnalisés actifs
+                appState.activeCustomTagFilters = [];
+                this.updateCustomTagFiltersDisplay();
+                
                 this.filterExerciseDatabase();
+                this.showNotification('🗑️ Tous les filtres effacés');
             },
 
             showExerciseFavorites() {
@@ -7337,6 +7657,271 @@
                 
                 document.getElementById('media-count').textContent = count;
                 document.getElementById('media-total-size').textContent = Math.round(totalSize / 1024);
+            },
+
+            // === SYSTÈME DE TAGS AVANCÉ ===
+            initializeTagsSystem() {
+                if (!appState.customTags) {
+                    appState.customTags = [];
+                }
+                if (!appState.exerciseTags) {
+                    appState.exerciseTags = {}; // exerciseId -> [tags]
+                }
+            },
+
+            toggleAdvancedFilters() {
+                const panel = document.getElementById('advanced-filters');
+                const btn = document.getElementById('advanced-filters-btn');
+                
+                if (panel.style.display === 'none') {
+                    panel.style.display = 'block';
+                    btn.innerHTML = '🔧 Masquer filtres';
+                    this.loadCustomTagsInFilters();
+                } else {
+                    panel.style.display = 'none';
+                    btn.innerHTML = '🔧 Filtres avancés';
+                }
+            },
+
+            loadCustomTagsInFilters() {
+                const container = document.getElementById('custom-tags-container');
+                const noTagsSpan = document.getElementById('no-custom-tags');
+                
+                if (!appState.customTags || appState.customTags.length === 0) {
+                    noTagsSpan.style.display = 'block';
+                    return;
+                }
+                
+                noTagsSpan.style.display = 'none';
+                
+                // Ajouter les tags personnalisés comme filtres cliquables
+                appState.customTags.forEach(tag => {
+                    const tagElement = document.createElement('span');
+                    tagElement.className = `tag-item tag-${tag.color}`;
+                    tagElement.textContent = tag.name;
+                    tagElement.onclick = () => this.toggleCustomTagFilter(tag.name);
+                    container.appendChild(tagElement);
+                });
+            },
+
+            toggleCustomTagFilter(tagName) {
+                if (!appState.activeCustomTagFilters) {
+                    appState.activeCustomTagFilters = [];
+                }
+                
+                const index = appState.activeCustomTagFilters.indexOf(tagName);
+                if (index === -1) {
+                    appState.activeCustomTagFilters.push(tagName);
+                } else {
+                    appState.activeCustomTagFilters.splice(index, 1);
+                }
+                
+                // Mettre à jour l'affichage des tags actifs
+                this.updateCustomTagFiltersDisplay();
+                this.filterExerciseDatabase();
+            },
+
+            updateCustomTagFiltersDisplay() {
+                const container = document.getElementById('custom-tags-container');
+                const tags = container.querySelectorAll('.tag-item');
+                
+                tags.forEach(tag => {
+                    if (appState.activeCustomTagFilters && appState.activeCustomTagFilters.includes(tag.textContent)) {
+                        tag.classList.add('selected');
+                    } else {
+                        tag.classList.remove('selected');
+                    }
+                });
+            },
+
+            showTagsManager() {
+                this.loadTagsManager();
+                document.getElementById('tags-manager-modal').classList.add('active');
+            },
+
+            loadTagsManager() {
+                this.renderExistingCustomTags();
+                this.renderTagsStats();
+            },
+
+            renderExistingCustomTags() {
+                const container = document.getElementById('existing-custom-tags');
+                
+                if (!appState.customTags || appState.customTags.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin: 0;">Aucun tag personnalisé créé</p>';
+                    return;
+                }
+                
+                container.innerHTML = appState.customTags.map(tag => `
+                    <div class="tag-item tag-${tag.color} removable" style="margin: 4px;">
+                        ${tag.name}
+                        <button class="remove-btn" onclick="actions.deleteCustomTag('${tag.name}')" title="Supprimer ce tag">×</button>
+                    </div>
+                `).join('');
+            },
+
+            renderTagsStats() {
+                const container = document.getElementById('tags-stats');
+                
+                // Calculer les statistiques d'utilisation des tags
+                const tagUsage = {};
+                
+                // Tags par défaut
+                appState.exercises.forEach(exercise => {
+                    const enrichedData = this.getExerciseEnrichedData(exercise);
+                    enrichedData.tags.forEach(tag => {
+                        tagUsage[tag] = (tagUsage[tag] || 0) + 1;
+                    });
+                });
+                
+                // Tags personnalisés
+                Object.values(appState.exerciseTags || {}).forEach(tags => {
+                    tags.forEach(tag => {
+                        tagUsage[tag] = (tagUsage[tag] || 0) + 1;
+                    });
+                });
+                
+                // Trier par utilisation
+                const sortedTags = Object.entries(tagUsage)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 8); // Top 8
+                
+                container.innerHTML = sortedTags.map(([tag, count]) => `
+                    <div style="background: var(--surface); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border);">
+                        <div style="font-size: 18px; font-weight: bold; color: var(--primary);">${count}</div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">${tag}</div>
+                    </div>
+                `).join('');
+            },
+
+            createCustomTag() {
+                const nameInput = document.getElementById('new-tag-name');
+                const colorSelect = document.getElementById('new-tag-color');
+                
+                const name = nameInput.value.trim().toLowerCase();
+                const color = colorSelect.value;
+                
+                if (!name) {
+                    this.showNotification('❌ Nom du tag requis');
+                    return;
+                }
+                
+                if (name.length > 20) {
+                    this.showNotification('❌ Nom trop long (max 20 caractères)');
+                    return;
+                }
+                
+                // Vérifier les doublons
+                if (appState.customTags.some(tag => tag.name === name)) {
+                    this.showNotification('❌ Ce tag existe déjà');
+                    return;
+                }
+                
+                // Ajouter le nouveau tag
+                appState.customTags.push({
+                    name,
+                    color,
+                    createdAt: new Date().toISOString()
+                });
+                
+                // Nettoyer le formulaire
+                nameInput.value = '';
+                colorSelect.value = 'blue';
+                
+                // Rafraîchir l'affichage
+                this.renderExistingCustomTags();
+                this.renderTagsStats();
+                this.saveData();
+                
+                this.showNotification(`✅ Tag "${name}" créé !`);
+            },
+
+            deleteCustomTag(tagName) {
+                if (!confirm(`Supprimer le tag "${tagName}" ? Il sera retiré de tous les exercices.`)) {
+                    return;
+                }
+                
+                // Supprimer le tag de la liste
+                appState.customTags = appState.customTags.filter(tag => tag.name !== tagName);
+                
+                // Supprimer le tag de tous les exercices
+                Object.keys(appState.exerciseTags || {}).forEach(exerciseId => {
+                    appState.exerciseTags[exerciseId] = appState.exerciseTags[exerciseId].filter(tag => tag !== tagName);
+                });
+                
+                // Rafraîchir l'affichage
+                this.renderExistingCustomTags();
+                this.renderTagsStats();
+                this.saveData();
+                
+                this.showNotification(`🗑️ Tag "${tagName}" supprimé`);
+            },
+
+            exportTags() {
+                const data = {
+                    customTags: appState.customTags || [],
+                    exerciseTags: appState.exerciseTags || {},
+                    exportDate: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `smarttrack_tags_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                this.showNotification('📤 Tags exportés !');
+            },
+
+            importTags() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            
+                            if (data.customTags) {
+                                appState.customTags = [...(appState.customTags || []), ...data.customTags];
+                            }
+                            
+                            if (data.exerciseTags) {
+                                appState.exerciseTags = {...(appState.exerciseTags || {}), ...data.exerciseTags};
+                            }
+                            
+                            this.loadTagsManager();
+                            this.saveData();
+                            this.showNotification('📥 Tags importés !');
+                        } catch (error) {
+                            this.showNotification('❌ Fichier invalide');
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            },
+
+            resetAllTags() {
+                if (!confirm('⚠️ Supprimer TOUS les tags personnalisés ? Cette action est irréversible !')) {
+                    return;
+                }
+                
+                appState.customTags = [];
+                appState.exerciseTags = {};
+                
+                this.loadTagsManager();
+                this.saveData();
+                this.showNotification('🗑️ Tous les tags supprimés');
             }
         };
 
@@ -8646,7 +9231,7 @@
                 });
                 
                 // Afficher par groupes
-                const groupOrder = ['biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes', 'autres'];
+                const groupOrder = ['echauffement', 'biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes', 'autres'];
                 groupOrder.forEach(group => {
                     if (groupedExercises[group] && groupedExercises[group].length > 0) {
                         const groupTitle = document.createElement('h4');
