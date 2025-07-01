@@ -3189,6 +3189,9 @@
                 appState.records = storage.load('records', {});
                 appState.settings = storage.load('settings', { theme: 'light' });
                 appState.currentScreen = storage.load('currentScreen', 'dashboard');
+                appState.mediaLibrary = storage.load('mediaLibrary', []);
+                appState.exerciseFavorites = storage.load('exerciseFavorites', []);
+                console.log('📚 Médias chargés:', appState.mediaLibrary?.length || 0, 'images');
             },
             
             saveData() {
@@ -3303,10 +3306,14 @@
             saveExerciseMedia(exercise) {
                 if (!appState.currentExerciseMedia) return;
 
+                console.log('💾 Sauvegarde média pour:', exercise.name);
+                console.log('📊 Données média:', appState.currentExerciseMedia);
+
                 if (appState.currentExerciseMedia.libraryId) {
                     // Image vient de la bibliothèque
                     exercise.mediaId = appState.currentExerciseMedia.libraryId;
-                } else if (appState.currentExerciseMedia.file) {
+                    console.log('✅ MediaId assigné depuis bibliothèque:', exercise.mediaId);
+                } else if (appState.currentExerciseMedia.file || appState.currentExerciseMedia.preview) {
                     // Nouvelle image uploadée
                     if (!appState.mediaLibrary) {
                         appState.mediaLibrary = [];
@@ -3318,7 +3325,7 @@
                         name: appState.currentExerciseMedia.name,
                         preview: appState.currentExerciseMedia.preview,
                         size: appState.currentExerciseMedia.size,
-                        type: appState.currentExerciseMedia.file.type,
+                        type: appState.currentExerciseMedia.file?.type || 'image/webp',
                         dateAdded: new Date().toISOString(),
                         category: exercise.muscle_group,
                         tags: [exercise.muscle_group, exercise.name.toLowerCase()]
@@ -3326,6 +3333,9 @@
 
                     appState.mediaLibrary.push(media);
                     exercise.mediaId = media.id;
+                    
+                    console.log('✅ Nouveau média ajouté:', media);
+                    console.log('✅ MediaId assigné:', exercise.mediaId);
                 }
 
                 // Nettoyer les données temporaires
@@ -3414,6 +3424,19 @@
                 }
             },
             
+            debugExerciseMedia(exercise) {
+                console.log('🔍 Debug exercice:', exercise.name);
+                console.log('📊 MediaId:', exercise.mediaId);
+                console.log('📚 MediaLibrary:', appState.mediaLibrary);
+                
+                if (exercise.mediaId && appState.mediaLibrary) {
+                    const media = appState.mediaLibrary.find(m => m.id === exercise.mediaId);
+                    console.log('🖼️ Media trouvé:', media);
+                }
+                
+                return this.getExerciseMediaDisplay(exercise);
+            },
+
             getExerciseMediaDisplay(exercise) {
                 // Vérifier s'il y a une image dans la bibliothèque
                 if (exercise.mediaId && appState.mediaLibrary) {
@@ -3462,7 +3485,7 @@
                         <div style="font-size: 12px; color: var(--text-secondary);">
                             Bientôt disponible • Format WebP optimisé
                         </div>
-                        <button class="btn btn-small btn-secondary" onclick="actions.editExercise(${exercise.id}); actions.closeModal('exercise-details-modal')" style="margin-top: 12px; max-width: 150px; margin-left: auto; margin-right: auto;">
+                        <button class="btn btn-small btn-secondary" onclick="actions.goToEditExercise(${exercise.id})" style="margin-top: 12px; max-width: 150px; margin-left: auto; margin-right: auto;">
                             📷 Ajouter une image
                         </button>
                     </div>
@@ -6679,7 +6702,7 @@
                         </button>
                     
                         <div class="image-placeholder">
-                            ${this.getExerciseMediaDisplay(exercise)}
+                            ${this.debugExerciseMedia(exercise)}
                         </div>
 
                         <div style="margin-top: 16px;">
@@ -6817,7 +6840,7 @@
                             <button class="btn btn-secondary" onclick="actions.viewExerciseHistory(${exercise.id})">
                                 📊 Voir l'historique
                             </button>
-                            <button class="btn btn-secondary" onclick="actions.editExercise(${exercise.id}); actions.closeModal('exercise-details-modal')">
+                            <button class="btn btn-secondary" onclick="actions.goToEditExercise(${exercise.id})">
                                 ✏️ Modifier l'exercice
                             </button>
                             <button class="btn btn-secondary" onclick="actions.shareExercise(${exercise.id})">
@@ -6962,6 +6985,16 @@
                 } else {
                     this.showNotification('Partage non supporté sur cet appareil');
                 }
+            },
+
+            goToEditExercise(exerciseId) {
+                this.closeModal('exercise-details-modal');
+                this.showScreen('exercises');
+                
+                // Attendre que l'écran soit chargé puis éditer
+                setTimeout(() => {
+                    this.editExercise(exerciseId);
+                }, 100);
             },
 
             // === GESTION DES MÉDIAS ===
