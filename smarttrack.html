@@ -1123,6 +1123,66 @@
             <div id="manual-entry-content"></div>
         </div>
 
+        <!-- Écran 10: Base de Données Exercices -->
+        <div id="screen-exercise-database" class="screen">
+            <div class="header">
+                <h1>💪 Base d'Exercices</h1>
+                <button class="btn btn-small btn-secondary" onclick="actions.toggleExerciseView()">
+                    <span id="view-toggle-btn">🔤 Vue Liste</span>
+                </button>
+            </div>
+        
+            <!-- Filtres et recherche -->
+            <div class="card">
+                <div class="input-group">
+                    <label>🔍 Rechercher un exercice</label>
+                    <input type="text" id="exercise-db-search" class="input" placeholder="Nom d'exercice, groupe musculaire..." onkeyup="actions.filterExerciseDatabase()">
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 12px;">
+                    <div class="input-group">
+                        <label>Groupe musculaire</label>
+                        <select id="muscle-filter" class="select" onchange="actions.filterExerciseDatabase()">
+                            <option value="">Tous les groupes</option>
+                            <option value="echauffement">🔥 Échauffement</option>
+                            <option value="biceps">💪 Biceps</option>
+                            <option value="triceps">🔧 Triceps</option>
+                            <option value="epaules">🤲 Épaules</option>
+                            <option value="dos">🗂️ Dos</option>
+                            <option value="pectoraux">🦆 Pectoraux</option>
+                            <option value="jambes">🦵 Jambes</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Niveau de difficulté</label>
+                        <select id="difficulty-filter" class="select" onchange="actions.filterExerciseDatabase()">
+                            <option value="">Tous niveaux</option>
+                            <option value="beginner">🟢 Débutant</option>
+                            <option value="intermediate">🟡 Intermédiaire</option>
+                            <option value="advanced">🔴 Confirmé</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Point d'ancrage</label>
+                        <select id="anchor-filter" class="select" onchange="actions.filterExerciseDatabase()">
+                            <option value="">Tous ancrages</option>
+                            <option value="none">🏃 Sans ancrage</option>
+                            <option value="door">🚪 Porte</option>
+                            <option value="floor">🦵 Sol/Pieds</option>
+                            <option value="body">🔄 Corps</option>
+                            <option value="external">🌳 Extérieur</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-small btn-secondary" onclick="actions.clearExerciseFilters()">🗑️ Effacer filtres</button>
+                    <button class="btn btn-small btn-primary" onclick="actions.showExerciseFavorites()">⭐ Favoris</button>
+                </div>
+            </div>
+
+            <!-- Résultats -->
+            <div id="exercise-database-results"></div>
+        </div>
+
         <!-- Navigation -->
         <nav class="nav-bar">
             <div class="nav-item active" onclick="actions.showScreen('dashboard')">
@@ -1132,6 +1192,10 @@
             <div class="nav-item" onclick="actions.goToSession()">
                 <div>⚡</div>
                 <div>Séance</div>
+            </div>
+            <div class="nav-item" onclick="actions.showScreen('exercise-database')">
+                <div>💪</div>
+                <div>Exercices</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('history')">
                 <div>📊</div>
@@ -4977,21 +5041,308 @@
                 const notification = document.getElementById('notification');
                 notification.textContent = message;
                 notification.classList.add('show');
-                
                 // Style spécial pendant les séances live
                 if (appState.liveSession) {
                     notification.classList.add('live-session');
                 } else {
                     notification.classList.remove('live-session');
                 }
-                
                 // Réduire le temps pour les notifications de records pendant les séances
                 const duration = appState.liveSession ? 1500 : 3000;
-                
                 setTimeout(() => {
                     notification.classList.remove('show');
                     notification.classList.remove('live-session');
                 }, duration);
+            },
+
+            // === GESTION BASE DE DONNÉES EXERCICES ===
+            toggleExerciseView() {
+                appState.exerciseView = appState.exerciseView === 'grid' ? 'list' : 'grid';
+                const toggleBtn = document.getElementById('view-toggle-btn');
+                if (toggleBtn) {
+                    toggleBtn.innerHTML = appState.exerciseView === 'grid' ? '📋 Vue Grille' : '🔤 Vue Liste';
+                }
+                this.filterExerciseDatabase();
+            },
+
+            filterExerciseDatabase() {
+                const searchTerm = document.getElementById('exercise-db-search')?.value.toLowerCase() || '';
+                const muscleFilter = document.getElementById('muscle-filter')?.value || '';
+                const difficultyFilter = document.getElementById('difficulty-filter')?.value || '';
+                const anchorFilter = document.getElementById('anchor-filter')?.value || '';
+            
+                // Obtenir la liste des exercices étendus avec les données d'entraînement
+                const extendedExercises = this.getExtendedExerciseDatabase();
+                
+                // Filtrer les exercices
+                let filteredExercises = extendedExercises.filter(exercise => {
+                    // Filtre de recherche textuelle
+                    const matchesSearch = !searchTerm || 
+                        exercise.name.toLowerCase().includes(searchTerm) ||
+                        exercise.muscle_group.toLowerCase().includes(searchTerm) ||
+                        (exercise.tags && exercise.tags.some(tag => tag.toLowerCase().includes(searchTerm)));
+                
+                    // Filtre groupe musculaire
+                    const matchesMuscle = !muscleFilter || exercise.muscle_group === muscleFilter;
+                    
+                    // Filtre difficulté
+                    const matchesDifficulty = !difficultyFilter || exercise.difficulty === difficultyFilter;
+                    
+                    // Filtre ancrage
+                    const matchesAnchor = !anchorFilter || 
+                        (anchorFilter === 'door' && exercise.anchor_point.includes('door')) ||
+                        exercise.anchor_point === anchorFilter;
+                    
+                    return matchesSearch && matchesMuscle && matchesDifficulty && matchesAnchor;
+                });
+            
+                this.renderExerciseResults(filteredExercises);
+            },
+
+            getExtendedExerciseDatabase() {
+                // Combiner exercices personnalisés avec données enrichies
+                return appState.exercises.map(exercise => {
+                    const enrichedData = this.getExerciseEnrichedData(exercise);
+                    return {
+                        ...exercise,
+                        ...enrichedData
+                    };
+                });
+            },
+
+            getExerciseEnrichedData(exercise) {
+                // Base de données enrichie avec descriptions, instructions, etc.
+                const enrichedDatabase = {
+                    // BICEPS
+                    'Curl biceps': {
+                        difficulty: 'beginner',
+                        description: 'Exercice de base pour développer la masse et la force des biceps avec élastique.',
+                        instructions: [
+                            'Placez-vous debout, pieds écartés largeur d\'épaules',
+                            'Tenez l\'élastique avec prise en supination (paumes vers le haut)',
+                            'Gardez les coudes près du corps, contractez les biceps',
+                            'Montez lentement en fléchissant les avant-bras',
+                            'Revenez lentement à la position de départ'
+                        ],
+                        tips: [
+                            'Gardez le dos droit pendant tout le mouvement',
+                            'Contrôlez la descente pour maximiser l\'efficacité',
+                            'Ne balancez pas le corps pour tricher'
+                        ],
+                        commonMistakes: [
+                            'Utiliser l\'élan du corps',
+                            'Lâcher trop vite en phase excentrique',
+                            'Écarter les coudes du corps'
+                        ],
+                        muscleGroups: {
+                            primary: ['Biceps brachial', 'Biceps court'],
+                            secondary: ['Avant-bras', 'Brachial antérieur']
+                        },
+                        tags: ['isolation', 'bras', 'force', 'mass']
+                    },
+                    
+                    'Squat': {
+                        difficulty: 'beginner',
+                        description: 'Exercice fondamental pour les jambes, travaille quadriceps, fessiers et stabilité.',
+                        instructions: [
+                            'Placez l\'élastique sous vos pieds, tenez les extrémités',
+                            'Pieds écartés largeur d\'épaules, orteils légèrement vers l\'extérieur',
+                            'Descendez en poussant les hanches vers l\'arrière',
+                            'Gardez le dos droit, poitrine sortie',
+                            'Remontez en poussant sur les talons'
+                        ],
+                        tips: [
+                            'Gardez les genoux dans l\'axe des orteils',
+                            'Descendez jusqu\'à ce que les cuisses soient parallèles au sol',
+                            'Respirez en descendant, expirez en montant'
+                        ],
+                        commonMistakes: [
+                            'Genoux qui rentrent vers l\'intérieur',
+                            'Dos rond',
+                            'Ne pas descendre assez bas'
+                        ],
+                        muscleGroups: {
+                            primary: ['Quadriceps', 'Fessiers'],
+                            secondary: ['Ischio-jambiers', 'Mollets', 'Core']
+                        },
+                        tags: ['composé', 'jambes', 'force', 'fonctionnel']
+                    },
+                    
+                    'Face Pull': {
+                        difficulty: 'intermediate',
+                        description: 'Excellent exercice pour les deltoïdes postérieurs et la posture.',
+                        instructions: [
+                            'Ancrez l\'élastique à hauteur d\'épaules',
+                            'Tirez vers votre visage en écartant les coudes',
+                            'Contractez les omoplates en fin de mouvement',
+                            'Revenez lentement à la position de départ'
+                        ],
+                        tips: [
+                            'Gardez les coudes hauts pendant le mouvement',
+                            'Contractez bien les muscles du haut du dos',
+                            'Mouvement lent et contrôlé'
+                        ],
+                        commonMistakes: [
+                            'Coudes qui descendent',
+                            'Tirer trop vers le bas',
+                            'Mouvement trop rapide'
+                        ],
+                        muscleGroups: {
+                            primary: ['Deltoïdes postérieurs', 'Rhomboïdes'],
+                            secondary: ['Trapèzes moyens', 'Triceps']
+                        },
+                        tags: ['isolation', 'epaules', 'posture', 'prevention']
+                    }
+                };
+            
+                // Données par défaut pour exercices non référencés
+                const defaultData = {
+                    difficulty: 'beginner',
+                    description: 'Exercice avec élastiques SmartWorkout. Consultez votre guide pour plus de détails.',
+                    instructions: [
+                        'Préparez votre élastique selon la résistance désirée',
+                        'Adoptez une position stable et sécurisée',
+                        'Effectuez le mouvement de manière contrôlée',
+                        'Respirez correctement pendant l\'exercice'
+                    ],
+                    tips: [
+                        'Commencez avec une résistance légère',
+                        'Augmentez progressivement la difficulté',
+                        'Maintenez une bonne technique'
+                    ],
+                    commonMistakes: [
+                        'Résistance trop importante au début',
+                        'Mouvements trop rapides',
+                        'Mauvaise position de départ'
+                    ],
+                    muscleGroups: {
+                        primary: [exercise.muscle_group || 'Non défini'],
+                        secondary: []
+                    },
+                    tags: ['elastique', exercise.muscle_group || 'general']
+                };
+            
+                return enrichedDatabase[exercise.name] || defaultData;
+            },
+
+            renderExerciseResults(exercises) {
+                const resultsContainer = document.getElementById('exercise-database-results');
+            
+                if (exercises.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div class="card">
+                            <p style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                                🔍 Aucun exercice trouvé avec ces critères
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+            
+                // En-tête avec compteur
+                let html = `
+                    <div class="card">
+                        <h3>📋 ${exercises.length} exercice${exercises.length > 1 ? 's' : ''} trouvé${exercises.length > 1 ? 's' : ''}</h3>
+                    </div>
+                `;
+            
+                if (appState.exerciseView === 'grid') {
+                    // Vue grille - cartes compactes
+                    html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">';
+                    
+                    exercises.forEach(exercise => {
+                        const difficultyColor = {
+                            'beginner': '#34C759',
+                            'intermediate': '#FF9500', 
+                            'advanced': '#FF3B30'
+                        };
+                    
+                        const difficultyLabel = {
+                            'beginner': '🟢 Débutant',
+                            'intermediate': '🟡 Intermédiaire',
+                            'advanced': '🔴 Confirmé'
+                        };
+                    
+                        html += `
+                            <div class="card" style="cursor: pointer; transition: transform 0.2s;" onclick="actions.showExerciseDetails(${exercise.id})">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                    <h4 style="margin: 0; flex: 1;">${exercise.name}</h4>
+                                    <span style="background: ${difficultyColor[exercise.difficulty]}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; white-space: nowrap;">
+                                        ${difficultyLabel[exercise.difficulty]}
+                                    </span>
+                                </div>
+                            
+                                <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 8px;">
+                                    ${exercise.description.substring(0, 100)}...
+                                </div>
+                            
+                                <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px;">
+                                    <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 8px; font-size: 11px;">
+                                        ${exercise.muscle_group}
+                                    </span>
+                                    ${exercise.is_unilateral ? '<span style="background: var(--warning); color: white; padding: 2px 6px; border-radius: 8px; font-size: 11px;">Unilatéral</span>' : ''}
+                                    ${exercise.tags.slice(0, 2).map(tag => 
+                                        `<span style="background: var(--border); color: var(--text-secondary); padding: 2px 6px; border-radius: 8px; font-size: 11px;">${tag}</span>`
+                                    ).join('')}
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-secondary);">
+                                    <span>👆 Cliquer pour détails</span>
+                                    <span>${exercise.muscleGroups.primary.length} muscles ciblés</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                } else {
+                    // Vue liste - format compact
+                    exercises.forEach(exercise => {
+                        const difficultyIcon = {
+                            'beginner': '🟢',
+                            'intermediate': '🟡',
+                            'advanced': '🔴'
+                        };
+                    
+                        html += `
+                            <div class="exercise-item" style="cursor: pointer;" onclick="actions.showExerciseDetails(${exercise.id})">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                        <strong>${exercise.name}</strong>
+                                        <span>${difficultyIcon[exercise.difficulty]}</span>
+                                        <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 8px; font-size: 10px;">
+                                            ${exercise.muscle_group}
+                                        </span>
+                                    </div>
+                                    <div style="font-size: 14px; color: var(--text-secondary);">
+                                        ${exercise.description.substring(0, 120)}...
+                                    </div>
+                                </div>
+                                <div style="font-size: 20px; color: var(--primary);">👆</div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                resultsContainer.innerHTML = html;
+            },
+
+            clearExerciseFilters() {
+                document.getElementById('exercise-db-search').value = '';
+                document.getElementById('muscle-filter').value = '';
+                document.getElementById('difficulty-filter').value = '';
+                document.getElementById('anchor-filter').value = '';
+                this.filterExerciseDatabase();
+            },
+
+            showExerciseFavorites() {
+                // TODO: Implémenter dans la prochaine version
+                this.showNotification('Fonctionnalité des favoris en cours de développement');
+            },
+
+            showExerciseDetails(exerciseId) {
+                // TODO: Implémenter dans la prochaine étape
+                this.showNotification('Détails de l\'exercice - Prochaine étape !');
             }
         };
 
@@ -5034,6 +5385,10 @@
                 case 'body':
                     renderBody();
                     document.querySelectorAll('.nav-item')[4].classList.add('active');
+                    break;
+                case 'exercise-database':
+                    renderExerciseDatabase();
+                    document.querySelectorAll('.nav-item')[2].classList.add('active');
                     break;
                 case 'exercises':
                     renderExercises();
@@ -6254,6 +6609,15 @@
             } else {
                 measurementsList.innerHTML = '<div class="card"><p style="text-align: center; color: var(--text-secondary);">Aucune mensuration enregistrée</p></div>';
             }
+        }
+
+        function renderExerciseDatabase() {
+            // Initialiser la vue si elle n'existe pas
+            if (!appState.exerciseView) {
+                appState.exerciseView = 'grid'; // 'grid' ou 'list'
+            }
+            
+            actions.filterExerciseDatabase();
         }
 
         function renderExercises() {
