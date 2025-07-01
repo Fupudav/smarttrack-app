@@ -592,6 +592,155 @@
             margin-top: 4px;
         }
 
+        /* === SYSTÈME DE MÉDIAS === */
+        .media-library-modal .modal-content {
+            max-width: 900px;
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .media-item {
+            position: relative;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--surface);
+        }
+
+        .media-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .media-item.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .media-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .media-item-info {
+            padding: 8px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .media-item-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .media-item-size {
+            color: var(--text-secondary);
+            font-size: 10px;
+        }
+
+        .media-upload-zone {
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            margin: 16px 0;
+            background: var(--background);
+            transition: all 0.2s;
+        }
+
+        .media-upload-zone.dragover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.02);
+        }
+
+        .media-optimization-info {
+            background: var(--background);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            border-left: 4px solid var(--warning);
+        }
+
+        .media-optimization-info h5 {
+            color: var(--warning);
+            margin-bottom: 8px;
+        }
+
+        .compression-preview {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+            padding: 16px;
+            background: var(--surface);
+            border-radius: 8px;
+        }
+
+        .compression-before, .compression-after {
+            text-align: center;
+        }
+
+        .compression-stats {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .lazy-image {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .lazy-image.loaded {
+            opacity: 1;
+        }
+
+        .media-search {
+            position: sticky;
+            top: 0;
+            background: var(--surface);
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            z-index: 10;
+        }
+
+        .media-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .media-category-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .media-category-btn:hover,
+        .media-category-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
         /* === LIVE SESSION === */
         .session-timer {
             text-align: center;
@@ -1200,6 +1349,41 @@
                     </div>
                 </div>
                 
+                <div class="input-group">
+                    <label>Image/GIF de l'exercice</label>
+                    <div id="exercise-media-container" style="border: 2px dashed var(--border); border-radius: 8px; padding: 16px; text-align: center;">
+                        <div id="exercise-media-preview" style="display: none;">
+                            <img id="exercise-media-img" style="max-width: 100%; max-height: 200px; border-radius: 8px; margin-bottom: 8px;">
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+                                <span id="media-file-info"></span>
+                            </div>
+                            <button type="button" class="btn btn-small btn-danger" onclick="actions.removeExerciseMedia()">
+                                🗑️ Supprimer l'image
+                            </button>
+                        </div>
+                        <div id="exercise-media-upload" style="display: block;">
+                            <input type="file" id="exercise-media-input" accept="image/*,video/*" style="display: none;" onchange="actions.handleExerciseMediaUpload(event)">
+                            <div style="margin-bottom: 12px;">
+                                <div style="font-size: 48px; margin-bottom: 8px;">🎥</div>
+                                <div style="font-size: 14px; margin-bottom: 8px;">Ajoutez une image ou GIF pour cet exercice</div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">
+                                    Formats supportés : JPG, PNG, WebP, GIF<br>
+                                    Taille recommandée : 400x300px • Max : 50KB
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('exercise-media-input').click()">
+                                📁 Choisir un fichier
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="actions.showMediaLibrary()" style="margin-left: 8px;">
+                                🖼️ Bibliothèque
+                            </button>
+                        </div>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+                        💡 <strong>Conseil :</strong> Les images améliorent considérablement la compréhension des mouvements
+                    </div>
+                </div>
+
                 <button class="btn btn-primary btn-full" onclick="actions.saveExercise()" id="save-exercise-btn">
                     ➕ Ajouter l'exercice
                 </button>
@@ -1461,6 +1645,75 @@
                 <button class="close-btn" onclick="actions.closeModal('exercise-details-modal')">×</button>
             </div>
             <div id="exercise-details-content"></div>
+        </div>
+    </div>
+
+    <!-- Modal Bibliothèque de Médias -->
+    <div id="media-library-modal" class="modal">
+        <div class="modal-content media-library-modal">
+            <div class="modal-header">
+                <h3>🖼️ Bibliothèque de Médias</h3>
+                <button class="close-btn" onclick="actions.closeModal('media-library-modal')">×</button>
+            </div>
+            
+            <div class="media-search">
+                <div class="input-group">
+                    <input type="text" id="media-search-input" class="input" placeholder="🔍 Rechercher une image..." onkeyup="actions.filterMediaLibrary()">
+                </div>
+            
+                <div class="media-categories">
+                    <button class="media-category-btn active" onclick="actions.filterMediaByCategory('all')">Tout</button>
+                    <button class="media-category-btn" onclick="actions.filterMediaByCategory('echauffement')">Échauffement</button>
+                    <button class="media-category-btn" onclick="actions.filterMediaByCategory('biceps')">Biceps</button>
+                    <button class="media-category-btn" onclick="actions.filterMediaByCategory('triceps')">Triceps</button>
+                    <button class="media-category-btn" onclick="actions.filterMediaByCategory('epaules')">Épaules</button>
+                    <button class="media-category-btn" onclick="actions.filterMediaByCategory('dos')">Dos</button>
+                    <button class="media-category-btn" onclick="actions.filterMediaByCategory('pectoraux')">Pectoraux</button>
+                    <button class="media-category-btn" onclick="actions.filterMediaByCategory('jambes')">Jambes</button>
+                </div>
+            </div>
+
+            <div id="media-upload-section">
+                <div class="media-upload-zone" id="media-drop-zone">
+                    <div style="font-size: 48px; margin-bottom: 12px;">⬆️</div>
+                    <div style="font-size: 16px; font-weight: 500; margin-bottom: 8px;">
+                        Glissez-déposez vos images ici
+                    </div>
+                    <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                        ou cliquez pour parcourir
+                    </div>
+                    <input type="file" id="media-library-input" multiple accept="image/*,video/*" style="display: none;" onchange="actions.handleMediaLibraryUpload(event)">
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('media-library-input').click()">
+                        📁 Sélectionner des fichiers
+                    </button>
+                </div>
+            
+                <div class="media-optimization-info">
+                    <h5>⚡ Optimisation automatique</h5>
+                    <div style="font-size: 14px;">
+                        • Compression intelligente pour respecter la limite de 50KB<br>
+                        • Redimensionnement automatique vers 400x300px<br>
+                        • Conversion vers WebP pour une meilleure performance<br>
+                        • Fallback JPG pour la compatibilité
+                    </div>
+                </div>
+            </div>
+
+            <div id="media-library-content">
+                <div id="media-grid" class="media-grid"></div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                <div style="font-size: 14px; color: var(--text-secondary);">
+                    <span id="media-count">0</span> image(s) • <span id="media-total-size">0</span> KB utilisés
+                </div>
+                <div>
+                    <button class="btn btn-secondary" onclick="actions.closeModal('media-library-modal')">Annuler</button>
+                    <button class="btn btn-primary" onclick="actions.selectMediaFromLibrary()" id="select-media-btn" disabled>
+                        ✅ Utiliser cette image
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2845,6 +3098,7 @@
             // Initialisation
             init() {
                 this.loadData();
+                this.initializeMediaSystem();
                 this.applyTheme();
                 this.setCurrentDate();
                 // Restaurer l'écran sauvegardé ou dashboard par défaut
@@ -2874,6 +3128,8 @@
                 storage.save('measurements', appState.measurements);
                 storage.save('records', appState.records);
                 storage.save('settings', appState.settings);
+                storage.save('mediaLibrary', appState.mediaLibrary || []);
+                storage.save('exerciseFavorites', appState.exerciseFavorites || []);
             },
             
             // Navigation
@@ -2916,14 +3172,14 @@
                 const category = document.getElementById('exercise-category')?.value || 'strength';
                 const mode = document.getElementById('exercise-mode')?.value || 'reps';
                 const duration = utils.validateNumber(document.getElementById('exercise-duration').value, 10, 300);
-                
+
                 if (!name) {
                     this.showNotification('Le nom de l\'exercice est requis (1-50 caractères)');
                     return;
                 }
-                
+
                 if (appState.editingExercise) {
-                    // Modification
+                    // Modification d'exercice existant
                     const exercise = appState.exercises.find(e => e.id === appState.editingExercise);
                     exercise.name = name;
                     exercise.is_unilateral = isUnilateral;
@@ -2934,9 +3190,15 @@
                     exercise.exercise_type = category === 'warmup' ? 'bodyweight' : 'elastics';
                     exercise.anchor_point = document.getElementById('exercise-anchor')?.value || 'none';
                     exercise.muscle_group = document.getElementById('exercise-muscle-group')?.value || 'autres';
+                    
+                    // Gérer les médias
+                    if (appState.currentExerciseMedia) {
+                        this.saveExerciseMedia(exercise);
+                    }
+                    
                     appState.editingExercise = null;
                 } else {
-                    // Création
+                    // Création d'un nouvel exercice
                     const newExercise = {
                         id: Date.now(),
                         name,
@@ -2949,13 +3211,51 @@
                         anchor_point: document.getElementById('exercise-anchor')?.value || 'none',
                         muscle_group: document.getElementById('exercise-muscle-group')?.value || 'autres'
                     };
+
+                    // Gérer les médias pour le nouvel exercice
+                    if (appState.currentExerciseMedia) {
+                        
+                    }
+
                     appState.exercises.push(newExercise);
                 }
-                
+
                 this.clearExerciseForm();
                 this.saveData();
                 render();
                 this.showNotification('Exercice sauvegardé !');
+            },
+
+            saveExerciseMedia(exercise) {
+                if (!appState.currentExerciseMedia) return;
+
+                if (appState.currentExerciseMedia.libraryId) {
+                    // Image vient de la bibliothèque
+                    exercise.mediaId = appState.currentExerciseMedia.libraryId;
+                } else if (appState.currentExerciseMedia.file) {
+                    // Nouvelle image uploadée
+                    if (!appState.mediaLibrary) {
+                        appState.mediaLibrary = [];
+                    }
+
+                    // Ajouter à la bibliothèque avec catégorie
+                    const media = {
+                        id: Date.now() + Math.random(),
+                        name: appState.currentExerciseMedia.name,
+                        preview: appState.currentExerciseMedia.preview,
+                        size: appState.currentExerciseMedia.size,
+                        type: appState.currentExerciseMedia.file.type,
+                        dateAdded: new Date().toISOString(),
+                        category: exercise.muscle_group,
+                        tags: [exercise.muscle_group, exercise.name.toLowerCase()]
+                    };
+
+                    appState.mediaLibrary.push(media);
+                    exercise.mediaId = media.id;
+                }
+
+                // Nettoyer les données temporaires
+                appState.currentExerciseMedia = null;
             },
             
             // Fonction pour déplacer un exercice vers le haut
@@ -3007,6 +3307,9 @@
                     document.getElementById('exercise-anchor').value = exercise.anchor_point || 'none';
                     document.getElementById('exercise-muscle-group').value = exercise.muscle_group || 'autres';
                     
+                    // Charger l'image si elle existe
+                    this.loadExerciseMedia(exercise);
+                    
                     // Afficher/masquer le champ durée selon le mode
                     toggleExerciseMode();
                     
@@ -3016,7 +3319,108 @@
                     render();
                 }
             },
+
+            loadExerciseMedia(exercise) {
+                // Nettoyer d'abord
+                this.removeExerciseMedia();
+                
+                if (exercise.mediaId && appState.mediaLibrary) {
+                    const media = appState.mediaLibrary.find(m => m.id === exercise.mediaId);
+                    if (media) {
+                        appState.currentExerciseMedia = {
+                            file: null,
+                            preview: media.preview,
+                            name: media.name,
+                            size: media.size,
+                            libraryId: media.id
+                        };
+                        
+                        this.showMediaPreview(media.preview, media.name, media.size);
+                    }
+                }
+            },
             
+            getExerciseMediaDisplay(exercise) {
+                // Vérifier s'il y a une image dans la bibliothèque
+                if (exercise.mediaId && appState.mediaLibrary) {
+                    const media = appState.mediaLibrary.find(m => m.id === exercise.mediaId);
+                    if (media) {
+                        return `
+                            <img src="${media.preview}" 
+                                 alt="${exercise.name}" 
+                                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
+                                 loading="lazy">
+                            <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px;">
+                                ${Math.round(media.size/1024)}KB
+                            </div>
+                        `;
+                    }
+                }
+                
+                // Fallback : vérifier s'il y a une URL d'image (ancien système)
+                if (exercise.imageUrl) {
+                    return `
+                        <img src="${exercise.imageUrl}" 
+                             alt="${exercise.name}" 
+                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
+                             loading="lazy">
+                    `;
+                }
+                
+                // Fallback par défaut avec emoji spécifique au groupe musculaire
+                const muscleEmojis = {
+                    'echauffement': '🔥',
+                    'biceps': '💪',
+                    'triceps': '🔧', 
+                    'epaules': '🤲',
+                    'dos': '🗂️',
+                    'pectoraux': '🦆',
+                    'jambes': '🦵',
+                    'autres': '💪'
+                };
+                
+                const emoji = muscleEmojis[exercise.muscle_group] || '💪';
+                
+                return `
+                    <div style="text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%;">
+                        <div style="font-size: 72px; margin-bottom: 16px; opacity: 0.6;">${emoji}</div>
+                        <div style="font-size: 16px; font-weight: 500; margin-bottom: 8px;">Image à venir</div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">
+                            Bientôt disponible • Format WebP optimisé
+                        </div>
+                        <button class="btn btn-small btn-secondary" onclick="actions.editExercise(${exercise.id}); actions.closeModal('exercise-details-modal')" style="margin-top: 12px; max-width: 150px; margin-left: auto; margin-right: auto;">
+                            📷 Ajouter une image
+                        </button>
+                    </div>
+                `;
+            },
+
+            initializeMediaSystem() {
+                // Charger la bibliothèque de médias au démarrage
+                if (!appState.mediaLibrary) {
+                    appState.mediaLibrary = storage.load('mediaLibrary', []);
+                }
+                
+                // Nettoyer les URLs d'objets orphelins au démarrage
+                this.cleanupOrphanedMediaUrls();
+            },
+
+            cleanupOrphanedMediaUrls() {
+                // Cette fonction nettoie les URLs créées par createObjectURL qui ne sont plus utilisées
+                // Important pour éviter les fuites mémoire
+                if (appState.mediaLibrary) {
+                    appState.mediaLibrary.forEach(media => {
+                        if (media.preview && media.preview.startsWith('blob:')) {
+                            // Vérifier si l'image est encore utilisée
+                            const isUsed = appState.exercises.some(ex => ex.mediaId === media.id);
+                            if (!isUsed) {
+                                console.log(`🧹 Nettoyage de l'URL orpheline: ${media.name}`);
+                            }
+                        }
+                    });
+                }
+            },
+
             // Fonction pour générer les inputs de performance selon le mode de l'exercice
             generatePerformanceInputs(exercise, prefix = '') {
                 let html = '';
@@ -3133,6 +3537,8 @@
                 document.getElementById('exercise-muscle-group').value = 'biceps';
                 document.getElementById('exercise-examples').style.display = 'none';
                 document.getElementById('duration-group').style.display = 'none';
+                // Nettoyer les médias
+                this.removeExerciseMedia();
             },
             
             // Gestion des modèles
@@ -6008,14 +6414,7 @@
                         </button>
                     
                         <div class="image-placeholder">
-                            ${exercise.imageUrl ? 
-                                `<img src="${exercise.imageUrl}" alt="${exercise.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">` :
-                                `<div style="text-align: center;">
-                                    <div style="font-size: 48px; margin-bottom: 8px;">🎥</div>
-                                    <div style="font-size: 16px; font-weight: 500;">Image/GIF à venir</div>
-                                    <div style="font-size: 12px;">Format recommandé : 400x300px, <50KB</div>
-                                </div>`
-                            }
+                            ${this.getExerciseMediaDisplay(exercise)}
                         </div>
 
                         <div style="margin-top: 16px;">
@@ -6295,6 +6694,342 @@
                 } else {
                     this.showNotification('Partage non supporté sur cet appareil');
                 }
+            },
+
+            // === GESTION DES MÉDIAS ===
+            handleExerciseMediaUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                // Vérifications de base
+                if (!this.validateMediaFile(file)) {
+                    return;
+                }
+
+                this.processMediaFile(file, (optimizedFile, preview) => {
+                    // Stocker temporairement pour l'exercice en cours d'édition
+                    appState.currentExerciseMedia = {
+                        file: optimizedFile,
+                        preview: preview,
+                        name: file.name,
+                        size: optimizedFile.size
+                    };
+
+                    this.showMediaPreview(preview, file.name, optimizedFile.size);
+                });
+            },
+
+            validateMediaFile(file) {
+                const maxSize = 5 * 1024 * 1024; // 5MB avant compression
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+                if (!allowedTypes.includes(file.type)) {
+                    this.showNotification('❌ Format non supporté. Utilisez JPG, PNG, WebP ou GIF');
+                    return false;
+                }
+
+                if (file.size > maxSize) {
+                    this.showNotification('❌ Fichier trop volumineux. Maximum 5MB avant compression');
+                    return false;
+                }
+
+                return true;
+            },
+
+            processMediaFile(file, callback) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+
+                img.onload = () => {
+                    // Redimensionner vers 400x300
+                    const targetWidth = 400;
+                    const targetHeight = 300;
+                    
+                    canvas.width = targetWidth;
+                    canvas.height = targetHeight;
+
+                    // Calculer le ratio pour conserver les proportions
+                    const ratio = Math.min(targetWidth / img.width, targetHeight / img.height);
+                    const width = img.width * ratio;
+                    const height = img.height * ratio;
+                    
+                    // Centrer l'image
+                    const x = (targetWidth - width) / 2;
+                    const y = (targetHeight - height) / 2;
+
+                    // Fond blanc si nécessaire
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, targetWidth, targetHeight);
+                    
+                    // Dessiner l'image redimensionnée
+                    ctx.drawImage(img, x, y, width, height);
+
+                    // Convertir en WebP avec compression
+                    this.compressToTargetSize(canvas, callback, file.name);
+                };
+
+                img.src = URL.createObjectURL(file);
+            },
+
+            compressToTargetSize(canvas, callback, originalName) {
+                const targetSize = 50 * 1024; // 50KB
+                let quality = 0.9;
+                let attempts = 0;
+                const maxAttempts = 10;
+
+                const tryCompress = () => {
+                    canvas.toBlob((blob) => {
+                        if (blob.size <= targetSize || attempts >= maxAttempts || quality <= 0.1) {
+                            // Créer le fichier optimisé
+                            const optimizedFile = new File([blob], originalName, { type: 'image/webp' });
+                            const preview = URL.createObjectURL(blob);
+                            
+                            console.log(`🎯 Compression terminée: ${blob.size} bytes (${Math.round(blob.size/1024)}KB) avec qualité ${quality}`);
+                            callback(optimizedFile, preview);
+                        } else {
+                            // Réduire la qualité et réessayer
+                            quality -= 0.1;
+                            attempts++;
+                            tryCompress();
+                        }
+                    }, 'image/webp', quality);
+                };
+
+                tryCompress();
+            },
+
+            showMediaPreview(preview, name, size) {
+                const previewDiv = document.getElementById('exercise-media-preview');
+                const uploadDiv = document.getElementById('exercise-media-upload');
+                const img = document.getElementById('exercise-media-img');
+                const info = document.getElementById('media-file-info');
+
+                img.src = preview;
+                info.textContent = `${name} • ${Math.round(size/1024)}KB`;
+                
+                previewDiv.style.display = 'block';
+                uploadDiv.style.display = 'none';
+            },
+
+            removeExerciseMedia() {
+                const previewDiv = document.getElementById('exercise-media-preview');
+                const uploadDiv = document.getElementById('exercise-media-upload');
+                
+                previewDiv.style.display = 'none';
+                uploadDiv.style.display = 'block';
+                
+                // Nettoyer les données temporaires
+                if (appState.currentExerciseMedia && appState.currentExerciseMedia.preview) {
+                    URL.revokeObjectURL(appState.currentExerciseMedia.preview);
+                }
+                appState.currentExerciseMedia = null;
+                
+                // Nettoyer l'input
+                document.getElementById('exercise-media-input').value = '';
+            },
+
+            showMediaLibrary() {
+                this.loadMediaLibrary();
+                document.getElementById('media-library-modal').classList.add('active');
+                
+                // Configurer le drag & drop
+                this.setupMediaDragDrop();
+            },
+
+            loadMediaLibrary() {
+                if (!appState.mediaLibrary) {
+                    appState.mediaLibrary = [];
+                }
+
+                this.renderMediaLibrary();
+                this.updateMediaStats();
+            },
+
+            renderMediaLibrary() {
+                const grid = document.getElementById('media-grid');
+                const searchTerm = document.getElementById('media-search-input')?.value.toLowerCase() || '';
+                const activeCategory = document.querySelector('.media-category-btn.active')?.textContent.toLowerCase() || 'tout';
+
+                let filteredMedia = appState.mediaLibrary.filter(media => {
+                    const matchesSearch = !searchTerm || media.name.toLowerCase().includes(searchTerm) || (media.tags && media.tags.some(tag => tag.includes(searchTerm)));
+                    const matchesCategory = activeCategory === 'tout' || (media.category && media.category === activeCategory);
+                    return matchesSearch && matchesCategory;
+                });
+
+                if (filteredMedia.length === 0) {
+                    grid.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-secondary);">
+                            ${appState.mediaLibrary.length === 0 ? 
+                                '📁 Aucune image dans la bibliothèque<br><small>Ajoutez des images en les glissant ci-dessus</small>' :
+                                '🔍 Aucun résultat pour cette recherche'
+                            }
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = filteredMedia.map((media, index) => `
+                    <div class="media-item" onclick="actions.selectMediaItem(${media.id})" data-media-id="${media.id}">
+                        <img src="${media.preview}" alt="${media.name}" loading="lazy" class="lazy-image">
+                        <div class="media-item-info">
+                            <div class="media-item-name">${media.name}</div>
+                            <div class="media-item-size">${Math.round(media.size/1024)}KB</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Lazy loading des images
+                this.setupLazyLoading();
+            },
+
+            setupLazyLoading() {
+                const images = document.querySelectorAll('.lazy-image');
+                
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.classList.add('loaded');
+                            observer.unobserve(img);
+                        }
+                    });
+                });
+
+                images.forEach(img => imageObserver.observe(img));
+            },
+
+            selectMediaItem(mediaId) {
+                // Désélectionner tous
+                document.querySelectorAll('.media-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+
+                // Sélectionner le cliqué
+                const item = document.querySelector(`[data-media-id="${mediaId}"]`);
+                if (item) {
+                    item.classList.add('selected');
+                    appState.selectedMediaId = mediaId;
+                    document.getElementById('select-media-btn').disabled = false;
+                }
+            },
+
+            selectMediaFromLibrary() {
+                if (!appState.selectedMediaId) return;
+
+                const media = appState.mediaLibrary.find(m => m.id === appState.selectedMediaId);
+                if (media) {
+                    // Utiliser cette image pour l'exercice
+                    appState.currentExerciseMedia = {
+                        file: null, // Déjà en bibliothèque
+                        preview: media.preview,
+                        name: media.name,
+                        size: media.size,
+                        libraryId: media.id
+                    };
+
+                    this.showMediaPreview(media.preview, media.name, media.size);
+                    this.closeModal('media-library-modal');
+                    this.showNotification('✅ Image sélectionnée !');
+                }
+            },
+
+            filterMediaLibrary() {
+                this.renderMediaLibrary();
+            },
+
+            filterMediaByCategory(category) {
+                // Mettre à jour les boutons actifs
+                document.querySelectorAll('.media-category-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                event.target.classList.add('active');
+
+                this.renderMediaLibrary();
+            },
+
+            setupMediaDragDrop() {
+                const dropZone = document.getElementById('media-drop-zone');
+                
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, this.preventDefaults, false);
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+                });
+
+                dropZone.addEventListener('drop', this.handleDrop.bind(this), false);
+                dropZone.addEventListener('click', () => {
+                    document.getElementById('media-library-input').click();
+                });
+            },
+
+            preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            },
+
+            handleDrop(e) {
+                const files = e.dataTransfer.files;
+                this.handleMediaLibraryUpload({ target: { files } });
+            },
+
+            handleMediaLibraryUpload(event) {
+                const files = Array.from(event.target.files);
+                let processed = 0;
+                const total = files.length;
+
+                if (total === 0) return;
+
+                this.showNotification(`📤 Traitement de ${total} fichier(s)...`);
+
+                files.forEach(file => {
+                    if (this.validateMediaFile(file)) {
+                        this.processMediaFile(file, (optimizedFile, preview) => {
+                            this.addToMediaLibrary(optimizedFile, preview, file.name);
+                            processed++;
+                            
+                            if (processed === total) {
+                                this.showNotification(`✅ ${processed} image(s) ajoutée(s) à la bibliothèque !`);
+                                this.renderMediaLibrary();
+                                this.updateMediaStats();
+                            }
+                        });
+                    }
+                });
+            },
+
+            addToMediaLibrary(file, preview, originalName) {
+                if (!appState.mediaLibrary) {
+                    appState.mediaLibrary = [];
+                }
+
+                const media = {
+                    id: Date.now() + Math.random(),
+                    name: originalName,
+                    preview: preview,
+                    size: file.size,
+                    type: file.type,
+                    dateAdded: new Date().toISOString(),
+                    category: null, // À déterminer selon l'exercice
+                    tags: []
+                };
+
+                appState.mediaLibrary.push(media);
+                this.saveData();
+            },
+
+            updateMediaStats() {
+                const count = appState.mediaLibrary?.length || 0;
+                const totalSize = appState.mediaLibrary?.reduce((sum, media) => sum + media.size, 0) || 0;
+                
+                document.getElementById('media-count').textContent = count;
+                document.getElementById('media-total-size').textContent = Math.round(totalSize / 1024);
             }
         };
 
