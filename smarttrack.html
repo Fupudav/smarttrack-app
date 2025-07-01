@@ -666,26 +666,29 @@
 
         /* === RECHERCHE EXERCICES === */
         .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
+            position: fixed;
+            top: auto;
+            left: 16px;
+            right: 16px;
             background: var(--surface);
             border: 2px solid var(--primary);
-            border-top: none;
-            border-radius: 0 0 12px 12px;
-            max-height: 60vh;
+            border-radius: 12px;
+            max-height: 75vh;
             overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 0 4px 20px var(--shadow);
+            z-index: 1500;
+            box-shadow: 0 8px 32px var(--shadow);
+            margin-top: 8px;
         }
 
         /* Ajustement responsive pour petits écrans */
         @media (max-width: 768px) {
             .search-results {
-                max-height: 50vh;
+                max-height: 80vh;
+                left: 8px;
+                right: 8px;
             }
         }
+
 
         .search-result-item {
             padding: 12px 16px;
@@ -1668,6 +1671,7 @@
                 this.audioContext = null;
                 this.onTick = null;
                 this.onComplete = null;
+                this.lastBeepSecond = null;
                 
                 // Initialiser le contexte audio
                 try {
@@ -1694,9 +1698,11 @@
             // Démarrer le timer
             start() {
                 if (this.isRunning && !this.isPaused) return;
-                
                 this.isRunning = true;
                 this.isPaused = false;
+                
+                // Réinitialiser le dernier bip
+                this.lastBeepSecond = this.timeLeft + 1;
                 
                 this.interval = setInterval(() => {
                     if (this.timeLeft > 0) {
@@ -1707,16 +1713,15 @@
                             this.onTick(this.timeLeft, this.duration);
                         }
                         
-                        // Alertes sonores
-                        if (this.timeLeft === 5 || this.timeLeft === 3 || this.timeLeft === 1) {
+                        // Alertes sonores améliorées - bip de 5 à 2 secondes (pas à 1 pour éviter le double bip)
+                        if (this.timeLeft <= 5 && this.timeLeft > 1 && this.timeLeft !== this.lastBeepSecond) {
+                            this.lastBeepSecond = this.timeLeft;
                             this.playBeep(800, 200);
+                            // Vibration dans les dernières secondes
+                            if ('vibrate' in navigator) {
+                                navigator.vibrate(100);
+                            }
                         }
-                        
-                        // Vibration dans les dernières secondes
-                        if (this.timeLeft <= 3 && 'vibrate' in navigator) {
-                            navigator.vibrate(100);
-                        }
-                        
                     } else {
                         // Timer terminé
                         this.complete();
@@ -2626,10 +2631,15 @@
             showScreen(screenName) {
                 // Ajouter à l'historique de navigation
                 addToNavigationHistory(screenName);
-            
                 appState.currentScreen = screenName;
                 // Sauvegarder l'écran actuel
                 storage.save('currentScreen', screenName);
+                
+                // Synchroniser avec l'historique du navigateur
+                if (!isNavigatingBack) {
+                    window.history.pushState({ screen: screenName }, '', window.location.href);
+                }
+                
                 render();
             },
             
@@ -3081,23 +3091,23 @@
             // Afficher les exercices sélectionnés
             renderSelectedExercises() {
                 const container = document.getElementById('template-selected-exercises');
-                const globalSettings = document.getElementById('template-global-settings');
-            
-                if (!appState.templateInCreation || appState.templateInCreation.exercises.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Aucun exercice sélectionné</p>';
-                    globalSettings.style.display = 'none';
+                
+                if (!container) {
+                    console.error('Container template-selected-exercises not found');
                     return;
                 }
-
-                globalSettings.style.display = 'block';
-            
+                
+                if (!appState.templateInCreation || appState.templateInCreation.exercises.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Aucun exercice sélectionné</p>';
+                    return;
+                }
+                
                 let html = '';
                 appState.templateInCreation.exercises.forEach((exData, index) => {
                     const exercise = appState.exercises.find(e => e.id === exData.exerciseId);
                     if (exercise) {
-                        const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' : 
-                                         exercise.exercise_mode === 'both' ? '🔄' : '🔢';
-                
+                        const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
+                            exercise.exercise_mode === 'both' ? '🔄' : '🔢';
                         html += `
                             <div class="exercise-item" style="margin-bottom: 8px;">
                                 <div style="flex: 1;">
@@ -3129,9 +3139,9 @@
                                     ` : ''}
                                     <div class="reorder-buttons">
                                         <button class="btn btn-small btn-secondary" onclick="actions.moveTemplateExerciseUp(${index})"
-                                                ${index === 0 ? 'disabled' : ''}>↑</button>
+                                            ${index === 0 ? 'disabled' : ''}>↑</button>
                                         <button class="btn btn-small btn-secondary" onclick="actions.moveTemplateExerciseDown(${index})"
-                                                ${index === appState.templateInCreation.exercises.length - 1 ? 'disabled' : ''}>↓</button>
+                                            ${index === appState.templateInCreation.exercises.length - 1 ? 'disabled' : ''}>↓</button>
                                     </div>
                                     <button class="btn btn-small btn-danger" onclick="actions.removeFromTemplateByIndex(${index})">✕</button>
                                 </div>
@@ -3139,9 +3149,8 @@
                         `;
                     }
                 });
-            
                 container.innerHTML = html;
-            },
+                },
 
             // Mettre à jour le nombre de séries d'un exercice dans le modèle
             updateTemplateExerciseSets(index, sets) {
@@ -3713,22 +3722,27 @@
                                     restElement.style.color = 'var(--warning)';
                                 }
                             
-                                // Sons pour les dernières secondes (éviter les répétitions)
-                                const currentSecond = Math.floor(restRemaining / 1000);
-                                if (!appState.liveSession.lastRestSecond || appState.liveSession.lastRestSecond !== currentSecond) {
+                                // Sons pour les dernières secondes (logique finale corrigée)
+                                const currentSecond = Math.ceil(restRemaining / 1000);
+                                const previousSecond = appState.liveSession.lastRestSecond || currentSecond + 1;
+
+                                // Vérifier si on vient de passer à une nouvelle seconde
+                                if (currentSecond !== previousSecond && currentSecond > 1) {
                                     appState.liveSession.lastRestSecond = currentSecond;
-                                    // Bip à chaque seconde pendant les 5 dernières secondes
-                                    if (currentSecond <= 5 && currentSecond > 0) {
+                                    
+                                    // Bip à chaque seconde de 5 à 2 secondes (pas à 1 seconde pour éviter le double bip)
+                                    if (currentSecond <= 5) {
                                         exerciseTimer.playBeep(800, 200);
                                         if ('vibrate' in navigator) {
                                             navigator.vibrate(100);
                                         }
-                                    } else if (currentSecond === 0) {
-                                        // Son spécial pour la fin
-                                        exerciseTimer.playBeep(1000, 500);
-                                        if ('vibrate' in navigator) {
-                                            navigator.vibrate([200, 100, 200]);
-                                        }
+                                    }
+                                } else if (restRemaining === 0 && previousSecond !== 0) {
+                                    // Son spécial pour la fin (remplace le bip à 1 seconde)
+                                    appState.liveSession.lastRestSecond = 0;
+                                    exerciseTimer.playBeep(1000, 500);
+                                    if ('vibrate' in navigator) {
+                                        navigator.vibrate([200, 100, 200]);
                                     }
                                 }
                             
@@ -3736,14 +3750,49 @@
                                 if (restRemaining === 0) {
                                     appState.liveSession.isResting = false;
                                     appState.liveSession.lastRestSecond = null; // Reset
-                                    
                                     // CORRECTION : Vérifier que l'index est valide
                                     if (appState.liveSession.currentExerciseIndex < appState.liveSession.exercises.length) {
                                         const currentExercise = appState.liveSession.exercises[appState.liveSession.currentExerciseIndex];
+                                        
+                                        // Démarrer automatiquement les exercices en mode temps
+                                        const exercise = appState.exercises.find(e => e.id === currentExercise.exercise_id);
+                                        
+                                        // Attendre que le rendu soit terminé puis démarrer automatiquement
+                                        setTimeout(() => {
+                                            render();
+                                        
+                                            // Si l'exercice est en mode temps ou mode mixte, démarrer automatiquement le timer
+                                            if (exercise && (exercise.exercise_mode === 'time' || exercise.exercise_mode === 'both')) {
+                                                setTimeout(() => {
+                                                    // Vérifier le mode d'exécution pour les exercices mixtes
+                                                    const executionMode = document.getElementById('execution-mode');
+                                                    const shouldAutoStart = !executionMode || executionMode.value === 'time';
+                                                
+                                                    if (shouldAutoStart) {
+                                                        const durationInput = document.getElementById('duration');
+                                                        const defaultDuration = currentExercise.duration || exercise.default_duration || 30;
+                                                        
+                                                        if (durationInput) {
+                                                            durationInput.value = defaultDuration;
+                                                        }
+                                                        
+                                                        // Configurer et démarrer automatiquement le timer
+                                                        exerciseTimer.setup(
+                                                            defaultDuration,
+                                                            updateTimerDisplay,
+                                                            completeTimedExercise
+                                                        );
+                                                        
+                                                        // Démarrer automatiquement
+                                                        startExerciseTimer();
+                                                        
+                                                        // Notification pour informer l'utilisateur
+                                                        actions.showNotification('⏱️ Timer démarré automatiquement !');
+                                                    }
+                                                }, 300); // Délai pour que le DOM soit prêt
+                                            }
+                                        }, 100);
                                     
-                                        // Ne PAS passer automatiquement à l'exercice suivant ici
-                                        // C'est déjà géré dans validateSet()
-                                        render();
                                     } else {
                                         // Index invalide, terminer la séance
                                         this.finishLiveSession();
@@ -3794,9 +3843,8 @@
                                         render();
                                     
                                         // Si l'exercice est en mode temps, démarrer automatiquement le timer
-                                        if (exercise && (exercise.exercise_mode === 'time' || 
+                                        if (exercise && (exercise.exercise_mode === 'time' ||
                                             (exercise.exercise_mode === 'both' && document.getElementById('execution-mode')?.value === 'time'))) {
-                                        
                                             // Configurer et démarrer le timer automatiquement
                                             setTimeout(() => {
                                                 const durationInput = document.getElementById('duration');
@@ -3804,15 +3852,16 @@
                                                 if (durationInput) {
                                                     durationInput.value = defaultDuration;
                                                 }
-                                                
                                                 exerciseTimer.setup(
                                                     defaultDuration,
                                                     updateTimerDisplay,
                                                     completeTimedExercise
                                                 );
-                                                
                                                 // Démarrer automatiquement
                                                 startExerciseTimer();
+                                                
+                                                // Notification pour informer l'utilisateur
+                                                actions.showNotification('🚀 Premier exercice démarré !');
                                             }, 200); // Petit délai pour que le DOM soit prêt
                                         }
                                     }, 500); // Délai pour que le son se termine
@@ -3994,21 +4043,20 @@
             
             nextExercise() {
                 if (!appState.liveSession) return;
-                
                 appState.liveSession.currentExerciseIndex++;
                 appState.liveSession.currentSetIndex = 0;
-                
                 if (appState.liveSession.currentExerciseIndex >= appState.liveSession.exercises.length) {
                     this.finishLiveSession();
                 } else {
-                    // Repos avant le prochain exercice - utiliser le temps de repos entre exercices
+                    // Repos avant le prochain exercice - utiliser le temps de repos du prochain exercice
                     appState.liveSession.isResting = true;
                     appState.liveSession.restStartTime = Date.now();
                     
-                    // CORRECTION : Utiliser le temps de repos global entre exercices
-                    const restBetweenExercises = appState.liveSession.globalSettings?.restBetweenExercises || 120;
-                    appState.liveSession.restDuration = restBetweenExercises * 1000;
-                    
+                    // CORRECTION : Utiliser le temps de repos spécifique du prochain exercice
+                    const nextExerciseData = appState.liveSession.exercises[appState.liveSession.currentExerciseIndex];
+                    const nextExercise = appState.exercises.find(e => e.id === nextExerciseData.exercise_id);
+                    const customRestTime = nextExerciseData.rest_time || nextExercise.default_rest_time || 90;
+                    appState.liveSession.restDuration = customRestTime * 1000;
                     render();
                 }
             },
@@ -4121,25 +4169,39 @@
             },
 
             getLastPerformance(exerciseId) {
-                const exercise = appState.exercises.find(e => e.id === exerciseId);
-                if (!exercise) return null;
-
-                // Trouver la dernière séance avec cet exercice
+                // Conversion en nombre pour éviter les problèmes de type
+                const numericExerciseId = parseInt(exerciseId);
+                const exercise = appState.exercises.find(e => e.id === numericExerciseId);
+                if (!exercise) {
+                    console.log(`Exercise not found for ID: ${exerciseId}`);
+                    return null;
+                }
+                
+                // Trouver la dernière séance avec cet exercice (comparaison flexible)
                 const sessionsWithExercise = appState.sessions
-                    .filter(session => session.exercises.some(ex => ex.exercise_id === exerciseId))
+                    .filter(session => session.exercises.some(ex => parseInt(ex.exercise_id) === numericExerciseId))
                     .sort((a, b) => b.date.localeCompare(a.date));
-
-                if (sessionsWithExercise.length === 0) return null;
-
+                    
+                if (sessionsWithExercise.length === 0) {
+                    console.log(`No sessions found for exercise ID: ${exerciseId}`);
+                    return null;
+                }
+                
                 const lastSession = sessionsWithExercise[0];
-                const exerciseData = lastSession.exercises.find(ex => ex.exercise_id === exerciseId);
-
-                if (!exerciseData || exerciseData.sets.length === 0) return null;
-
-                // Récupérer TOUTES les séries de la dernière séance (pas seulement la meilleure)
-                const workSets = exerciseData.sets.filter(set => set.type === 'work');
-                if (workSets.length === 0) return null;
-
+                const exerciseData = lastSession.exercises.find(ex => parseInt(ex.exercise_id) === numericExerciseId);
+                
+                if (!exerciseData || !exerciseData.sets || exerciseData.sets.length === 0) {
+                    console.log(`No exercise data or sets found for exercise ID: ${exerciseId}`);
+                    return null;
+                }
+                
+                // Récupérer TOUTES les séries de travail de la dernière séance
+                const workSets = exerciseData.sets.filter(set => set.type === 'work' || !set.type);
+                if (workSets.length === 0) {
+                    console.log(`No work sets found for exercise ID: ${exerciseId}`);
+                    return null;
+                }
+                
                 // Retourner toutes les séries avec leurs détails
                 const allSets = workSets.map(set => {
                     if (exercise.is_unilateral) {
@@ -4159,7 +4221,8 @@
                         };
                     }
                 });
-
+                
+                console.log(`Found ${allSets.length} sets for exercise ${exercise.name}`);
                 return {
                     date: lastSession.date,
                     sets: allSets,
@@ -4168,25 +4231,31 @@
             },
 
             getLastPerformanceForSet(exerciseId, setNumber) {
-                const exercise = appState.exercises.find(e => e.id === exerciseId);
+                // Conversion en nombre pour éviter les problèmes de type
+                const numericExerciseId = parseInt(exerciseId);
+                const exercise = appState.exercises.find(e => e.id === numericExerciseId);
                 if (!exercise) return null;
-
-                // Trouver la dernière séance avec cet exercice
+                
+                // Trouver la dernière séance avec cet exercice (comparaison flexible)
                 const sessionsWithExercise = appState.sessions
-                    .filter(session => session.exercises.some(ex => ex.exercise_id === exerciseId))
+                    .filter(session => session.exercises.some(ex => parseInt(ex.exercise_id) === numericExerciseId))
                     .sort((a, b) => b.date.localeCompare(a.date));
-
+                    
                 if (sessionsWithExercise.length === 0) return null;
-
+                
                 const lastSession = sessionsWithExercise[0];
-                const exerciseData = lastSession.exercises.find(ex => ex.exercise_id === exerciseId);
-
-                if (!exerciseData || exerciseData.sets.length < setNumber) return null;
-
+                const exerciseData = lastSession.exercises.find(ex => parseInt(ex.exercise_id) === numericExerciseId);
+                
+                if (!exerciseData || !exerciseData.sets || exerciseData.sets.length === 0) return null;
+                
+                // Récupérer seulement les séries de travail
+                const workSets = exerciseData.sets.filter(set => set.type === 'work' || !set.type);
+                if (workSets.length < setNumber) return null;
+                
                 // Récupérer la série spécifique (setNumber - 1 car les arrays commencent à 0)
-                const specificSet = exerciseData.sets[setNumber - 1];
-                if (!specificSet || specificSet.type !== 'work') return null;
-
+                const specificSet = workSets[setNumber - 1];
+                if (!specificSet) return null;
+                
                 // Adapter le retour selon le mode de l'exercice
                 if (specificSet.exercise_mode === 'time') {
                     return {
@@ -4212,25 +4281,27 @@
             },
 
             getAllLastPerformances(exerciseId) {
-                const exercise = appState.exercises.find(e => e.id === exerciseId);
+                // Conversion en nombre pour éviter les problèmes de type
+                const numericExerciseId = parseInt(exerciseId);
+                const exercise = appState.exercises.find(e => e.id === numericExerciseId);
                 if (!exercise) return null;
-
-                // Trouver la dernière séance avec cet exercice
+                
+                // Trouver la dernière séance avec cet exercice (comparaison flexible)
                 const sessionsWithExercise = appState.sessions
-                    .filter(session => session.exercises.some(ex => ex.exercise_id === exerciseId))
+                    .filter(session => session.exercises.some(ex => parseInt(ex.exercise_id) === numericExerciseId))
                     .sort((a, b) => b.date.localeCompare(a.date));
-
+                    
                 if (sessionsWithExercise.length === 0) return null;
-
+                
                 const lastSession = sessionsWithExercise[0];
-                const exerciseData = lastSession.exercises.find(ex => ex.exercise_id === exerciseId);
-
-                if (!exerciseData || exerciseData.sets.length === 0) return null;
-
+                const exerciseData = lastSession.exercises.find(ex => parseInt(ex.exercise_id) === numericExerciseId);
+                
+                if (!exerciseData || !exerciseData.sets || exerciseData.sets.length === 0) return null;
+                
                 // Récupérer toutes les séries de travail
-                const workSets = exerciseData.sets.filter(set => set.type === 'work');
+                const workSets = exerciseData.sets.filter(set => set.type === 'work' || !set.type);
                 if (workSets.length === 0) return null;
-
+                
                 return {
                     date: lastSession.date,
                     sets: workSets.map((set, index) => {
@@ -5183,17 +5254,8 @@
                 document.getElementById('save-manual-btn').style.display = 'none';
             }
             
-            // Charger les paramètres de repos existants dans les champs
-            if (appState.currentSession && appState.currentSession.globalSettings) {
-                const restBetweenExercisesInput = document.getElementById('session-rest-between-exercises');
-                const restBetweenSetsInput = document.getElementById('session-rest-between-sets');
-                if (restBetweenExercisesInput) {
-                    restBetweenExercisesInput.value = appState.currentSession.globalSettings.restBetweenExercises || 120;
-                }
-                if (restBetweenSetsInput) {
-                    restBetweenSetsInput.value = appState.currentSession.globalSettings.restBetweenSets || 90;
-                }
-            }
+            // Les temps de repos sont maintenant gérés individuellement par exercice
+            // Plus besoin de paramètres globaux
         }
 
         function renderLiveSession() {
@@ -5288,28 +5350,39 @@
             }
 
             if (appState.liveSession.isResting) {
-                // Phase de repos - CORRIGER LA LOGIQUE
+                // Phase de repos - LOGIQUE CORRIGÉE
                 const currentExercise = appState.liveSession.exercises[appState.liveSession.currentExerciseIndex];
                 const exercise = appState.exercises.find(e => e.id === currentExercise.exercise_id);
                 
                 // Déterminer si on est entre séries du même exercice ou entre exercices différents
                 const isRestBetweenSets = currentExercise.sets.length < currentExercise.planned_sets;
                 
-                let nextExerciseIndex, nextExercise, isLastExercise;
+                let completedExercise, completedExerciseData;
+                let nextExercise, nextExerciseData;
+                let isLastExercise = false;
+                
                 if (isRestBetweenSets) {
-                    // Repos entre séries du même exercice
-                    nextExerciseIndex = appState.liveSession.currentExerciseIndex;
-                    nextExercise = exercise;
-                    isLastExercise = false;
+                    // Repos entre séries du MÊME exercice
+                    completedExercise = exercise;
+                    completedExerciseData = currentExercise;
+                    nextExercise = exercise; // Même exercice pour la série suivante
+                    nextExerciseData = currentExercise;
                 } else {
-                    // Repos entre exercices - PAS D'INCRÉMENTATION car déjà fait dans nextExercise()
-                    nextExerciseIndex = appState.liveSession.currentExerciseIndex;
+                    // Repos entre exercices DIFFÉRENTS
+                    // L'exercice terminé est celui à l'index actuel (qui vient de finir toutes ses séries)
+                    completedExercise = exercise;
+                    completedExerciseData = currentExercise;
+                    
+                    // Le prochain exercice est à l'index suivant
+                    const nextExerciseIndex = appState.liveSession.currentExerciseIndex + 1;
                     isLastExercise = nextExerciseIndex >= appState.liveSession.exercises.length;
                     
-                    if (!isLastExercise && appState.liveSession.exercises[nextExerciseIndex]) {
-                        nextExercise = appState.exercises.find(e => e.id === appState.liveSession.exercises[nextExerciseIndex].exercise_id);
+                    if (!isLastExercise) {
+                        nextExerciseData = appState.liveSession.exercises[nextExerciseIndex];
+                        nextExercise = appState.exercises.find(e => e.id === nextExerciseData.exercise_id);
                     } else {
                         nextExercise = null;
+                        nextExerciseData = null;
                     }
                 }
                 
@@ -5319,8 +5392,8 @@
                     let lastPerf;
                     if (isRestBetweenSets) {
                         // Repos entre séries - récupérer la performance de la série suivante de la dernière séance
-                        const nextSetNumber = currentExercise.sets.length + 1;
-                        lastPerf = actions.getLastPerformanceForSet(currentExercise.exercise_id, nextSetNumber);
+                        const nextSetNumber = completedExerciseData.sets.length + 1;
+                        lastPerf = actions.getLastPerformanceForSet(completedExerciseData.exercise_id, nextSetNumber);
                     } else {
                         // Repos entre exercices - récupérer toutes les séries du prochain exercice
                         lastPerf = actions.getAllLastPerformances(nextExercise.id);
@@ -5395,11 +5468,11 @@
                     
                     <div class="card" style="margin: 16px 0; padding: 12px; background: var(--background);">
                         <h4>✅ ${isRestBetweenSets ? 'Série terminée' : 'Exercice terminé'}</h4>
-                        <div style="font-size: 16px; font-weight: bold;">${appState.exercises.find(e => e.id === currentExercise.exercise_id).name}</div>
+                        <div style="font-size: 16px; font-weight: bold;">${completedExercise.name}</div>
                         <div style="font-size: 14px; color: var(--text-secondary);">
-                            ${isRestBetweenSets ? 
-                                `Série ${currentExercise.sets.length} / ${currentExercise.planned_sets} terminée` :
-                                `Toutes les séries terminées (${currentExercise.sets.length}/${currentExercise.planned_sets})`
+                            ${isRestBetweenSets ?
+                                `Série ${completedExerciseData.sets.length} / ${completedExerciseData.planned_sets} terminée` :
+                                `Toutes les séries terminées (${completedExerciseData.sets.length}/${completedExerciseData.planned_sets})`
                             }
                         </div>
                     </div>
@@ -5735,7 +5808,7 @@
                                             <strong>${record.exerciseName}</strong>
                                             <div style="font-size: 14px; color: var(--text-secondary);">
                                                 ${record.type === 'max_weight' ? 'Poids Max' :
-                                                record.type === 'max_reps' ? 'Reps Max' : '1RM Estimé'}:
+                                                    record.type === 'max_reps' ? 'Reps Max' : '1RM Estimé'}:
                                                 ${record.value}${record.type === 'max_reps' ? '' : 'kg'}
                                             </div>
                                         </div>
@@ -5751,62 +5824,60 @@
                 </div>
             `;
 
-            // STATISTIQUES PAR EXERCICE - Créer d'abord le HTML avec le select vide
+            // Grouper les exercices par groupes musculaires AVANT de créer le HTML
+            const groupedExercises = {};
+            appState.exercises.forEach(exercise => {
+                const group = exercise.muscle_group || 'autres';
+                if (!groupedExercises[group]) {
+                    groupedExercises[group] = [];
+                }
+                groupedExercises[group].push(exercise);
+            });
+
+            // Ordre d'affichage des catégories
+            const groupOrder = ['echauffement', 'biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes', 'autres'];
+
+            // Créer les options du select
+            let selectOptionsHtml = '<option value="">Choisir un exercice...</option>';
+            groupOrder.forEach(group => {
+                if (groupedExercises[group] && groupedExercises[group].length > 0) {
+                    selectOptionsHtml += `<optgroup label="${group.charAt(0).toUpperCase() + group.slice(1)} (${groupedExercises[group].length})">`;
+                    // Trier les exercices par nom dans chaque groupe
+                    groupedExercises[group].sort((a, b) => a.name.localeCompare(b.name));
+                    groupedExercises[group].forEach(exercise => {
+                        // Ajouter l'indicateur de mode
+                        const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
+                            exercise.exercise_mode === 'both' ? '🔄' : '🔢';
+                        selectOptionsHtml += `<option value="${exercise.id}">${modeIcon} ${exercise.name}</option>`;
+                    });
+                    selectOptionsHtml += '</optgroup>';
+                }
+            });
+
+            // Récupérer la valeur actuellement sélectionnée
+            const currentExerciseSelect = document.getElementById('stats-exercise-select');
+            const currentSelectedValue = currentExerciseSelect ? currentExerciseSelect.value : '';
+
+            // STATISTIQUES PAR EXERCICE - Une seule fois
             let exerciseStatsHtml = `
                 <div class="card">
                     <h3>📈 Statistiques par exercice</h3>
                     <div class="input-group">
                         <label>Sélectionner un exercice</label>
                         <select id="stats-exercise-select" class="select" onchange="actions.updateStats(this.value)">
-                            <option value="">Choisir un exercice...</option>
+                            ${selectOptionsHtml}
                         </select>
                     </div>
                 </div>
             `;
 
-            // Afficher d'abord le HTML de base
+            // Afficher les statistiques de base
             statsContent.innerHTML = generalStatsHtml + exerciseStatsHtml;
 
-            // MAINTENANT remplir le select après qu'il soit dans le DOM
+            // Restaurer la valeur sélectionnée
             const exerciseSelect = document.getElementById('stats-exercise-select');
-            if (exerciseSelect) {
-                // Grouper les exercices par groupes musculaires
-                const groupedExercises = {};
-                appState.exercises.forEach(exercise => {
-                    const group = exercise.muscle_group || 'autres';
-                    if (!groupedExercises[group]) {
-                        groupedExercises[group] = [];
-                    }
-                    groupedExercises[group].push(exercise);
-                });
-
-                // Ordre d'affichage des catégories
-                const groupOrder = ['echauffement', 'biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes', 'autres'];
-                groupOrder.forEach(group => {
-                    if (groupedExercises[group] && groupedExercises[group].length > 0) {
-                        const optgroup = document.createElement('optgroup');
-                        optgroup.label = `${group.charAt(0).toUpperCase() + group.slice(1)} (${groupedExercises[group].length})`;
-                        
-                        // Trier les exercices par nom dans chaque groupe
-                        groupedExercises[group].sort((a, b) => a.name.localeCompare(b.name));
-                        groupedExercises[group].forEach(exercise => {
-                            const option = document.createElement('option');
-                            option.value = exercise.id;
-                            // Ajouter l'indicateur de mode
-                            const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
-                                exercise.exercise_mode === 'both' ? '🔄' : '🔢';
-                            option.textContent = `${modeIcon} ${exercise.name}`;
-                            optgroup.appendChild(option);
-                        });
-                        exerciseSelect.appendChild(optgroup);
-                    }
-                });
-
-                // Conserver la valeur sélectionnée si elle existe
-                const currentValue = exerciseSelect.dataset.currentValue;
-                if (currentValue) {
-                    exerciseSelect.value = currentValue;
-                }
+            if (exerciseSelect && currentSelectedValue) {
+                exerciseSelect.value = currentSelectedValue;
             }
 
             // Afficher les stats de l'exercice sélectionné
@@ -5814,12 +5885,12 @@
             if (selectedExerciseId) {
                 const exercise = appState.exercises.find(e => e.id === selectedExerciseId);
                 const records = appState.records[selectedExerciseId] || [];
-                
+
                 // Calculer les records actuels
                 const maxWeight = actions.getCurrentRecord(selectedExerciseId, 'max_weight');
                 const maxReps = actions.getCurrentRecord(selectedExerciseId, 'max_reps');
                 const max1RM = actions.getCurrentRecord(selectedExerciseId, 'max_1rm');
-                
+
                 // Calculer le volume max
                 let maxVolume = 0;
                 appState.sessions.forEach(session => {
@@ -5956,10 +6027,10 @@
                                                 `${set.duration || 0}s - ${leftResistance}kg (G) | ${rightResistance}kg (D)` :
                                                 `${set.duration || 0}s`;
                                         } else {
-                                            const resistance = set.total_resistance || 0;
-                                            setInfo = resistance > 0 ?
-                                                `${set.duration || 0}s - ${resistance}kg` :
-                                                `${set.duration || 0}s`;
+                                        const resistance = set.total_resistance || 0;
+                                        setInfo = resistance > 0 ?
+                                            `${set.duration || 0}s - ${resistance}kg` :
+                                            `${set.duration || 0}s`;
                                         }
                                     } else {
                                         if (exercise.is_unilateral) {
@@ -6008,8 +6079,8 @@
                                     <div style="padding: 8px; border-bottom: 1px solid var(--border);">
                                         <strong>${new Date(record.date).toLocaleDateString('fr-FR')}</strong> -
                                         ${record.type === 'max_weight' ? 'Poids Max' :
-                                        record.type === 'max_reps' ? 'Reps Max' :
-                                        record.type === 'max_time' ? 'Temps Max' : '1RM Estimé'}:
+                                            record.type === 'max_reps' ? 'Reps Max' :
+                                            record.type === 'max_time' ? 'Temps Max' : '1RM Estimé'}:
                                         <span style="color: var(--primary);">${record.value}${record.type === 'max_reps' ? '' : record.type === 'max_time' ? 's' : 'kg'}</span>
                                     </div>
                                 `).join('')
@@ -6021,32 +6092,11 @@
 
                 // Ajouter les statistiques détaillées après les statistiques générales
                 statsContent.innerHTML = generalStatsHtml + exerciseStatsHtml + detailedStatsHtml;
-                
-                // Re-remplir le select car le DOM a été modifié
-                const newExerciseSelect = document.getElementById('stats-exercise-select');
-                if (newExerciseSelect) {
-                    newExerciseSelect.innerHTML = '<option value="">Choisir un exercice...</option>';
-                    
-                    // Re-créer les options
-                    groupOrder.forEach(group => {
-                        if (groupedExercises[group] && groupedExercises[group].length > 0) {
-                            const optgroup = document.createElement('optgroup');
-                            optgroup.label = `${group.charAt(0).toUpperCase() + group.slice(1)} (${groupedExercises[group].length})`;
-                            
-                            groupedExercises[group].forEach(exercise => {
-                                const option = document.createElement('option');
-                                option.value = exercise.id;
-                                const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
-                                    exercise.exercise_mode === 'both' ? '🔄' : '🔢';
-                                option.textContent = `${modeIcon} ${exercise.name}`;
-                                optgroup.appendChild(option);
-                            });
-                            newExerciseSelect.appendChild(optgroup);
-                        }
-                    });
-                    
-                    // Restaurer la valeur sélectionnée
-                    newExerciseSelect.value = selectedExerciseId;
+
+                // Restaurer la valeur sélectionnée une dernière fois
+                const finalExerciseSelect = document.getElementById('stats-exercise-select');
+                if (finalExerciseSelect) {
+                    finalExerciseSelect.value = selectedExerciseId;
                 }
             } else {
                 // Aucun exercice sélectionné
@@ -7017,17 +7067,37 @@
             // === GESTION DU BOUTON RETOUR ===
             window.addEventListener('popstate', (event) => {
                 event.preventDefault();
+            
+                // Vérifier s'il y a une séance en cours
+                if (appState.liveSession || appState.manualSession) {
+                    if (confirm('Une séance est en cours. Voulez-vous vraiment revenir en arrière ?')) {
+                        const canGoBack = navigateBack();
+                        if (!canGoBack && appState.currentScreen === 'dashboard') {
+                            // On est déjà au dashboard, confirmer la sortie
+                            if (confirm('Voulez-vous vraiment quitter SmartTrack ?')) {
+                                return; // Laisser le navigateur gérer la sortie
+                            }
+                        }
+                    }
+                    // Rester dans l'application
+                    window.history.pushState({ screen: appState.currentScreen }, '', window.location.href);
+                    return;
+                }
+            
                 const canGoBack = navigateBack();
                 if (!canGoBack) {
                     // Si on est sur le dashboard et qu'il n'y a nulle part où aller, on peut quitter
                     if (appState.currentScreen === 'dashboard') {
                         // Demander confirmation avant de quitter
                         if (confirm('Voulez-vous vraiment quitter SmartTrack ?')) {
-                            window.history.back();
+                            return; // Laisser le navigateur gérer la sortie
                         } else {
                             // Rester dans l'application
-                            window.history.pushState(null, '', window.location.href);
+                            window.history.pushState({ screen: appState.currentScreen }, '', window.location.href);
                         }
+                    } else {
+                        // Revenir au dashboard par défaut
+                        actions.showScreen('dashboard');
                     }
                 }
             });
@@ -7043,7 +7113,7 @@
             });
 
             // Ajouter un état initial à l'historique du navigateur
-            window.history.pushState(null, '', window.location.href);
+            window.history.replaceState({ screen: 'dashboard' }, '', window.location.href);
         });
 
         // Fermeture des modals en cliquant à l'extérieur
