@@ -418,6 +418,180 @@
             gap: 8px;
         }
 
+        /* === STYLES DÉTAILS EXERCICES === */
+        .exercise-details-section {
+            margin: 24px 0;
+            padding: 20px;
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .exercise-details-section h4 {
+            color: var(--primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instruction-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 12px 0;
+            padding: 12px;
+            background: var(--background);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .tip-item, .mistake-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin: 8px 0;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .tip-item {
+            background: #34C75920;
+            border-left: 3px solid #34C759;
+        }
+
+        .mistake-item {
+            background: #FF3B3020;
+            border-left: 3px solid #FF3B30;
+        }
+
+        .muscle-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .muscle-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .muscle-secondary {
+            background: var(--border);
+            color: var(--text-secondary);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: var(--background);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            margin: 16px 0;
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .favorite-btn:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.active {
+            background: #FFD700;
+            color: #000;
+        }
+
+        .difficulty-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 8px 0;
+        }
+
+        .difficulty-beginner {
+            background: #34C75920;
+            color: #34C759;
+            border: 2px solid #34C759;
+        }
+
+        .difficulty-intermediate {
+            background: #FF950020;
+            color: #FF9500;
+            border: 2px solid #FF9500;
+        }
+
+        .difficulty-advanced {
+            background: #FF3B3020;
+            color: #FF3B30;
+            border: 2px solid #FF3B30;
+        }
+
+        .exercise-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .exercise-stat {
+            text-align: center;
+            padding: 12px;
+            background: var(--background);
+            border-radius: 8px;
+        }
+
+        .exercise-stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .exercise-stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
         /* === LIVE SESSION === */
         .session-timer {
             text-align: center;
@@ -1276,6 +1450,17 @@
                 <button class="close-btn" onclick="actions.closeModal('edit-session-modal')">×</button>
             </div>
             <div id="edit-session-content"></div>
+        </div>
+    </div>
+
+    <!-- Modal de détails d'exercice -->
+    <div id="exercise-details-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 id="exercise-details-title">Détails de l'exercice</h3>
+                <button class="close-btn" onclick="actions.closeModal('exercise-details-modal')">×</button>
+            </div>
+            <div id="exercise-details-content"></div>
         </div>
     </div>
 
@@ -5113,88 +5298,504 @@
             getExerciseEnrichedData(exercise) {
                 // Base de données enrichie avec descriptions, instructions, etc.
                 const enrichedDatabase = {
-                    // BICEPS
+                    // === ÉCHAUFFEMENT ===
+                    'Jumping Jacks': {
+                        difficulty: 'beginner',
+                        description: 'Excellent exercice cardio pour échauffer tout le corps.',
+                        instructions: [
+                            'Debout, pieds joints, bras le long du corps',
+                            'Sautez en écartant les pieds et montant les bras',
+                            'Revenez à la position initiale en sautant',
+                            'Maintenez un rythme régulier'
+                        ],
+                        tips: ['Gardez le dos droit', 'Respirez régulièrement', 'Atterrissez sur la pointe des pieds'],
+                        commonMistakes: ['Rythme trop rapide', 'Mauvaise coordination', 'Dos rond'],
+                        muscleGroups: { primary: ['Cardio'], secondary: ['Mollets', 'Épaules'] },
+                        tags: ['échauffement', 'cardio', 'coordination'],
+                        imageUrl: null
+                    },
+
+                    'Montées de genoux': {
+                        difficulty: 'beginner',
+                        description: 'Échauffement dynamique pour les jambes et le cardio.',
+                        instructions: [
+                            'Debout, montez alternativement les genoux',
+                            'Amenez les genoux au niveau de la taille',
+                            'Gardez le dos droit',
+                            'Bougez les bras naturellement'
+                        ],
+                        tips: ['Montez bien les genoux', 'Gardez l\'équilibre', 'Respirez régulièrement'],
+                        commonMistakes: ['Genoux pas assez hauts', 'Se pencher vers l\'arrière', 'Rythme irrégulier'],
+                        muscleGroups: { primary: ['Hip flexeurs'], secondary: ['Quadriceps', 'Core'] },
+                        tags: ['échauffement', 'jambes', 'cardio'],
+                        imageUrl: null
+                    },
+
+                    'Planche': {
+                        difficulty: 'intermediate',
+                        description: 'Exercice isométrique pour renforcer le core et la stabilité.',
+                        instructions: [
+                            'Position de pompes, appui sur les avant-bras',
+                            'Corps aligné de la tête aux pieds',
+                            'Contractez les abdominaux',
+                            'Maintenez la position'
+                        ],
+                        tips: ['Ne creusez pas le dos', 'Respirez normalement', 'Regardez le sol'],
+                        commonMistakes: ['Fesses trop hautes', 'Dos creusé', 'Retenir sa respiration'],
+                        muscleGroups: { primary: ['Core', 'Abdominaux'], secondary: ['Épaules', 'Dos'] },
+                        tags: ['gainage', 'core', 'isométrique'],
+                        imageUrl: null
+                    },
+
+                    'Squats au poids du corps': {
+                        difficulty: 'beginner',
+                        description: 'Version de base du squat pour échauffer les jambes.',
+                        instructions: [
+                            'Pieds écartés largeur d\'épaules',
+                            'Descendez en poussant les hanches vers l\'arrière',
+                            'Gardez le dos droit',
+                            'Remontez en poussant sur les talons'
+                        ],
+                        tips: ['Genoux dans l\'axe des orteils', 'Descendez bien bas', 'Gardez la poitrine haute'],
+                        commonMistakes: ['Genoux vers l\'intérieur', 'Dos rond', 'Pas assez profond'],
+                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Ischio-jambiers'] },
+                        tags: ['échauffement', 'jambes', 'fonctionnel'],
+                        imageUrl: null
+                    },
+
+                    'Burpees': {
+                        difficulty: 'advanced',
+                        description: 'Exercice intense combinant squat, planche et saut.',
+                        instructions: [
+                            'Squat, mains au sol',
+                            'Jetez les pieds vers l\'arrière en planche',
+                            'Ramenez les pieds sous le corps',
+                            'Sautez verticalement bras tendus'
+                        ],
+                        tips: ['Mouvement fluide', 'Gardez le rythme', 'Respirez bien'],
+                        commonMistakes: ['Sauter l\'étape planche', 'Mouvement saccadé', 'Mauvaise respiration'],
+                        muscleGroups: { primary: ['Corps entier'], secondary: [] },
+                        tags: ['cardio', 'intense', 'fonctionnel'],
+                        imageUrl: null
+                    },
+
+                    // === BICEPS ===
                     'Curl biceps': {
                         difficulty: 'beginner',
-                        description: 'Exercice de base pour développer la masse et la force des biceps avec élastique.',
+                        description: 'Exercice de base pour développer la masse et la force des biceps.',
                         instructions: [
                             'Placez-vous debout, pieds écartés largeur d\'épaules',
-                            'Tenez l\'élastique avec prise en supination (paumes vers le haut)',
-                            'Gardez les coudes près du corps, contractez les biceps',
+                            'Tenez l\'élastique avec prise en supination',
+                            'Gardez les coudes près du corps',
                             'Montez lentement en fléchissant les avant-bras',
                             'Revenez lentement à la position de départ'
                         ],
-                        tips: [
-                            'Gardez le dos droit pendant tout le mouvement',
-                            'Contrôlez la descente pour maximiser l\'efficacité',
-                            'Ne balancez pas le corps pour tricher'
-                        ],
-                        commonMistakes: [
-                            'Utiliser l\'élan du corps',
-                            'Lâcher trop vite en phase excentrique',
-                            'Écarter les coudes du corps'
-                        ],
-                        muscleGroups: {
-                            primary: ['Biceps brachial', 'Biceps court'],
-                            secondary: ['Avant-bras', 'Brachial antérieur']
-                        },
-                        tags: ['isolation', 'bras', 'force', 'mass']
+                        tips: ['Gardez le dos droit', 'Contrôlez la descente', 'Ne balancez pas le corps'],
+                        commonMistakes: ['Utiliser l\'élan', 'Lâcher trop vite', 'Écarter les coudes'],
+                        muscleGroups: { primary: ['Biceps brachial'], secondary: ['Avant-bras', 'Brachial antérieur'] },
+                        tags: ['isolation', 'bras', 'force', 'masse'],
+                        imageUrl: null
                     },
-                    
-                    'Squat': {
+
+                    'Curl biceps (poulie basse)': {
                         difficulty: 'beginner',
-                        description: 'Exercice fondamental pour les jambes, travaille quadriceps, fessiers et stabilité.',
+                        description: 'Variante du curl avec ancrage bas pour un angle différent.',
                         instructions: [
-                            'Placez l\'élastique sous vos pieds, tenez les extrémités',
-                            'Pieds écartés largeur d\'épaules, orteils légèrement vers l\'extérieur',
-                            'Descendez en poussant les hanches vers l\'arrière',
-                            'Gardez le dos droit, poitrine sortie',
-                            'Remontez en poussant sur les talons'
+                            'Ancrez l\'élastique en bas',
+                            'Tenez les poignées en supination',
+                            'Fléchissez les avant-bras en gardant les coudes fixes',
+                            'Contractez les biceps en haut',
+                            'Redescendez lentement'
                         ],
-                        tips: [
-                            'Gardez les genoux dans l\'axe des orteils',
-                            'Descendez jusqu\'à ce que les cuisses soient parallèles au sol',
-                            'Respirez en descendant, expirez en montant'
-                        ],
-                        commonMistakes: [
-                            'Genoux qui rentrent vers l\'intérieur',
-                            'Dos rond',
-                            'Ne pas descendre assez bas'
-                        ],
-                        muscleGroups: {
-                            primary: ['Quadriceps', 'Fessiers'],
-                            secondary: ['Ischio-jambiers', 'Mollets', 'Core']
-                        },
-                        tags: ['composé', 'jambes', 'force', 'fonctionnel']
+                        tips: ['Gardez le torse stable', 'Focalisez sur la contraction', 'Amplitude complète'],
+                        commonMistakes: ['Se pencher vers l\'avant', 'Bouger les coudes', 'Relâcher trop vite'],
+                        muscleGroups: { primary: ['Biceps brachial'], secondary: ['Avant-bras'] },
+                        tags: ['isolation', 'bras', 'ancrage bas'],
+                        imageUrl: null
                     },
-                    
+
+                    'Curl biceps face à la porte': {
+                        difficulty: 'beginner',
+                        description: 'Curl biceps avec ancrage frontal pour une résistance constante.',
+                        instructions: [
+                            'Ancrez l\'élastique à hauteur moyenne',
+                            'Face à l\'ancrage, tenez les poignées',
+                            'Reculez pour créer de la tension',
+                            'Fléchissez en ramenant vers vous',
+                            'Contrôlez le retour'
+                        ],
+                        tips: ['Gardez les coudes stables', 'Reculez suffisamment', 'Mouvement contrôlé'],
+                        commonMistakes: ['Trop proche de l\'ancrage', 'Coudes qui bougent', 'Mouvement saccadé'],
+                        muscleGroups: { primary: ['Biceps'], secondary: ['Avant-bras'] },
+                        tags: ['isolation', 'biceps', 'ancrage frontal'],
+                        imageUrl: null
+                    },
+
+                    'Curl marteau': {
+                        difficulty: 'beginner',
+                        description: 'Variante ciblant davantage le brachial et les avant-bras.',
+                        instructions: [
+                            'Prise neutre (pouces vers le haut)',
+                            'Gardez les coudes près du corps',
+                            'Montez en gardant la prise neutre',
+                            'Contractez en haut',
+                            'Descendez lentement'
+                        ],
+                        tips: ['Prise ferme', 'Coudes fixes', 'Contrôlez bien la descente'],
+                        commonMistakes: ['Tourner les poignets', 'Bouger les coudes', 'Mouvement trop rapide'],
+                        muscleGroups: { primary: ['Brachial', 'Biceps'], secondary: ['Avant-bras'] },
+                        tags: ['isolation', 'bras', 'avant-bras'],
+                        imageUrl: null
+                    },
+
+                    // === TRICEPS ===
+                    'Extension triceps (poulie haute)': {
+                        difficulty: 'beginner',
+                        description: 'Exercice d\'isolation classique pour développer les triceps.',
+                        instructions: [
+                            'Ancrez l\'élastique en haut',
+                            'Tenez les poignées, coudes près du corps',
+                            'Étendez les avant-bras vers le bas',
+                            'Contractez les triceps en bas',
+                            'Remontez lentement'
+                        ],
+                        tips: ['Gardez les coudes fixes', 'Mouvement des avant-bras uniquement', 'Contractez fort en bas'],
+                        commonMistakes: ['Bouger les coudes', 'Utiliser le dos', 'Mouvement partiel'],
+                        muscleGroups: { primary: ['Triceps'], secondary: ['Deltoïdes antérieurs'] },
+                        tags: ['isolation', 'triceps', 'bras'],
+                        imageUrl: null
+                    },
+
+                    'Extension triceps verticale': {
+                        difficulty: 'intermediate',
+                        description: 'Extension triceps au-dessus de la tête pour étirer le muscle.',
+                        instructions: [
+                            'Élastique derrière le dos, une main en haut',
+                            'Étendez le bras vers le haut',
+                            'Gardez le coude près de l\'oreille',
+                            'Descendez lentement',
+                            'Alternez les bras'
+                        ],
+                        tips: ['Coude près de la tête', 'Mouvement contrôlé', 'Bon étirement en bas'],
+                        commonMistakes: ['Coude qui part sur le côté', 'Mouvement trop rapide', 'Mauvaise position'],
+                        muscleGroups: { primary: ['Triceps (chef long)'], secondary: [] },
+                        tags: ['isolation', 'triceps', 'étirement'],
+                        imageUrl: null
+                    },
+
+                    'Kickback triceps': {
+                        difficulty: 'intermediate',
+                        description: 'Isolation des triceps en position penchée.',
+                        instructions: [
+                            'Penchez-vous vers l\'avant, coude fixe',
+                            'Étendez l\'avant-bras vers l\'arrière',
+                            'Gardez le bras parallèle au sol',
+                            'Contractez en fin de mouvement',
+                            'Revenez lentement'
+                        ],
+                        tips: ['Gardez le coude fixe', 'Bras parallèle au sol', 'Contraction forte'],
+                        commonMistakes: ['Bouger le coude', 'Bras qui descend', 'Utiliser l\'élan'],
+                        muscleGroups: { primary: ['Triceps'], secondary: [] },
+                        tags: ['isolation', 'triceps', 'unilatéral'],
+                        imageUrl: null
+                    },
+
+                    // === ÉPAULES ===
+                    'Élévations latérales': {
+                        difficulty: 'beginner',
+                        description: 'Exercice d\'isolation pour développer la largeur des épaules.',
+                        instructions: [
+                            'Placez l\'élastique sous vos pieds',
+                            'Tenez les poignées le long du corps',
+                            'Élevez les bras sur les côtés jusqu\'à l\'horizontale',
+                            'Maintenez 1 seconde en haut',
+                            'Redescendez lentement'
+                        ],
+                        tips: ['Légère flexion des coudes', 'Pas plus haut que les épaules', 'Contrôlez la descente'],
+                        commonMistakes: ['Monter trop haut', 'Utiliser l\'élan', 'Bras tendus', 'Pencher le torse'],
+                        muscleGroups: { primary: ['Deltoïde moyen'], secondary: ['Deltoïde antérieur', 'Trapèzes'] },
+                        tags: ['isolation', 'épaules', 'largeur'],
+                        imageUrl: null
+                    },
+
+                    'Élévations frontales': {
+                        difficulty: 'beginner',
+                        description: 'Isolation du deltoïde antérieur.',
+                        instructions: [
+                            'Élastique sous les pieds',
+                            'Levez un bras devant vous',
+                            'Montez jusqu\'à la hauteur des épaules',
+                            'Descendez lentement',
+                            'Alternez les bras'
+                        ],
+                        tips: ['Pas plus haut que les épaules', 'Mouvement contrôlé', 'Gardez le torse stable'],
+                        commonMistakes: ['Monter trop haut', 'Utiliser l\'élan', 'Pencher en arrière'],
+                        muscleGroups: { primary: ['Deltoïde antérieur'], secondary: ['Core'] },
+                        tags: ['isolation', 'épaules', 'avant'],
+                        imageUrl: null
+                    },
+
+                    'Développé militaire assis': {
+                        difficulty: 'intermediate',
+                        description: 'Développé pour les épaules en position assise.',
+                        instructions: [
+                            'Assis, élastique sous les pieds',
+                            'Tenez les poignées à hauteur d\'épaules',
+                            'Poussez vers le haut',
+                            'Étendez complètement les bras',
+                            'Revenez lentement'
+                        ],
+                        tips: ['Gardez le dos droit', 'Poussée verticale', 'Extension complète'],
+                        commonMistakes: ['Dos rond', 'Poussée vers l\'avant', 'Mouvement partiel'],
+                        muscleGroups: { primary: ['Deltoïdes'], secondary: ['Triceps', 'Trapèzes'] },
+                        tags: ['composé', 'épaules', 'force'],
+                        imageUrl: null
+                    },
+
+                    'Oiseau': {
+                        difficulty: 'intermediate',
+                        description: 'Excellent pour les deltoïdes postérieurs et la posture.',
+                        instructions: [
+                            'Ancrage à hauteur de poitrine',
+                            'Bras tendus devant vous',
+                            'Écartez les bras sur les côtés',
+                            'Contractez les omoplates',
+                            'Revenez lentement'
+                        ],
+                        tips: ['Gardez les bras tendus', 'Contractez les omoplates', 'Mouvement lent'],
+                        commonMistakes: ['Plier les bras', 'Utiliser le dos', 'Mouvement trop rapide'],
+                        muscleGroups: { primary: ['Deltoïdes postérieurs'], secondary: ['Rhomboïdes', 'Trapèzes'] },
+                        tags: ['isolation', 'épaules', 'posture'],
+                        imageUrl: null
+                    },
+
+                    // === DOS ===
                     'Face Pull': {
                         difficulty: 'intermediate',
                         description: 'Excellent exercice pour les deltoïdes postérieurs et la posture.',
                         instructions: [
                             'Ancrez l\'élastique à hauteur d\'épaules',
+                            'Tenez les poignées, bras tendus',
                             'Tirez vers votre visage en écartant les coudes',
-                            'Contractez les omoplates en fin de mouvement',
-                            'Revenez lentement à la position de départ'
+                            'Contractez les omoplates',
+                            'Revenez lentement'
                         ],
-                        tips: [
-                            'Gardez les coudes hauts pendant le mouvement',
-                            'Contractez bien les muscles du haut du dos',
-                            'Mouvement lent et contrôlé'
+                        tips: ['Coudes hauts', 'Contractez le haut du dos', 'Mouvement contrôlé'],
+                        commonMistakes: ['Coudes qui descendent', 'Tirer vers le bas', 'Mouvement rapide'],
+                        muscleGroups: { primary: ['Deltoïdes postérieurs', 'Rhomboïdes'], secondary: ['Trapèzes'] },
+                        tags: ['isolation', 'dos', 'posture'],
+                        imageUrl: null
+                    },
+
+                    'Tirage horizontal unilatéral': {
+                        difficulty: 'intermediate',
+                        description: 'Tirage horizontal pour développer l\'épaisseur du dos.',
+                        instructions: [
+                            'Ancrage à hauteur de poitrine',
+                            'Un bras tendu devant vous',
+                            'Tirez le coude vers l\'arrière',
+                            'Contractez le dos',
+                            'Alternez les bras'
                         ],
-                        commonMistakes: [
-                            'Coudes qui descendent',
-                            'Tirer trop vers le bas',
-                            'Mouvement trop rapide'
+                        tips: ['Coude près du corps', 'Contractez le dos', 'Mouvement contrôlé'],
+                        commonMistakes: ['Tirer avec le bras', 'Coude qui s\'écarte', 'Rotation du torse'],
+                        muscleGroups: { primary: ['Grand dorsal', 'Rhomboïdes'], secondary: ['Biceps'] },
+                        tags: ['unilatéral', 'dos', 'épaisseur'],
+                        imageUrl: null
+                    },
+
+                    'Tirage vertical': {
+                        difficulty: 'intermediate',
+                        description: 'Simulation de tractions pour la largeur du dos.',
+                        instructions: [
+                            'Ancrez l\'élastique en haut',
+                            'Bras tendus au-dessus de la tête',
+                            'Tirez les coudes vers les côtes',
+                            'Contractez le dos',
+                            'Remontez lentement'
                         ],
-                        muscleGroups: {
-                            primary: ['Deltoïdes postérieurs', 'Rhomboïdes'],
-                            secondary: ['Trapèzes moyens', 'Triceps']
-                        },
-                        tags: ['isolation', 'epaules', 'posture', 'prevention']
-                    }
+                        tips: ['Penchez-vous légèrement', 'Contractez les dorsaux', 'Tirez avec le dos'],
+                        commonMistakes: ['Tirer avec les bras', 'Pas assez penché', 'Mouvement rapide'],
+                        muscleGroups: { primary: ['Grand dorsal'], secondary: ['Biceps', 'Rhomboïdes'] },
+                        tags: ['composé', 'dos', 'largeur'],
+                        imageUrl: null
+                    },
+
+                    'Rowing buste penché': {
+                        difficulty: 'intermediate',
+                        description: 'Exercice de base pour l\'épaisseur du dos.',
+                        instructions: [
+                            'Élastique sous les pieds',
+                            'Penchez le buste vers l\'avant',
+                            'Tirez les coudes vers l\'arrière',
+                            'Contractez les omoplates',
+                            'Revenez lentement'
+                        ],
+                        tips: ['Gardez le dos droit', 'Contractez les omoplates', 'Coudes près du corps'],
+                        commonMistakes: ['Dos rond', 'Tirer avec les bras', 'Se redresser'],
+                        muscleGroups: { primary: ['Grand dorsal', 'Rhomboïdes'], secondary: ['Biceps', 'Trapèzes'] },
+                        tags: ['composé', 'dos', 'force'],
+                        imageUrl: null
+                    },
+
+                    // === PECTORAUX ===
+                    'Développé debout (poulie moyenne)': {
+                        difficulty: 'intermediate',
+                        description: 'Développé pour les pectoraux en position debout.',
+                        instructions: [
+                            'Ancrage à hauteur de poitrine',
+                            'Dos à l\'ancrage, poignées en main',
+                            'Poussez devant vous',
+                            'Contractez les pectoraux',
+                            'Revenez lentement'
+                        ],
+                        tips: ['Gardez le dos droit', 'Contractez les pectoraux', 'Mouvement fluide'],
+                        commonMistakes: ['Pencher vers l\'avant', 'Mouvement rapide', 'Pas de contraction'],
+                        muscleGroups: { primary: ['Pectoraux'], secondary: ['Deltoïdes antérieurs', 'Triceps'] },
+                        tags: ['composé', 'pectoraux', 'poussée'],
+                        imageUrl: null
+                    },
+
+                    'Développé incliné': {
+                        difficulty: 'intermediate',
+                        description: 'Variante inclinée pour cibler le haut des pectoraux.',
+                        instructions: [
+                            'Ancrage en bas',
+                            'Poussez vers le haut et l\'avant',
+                            'Angle de 45 degrés',
+                            'Contractez le haut des pectoraux',
+                            'Revenez contrôlé'
+                        ],
+                        tips: ['Bon angle de poussée', 'Contractez le haut', 'Mouvement contrôlé'],
+                        commonMistakes: ['Mauvais angle', 'Mouvement trop rapide', 'Pas de contraction'],
+                        muscleGroups: { primary: ['Pectoraux (partie haute)'], secondary: ['Deltoïdes', 'Triceps'] },
+                        tags: ['composé', 'pectoraux', 'incliné'],
+                        imageUrl: null
+                    },
+
+                    'Écarté unilatéral': {
+                        difficulty: 'intermediate',
+                        description: 'Isolation des pectoraux avec étirement.',
+                        instructions: [
+                            'Ancrage à hauteur de poitrine',
+                            'Bras tendu sur le côté',
+                            'Ramenez le bras devant la poitrine',
+                            'Contractez le pectoral',
+                            'Revenez lentement'
+                        ],
+                        tips: ['Gardez le bras tendu', 'Bon étirement', 'Contraction forte'],
+                        commonMistakes: ['Plier le bras', 'Pas assez d\'étirement', 'Mouvement rapide'],
+                        muscleGroups: { primary: ['Pectoraux'], secondary: [] },
+                        tags: ['isolation', 'pectoraux', 'étirement'],
+                        imageUrl: null
+                    },
+
+                    'Pompes lestées': {
+                        difficulty: 'advanced',
+                        description: 'Pompes avec résistance élastique pour plus de difficulté.',
+                        instructions: [
+                            'Position de pompes, élastique sur le dos',
+                            'Tenez les extrémités sous les mains',
+                            'Effectuez des pompes normales',
+                            'La résistance augmente en montant',
+                            'Descendez lentement'
+                        ],
+                        tips: ['Gardez le corps aligné', 'Résistance progressive', 'Mouvement complet'],
+                        commonMistakes: ['Corps mal aligné', 'Mouvement partiel', 'Trop de résistance'],
+                        muscleGroups: { primary: ['Pectoraux'], secondary: ['Triceps', 'Deltoïdes', 'Core'] },
+                        tags: ['composé', 'pectoraux', 'avancé'],
+                        imageUrl: null
+                    },
+
+                    // === JAMBES ===
+                    'Squat': {
+                        difficulty: 'beginner',
+                        description: 'Exercice roi pour les jambes et les fessiers.',
+                        instructions: [
+                            'Élastique sous les pieds',
+                            'Pieds écartés largeur d\'épaules',
+                            'Descendez en poussant les hanches arrière',
+                            'Gardez le dos droit',
+                            'Remontez en poussant sur les talons'
+                        ],
+                        tips: ['Genoux dans l\'axe', 'Descendez bien bas', 'Gardez la poitrine haute'],
+                        commonMistakes: ['Genoux vers l\'intérieur', 'Dos rond', 'Pas assez profond'],
+                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Ischio-jambiers', 'Mollets'] },
+                        tags: ['composé', 'jambes', 'force', 'fonctionnel'],
+                        imageUrl: null
+                    },
+
+                    'Front squat': {
+                        difficulty: 'intermediate',
+                        description: 'Squat avec résistance frontale, plus difficile.',
+                        instructions: [
+                            'Élastique sous les pieds',
+                            'Tenez les poignées devant les épaules',
+                            'Squat normal en gardant les coudes hauts',
+                            'Résistance frontale constante',
+                            'Remontez en poussant les talons'
+                        ],
+                        tips: ['Coudes hauts', 'Gardez le torse droit', 'Résistance constante'],
+                        commonMistakes: ['Coudes qui descendent', 'Pencher vers l\'avant', 'Mauvaise posture'],
+                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Core', 'Ischio-jambiers'] },
+                        tags: ['composé', 'jambes', 'core'],
+                        imageUrl: null
+                    },
+
+                    'Fentes': {
+                        difficulty: 'intermediate',
+                        description: 'Exercice unilatéral pour jambes et équilibre.',
+                        instructions: [
+                            'Élastique sous le pied avant',
+                            'Grand pas en arrière',
+                            'Descendez en fléchissant les genoux',
+                            'Genou arrière frôle le sol',
+                            'Remontez sur le pied avant'
+                        ],
+                        tips: ['Gardez le torse droit', 'Poids sur le pied avant', 'Descendez bien bas'],
+                        commonMistakes: ['Pas assez grand', 'Pencher avant', 'Pas assez bas'],
+                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Ischio-jambiers', 'Core'] },
+                        tags: ['unilatéral', 'jambes', 'équilibre'],
+                        imageUrl: null
+                    },
+
+                    'Hip thrust': {
+                        difficulty: 'intermediate',
+                        description: 'Excellent pour développer les fessiers.',
+                        instructions: [
+                            'Allongé, élastique sur les hanches',
+                            'Pieds au sol, genoux fléchis',
+                            'Poussez les hanches vers le haut',
+                            'Contractez les fessiers en haut',
+                            'Redescendez lentement'
+                        ],
+                        tips: ['Contractez fort les fessiers', 'Gardez le dos droit', 'Poussée vers le haut'],
+                        commonMistakes: ['Pousser avec le dos', 'Pas de contraction', 'Mouvement partiel'],
+                        muscleGroups: { primary: ['Fessiers'], secondary: ['Ischio-jambiers', 'Core'] },
+                        tags: ['isolation', 'fessiers', 'force'],
+                        imageUrl: null
+                    },
+
+                    'Soulevé de terre': {
+                        difficulty: 'intermediate',
+                        description: 'Mouvement de charnière de hanche fondamental.',
+                        instructions: [
+                            'Élastique sous les pieds',
+                            'Penchez-vous en poussant les hanches arrière',
+                            'Gardez le dos droit',
+                            'Tirez en contractant les fessiers',
+                            'Revenez debout'
+                        ],
+                        tips: ['Charnière de hanche', 'Dos droit', 'Contractez les fessiers'],
+                        commonMistakes: ['Dos rond', 'Plier les genoux', 'Pas de poussée de hanches'],
+                        muscleGroups: { primary: ['Fessiers', 'Ischio-jambiers'], secondary: ['Dos', 'Trapèzes'] },
+                        tags: ['composé', 'chaîne postérieure', 'force'],
+                        imageUrl: null
+                    },
+
+                    // Ajoutez plus d'exercices selon vos besoins...
                 };
-            
+                
                 // Données par défaut pour exercices non référencés
                 const defaultData = {
                     difficulty: 'beginner',
@@ -5219,9 +5820,10 @@
                         primary: [exercise.muscle_group || 'Non défini'],
                         secondary: []
                     },
-                    tags: ['elastique', exercise.muscle_group || 'general']
+                    tags: ['elastique', exercise.muscle_group || 'general'],
+                    imageUrl: null
                 };
-            
+                
                 return enrichedDatabase[exercise.name] || defaultData;
             },
 
@@ -5336,13 +5938,363 @@
             },
 
             showExerciseFavorites() {
-                // TODO: Implémenter dans la prochaine version
-                this.showNotification('Fonctionnalité des favoris en cours de développement');
+                if (!appState.exerciseFavorites || appState.exerciseFavorites.length === 0) {
+                    this.showNotification('⭐ Aucun exercice en favoris pour le moment');
+                    return;
+                }
+                
+                // Filtrer pour afficher seulement les favoris
+                const favoriteExercises = appState.exercises.filter(ex => 
+                    appState.exerciseFavorites.includes(ex.id)
+                );
+                
+                const extendedFavorites = favoriteExercises.map(exercise => {
+                    const enrichedData = this.getExerciseEnrichedData(exercise);
+                    return { ...exercise, ...enrichedData };
+                });
+                
+                this.renderExerciseResults(extendedFavorites);
+                this.showNotification(`⭐ ${favoriteExercises.length} exercice(s) favori(s) affiché(s)`);
             },
 
             showExerciseDetails(exerciseId) {
-                // TODO: Implémenter dans la prochaine étape
-                this.showNotification('Détails de l\'exercice - Prochaine étape !');
+                const exercise = appState.exercises.find(e => e.id === exerciseId);
+                if (!exercise) {
+                    this.showNotification('Exercice introuvable');
+                    return;
+                }
+
+                const enrichedData = this.getExerciseEnrichedData(exercise);
+                const fullExercise = { ...exercise, ...enrichedData };
+
+                // Obtenir les statistiques de l'exercice
+                const stats = this.getExerciseStats(exerciseId);
+
+                // Vérifier si c'est un favori
+                const isFavorite = this.isExerciseFavorite(exerciseId);
+
+                // Construire le contenu du modal
+                const content = this.generateExerciseDetailsHTML(fullExercise, stats, isFavorite);
+
+                // Afficher le modal
+                document.getElementById('exercise-details-title').textContent = fullExercise.name;
+                document.getElementById('exercise-details-content').innerHTML = content;
+                document.getElementById('exercise-details-modal').classList.add('active');
+            },
+
+            generateExerciseDetailsHTML(exercise, stats, isFavorite) {
+                const difficultyClass = `difficulty-${exercise.difficulty}`;
+                const difficultyLabel = {
+                    'beginner': '🟢 Débutant',
+                    'intermediate': '🟡 Intermédiaire', 
+                    'advanced': '🔴 Confirmé'
+                };
+
+                const anchorText = {
+                    'none': '🏃 Sans ancrage (élastique libre)',
+                    'door-middle': '🚪 Porte - hauteur moyenne',
+                    'door-high': '🚪⬆️ Porte - position haute',
+                    'door-low': '🚪⬇️ Porte - position basse',
+                    'floor': '🦵 Sol/Pieds (marcher dessus)',
+                    'body': '🔄 Corps (élastique autour)',
+                    'external': '🌳 Ancrage extérieur'
+                };
+
+                return `
+                    <!-- En-tête avec image et infos principales -->
+                    <div class="exercise-details-section" style="position: relative;">
+                        <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="actions.toggleExerciseFavorite(${exercise.id})" title="${isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
+                            ${isFavorite ? '⭐' : '☆'}
+                        </button>
+                    
+                        <div class="image-placeholder">
+                            ${exercise.imageUrl ? 
+                                `<img src="${exercise.imageUrl}" alt="${exercise.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">` :
+                                `<div style="text-align: center;">
+                                    <div style="font-size: 48px; margin-bottom: 8px;">🎥</div>
+                                    <div style="font-size: 16px; font-weight: 500;">Image/GIF à venir</div>
+                                    <div style="font-size: 12px;">Format recommandé : 400x300px, <50KB</div>
+                                </div>`
+                            }
+                        </div>
+
+                        <div style="margin-top: 16px;">
+                            <div class="difficulty-badge ${difficultyClass}">
+                                ${difficultyLabel[exercise.difficulty]}
+                            </div>
+                            
+                            <p style="font-size: 16px; margin: 16px 0; line-height: 1.6;">
+                                ${exercise.description}
+                            </p>
+
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 16px 0;">
+                                <div>
+                                    <strong>🎯 Type :</strong> ${exercise.is_unilateral ? 'Unilatéral' : 'Bilatéral'}
+                                </div>
+                                <div>
+                                    <strong>⚓ Ancrage :</strong> ${anchorText[exercise.anchor_point] || 'Non défini'}
+                                </div>
+                                <div>
+                                    <strong>⏱️ Mode :</strong> ${exercise.exercise_mode === 'time' ? 'Temps' : exercise.exercise_mode === 'both' ? 'Temps ou Répétitions' : 'Répétitions'}
+                                </div>
+                                <div>
+                                    <strong>😴 Repos :</strong> ${exercise.default_rest_time}s
+                                </div>
+                            </div>
+
+                            <!-- Tags -->
+                            <div style="margin: 16px 0;">
+                                ${exercise.tags.map(tag => 
+                                    `<span style="background: var(--primary); color: white; padding: 4px 8px; margin: 2px; border-radius: 12px; font-size: 12px; display: inline-block;">${tag}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistiques personnelles -->
+                    ${stats.totalSessions > 0 ? `
+                        <div class="exercise-details-section">
+                            <h4>📊 Vos statistiques</h4>
+                            <div class="exercise-stats">
+                                <div class="exercise-stat">
+                                    <div class="exercise-stat-value">${stats.totalSessions}</div>
+                                    <div class="exercise-stat-label">Séances</div>
+                                </div>
+                                <div class="exercise-stat">
+                                    <div class="exercise-stat-value">${stats.totalSets}</div>
+                                    <div class="exercise-stat-label">Séries</div>
+                                </div>
+                                <div class="exercise-stat">
+                                    <div class="exercise-stat-value">${stats.maxWeight}kg</div>
+                                    <div class="exercise-stat-label">Poids Max</div>
+                                </div>
+                                <div class="exercise-stat">
+                                    <div class="exercise-stat-value">${stats.lastSession}</div>
+                                    <div class="exercise-stat-label">Dernière fois</div>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- Muscles ciblés -->
+                    <div class="exercise-details-section">
+                        <h4>🎯 Muscles ciblés</h4>
+                        <div style="margin: 12px 0;">
+                            <strong>Muscles principaux :</strong><br>
+                            ${exercise.muscleGroups.primary.map(muscle => 
+                                `<span class="muscle-tag muscle-primary">${muscle}</span>`
+                            ).join('')}
+                        </div>
+                        ${exercise.muscleGroups.secondary.length > 0 ? `
+                            <div style="margin: 12px 0;">
+                                <strong>Muscles secondaires :</strong><br>
+                                ${exercise.muscleGroups.secondary.map(muscle => 
+                                    `<span class="muscle-tag muscle-secondary">${muscle}</span>`
+                                ).join('')}
+                            </div>
+                        ` : ''}
+                    
+                        <div style="margin: 16px 0; padding: 12px; background: var(--background); border-radius: 8px; font-size: 14px; color: var(--text-secondary);">
+                            💡 <strong>Schéma anatomique :</strong> Fonctionnalité à venir - Visualisation interactive des muscles
+                        </div>
+                    </div>
+
+                    <!-- Instructions détaillées -->
+                    <div class="exercise-details-section">
+                        <h4>📋 Instructions pas-à-pas</h4>
+                        ${exercise.instructions.map((instruction, index) => `
+                            <div class="instruction-step">
+                                <div class="step-number">${index + 1}</div>
+                                <div style="flex: 1;">${instruction}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Conseils d'exécution -->
+                    <div class="exercise-details-section">
+                        <h4>💡 Conseils d'exécution</h4>
+                        ${exercise.tips.map(tip => `
+                            <div class="tip-item">
+                                <div style="color: #34C759; font-size: 14px;">✓</div>
+                                <div style="flex: 1;">${tip}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Erreurs communes -->
+                    <div class="exercise-details-section">
+                        <h4>⚠️ Erreurs communes à éviter</h4>
+                        ${exercise.commonMistakes.map(mistake => `
+                            <div class="mistake-item">
+                                <div style="color: #FF3B30; font-size: 14px;">✗</div>
+                                <div style="flex: 1;">${mistake}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Recommandations de résistance -->
+                    ${this.hasResistanceRecommendations(exercise.name) ? `
+                        <div class="exercise-details-section">
+                            <h4>💪 Recommandations de résistance</h4>
+                            ${generateResistanceRecommendations(exercise.name)}
+                        </div>
+                    ` : ''}
+
+                    <!-- Actions -->
+                    <div class="exercise-details-section">
+                        <h4>🚀 Actions</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                            <button class="btn btn-primary" onclick="actions.addExerciseToCurrentSession(${exercise.id})">
+                                ➕ Ajouter à la séance
+                            </button>
+                            <button class="btn btn-secondary" onclick="actions.viewExerciseHistory(${exercise.id})">
+                                📊 Voir l'historique
+                            </button>
+                            <button class="btn btn-secondary" onclick="actions.editExercise(${exercise.id}); actions.closeModal('exercise-details-modal')">
+                                ✏️ Modifier l'exercice
+                            </button>
+                            <button class="btn btn-secondary" onclick="actions.shareExercise(${exercise.id})">
+                                🔗 Partager
+                            </button>
+                        </div>
+                    </div>
+                `;
+            },
+
+            getExerciseStats(exerciseId) {
+                let totalSessions = 0;
+                let totalSets = 0;
+                let maxWeight = 0;
+                let lastSessionDate = null;
+
+                appState.sessions.forEach(session => {
+                    const exerciseData = session.exercises.find(ex => ex.exercise_id === exerciseId);
+                    if (exerciseData && exerciseData.sets.length > 0) {
+                        totalSessions++;
+                        totalSets += exerciseData.sets.length;
+                        lastSessionDate = session.date;
+                    
+                        exerciseData.sets.forEach(set => {
+                            const resistance = set.total_resistance || 0;
+                            if (resistance > maxWeight) {
+                                maxWeight = resistance;
+                            }
+                        });
+                    }
+                });
+
+                const lastSession = lastSessionDate ? 
+                    new Date(lastSessionDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : 
+                    'Jamais';
+
+                return {
+                    totalSessions,
+                    totalSets,
+                    maxWeight,
+                    lastSession
+                };
+            },
+
+            hasResistanceRecommendations(exerciseName) {
+                return RESISTANCE_RECOMMENDATIONS.hasOwnProperty(exerciseName);
+            },
+
+            // Gestion des favoris
+            isExerciseFavorite(exerciseId) {
+                if (!appState.exerciseFavorites) {
+                    appState.exerciseFavorites = [];
+                }
+                return appState.exerciseFavorites.includes(exerciseId);
+            },
+
+            toggleExerciseFavorite(exerciseId) {
+                if (!appState.exerciseFavorites) {
+                    appState.exerciseFavorites = [];
+                }
+                
+                const index = appState.exerciseFavorites.indexOf(exerciseId);
+                if (index === -1) {
+                    appState.exerciseFavorites.push(exerciseId);
+                    this.showNotification('⭐ Ajouté aux favoris !');
+                } else {
+                    appState.exerciseFavorites.splice(index, 1);
+                    this.showNotification('☆ Retiré des favoris');
+                }
+                
+                this.saveData();
+                
+                // Mettre à jour le bouton si le modal est ouvert
+                const favoriteBtn = document.querySelector('.favorite-btn');
+                if (favoriteBtn) {
+                    const isFavorite = this.isExerciseFavorite(exerciseId);
+                    favoriteBtn.classList.toggle('active', isFavorite);
+                    favoriteBtn.innerHTML = isFavorite ? '⭐' : '☆';
+                    favoriteBtn.title = isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris';
+                }
+            },
+
+            addExerciseToCurrentSession(exerciseId) {
+                if (!appState.currentSession) {
+                    if (confirm('Aucune séance en cours. Voulez-vous créer une nouvelle séance ?')) {
+                        this.startNewSession();
+                    } else {
+                        return;
+                    }
+                }
+
+                const exercise = appState.exercises.find(e => e.id === exerciseId);
+                const exists = appState.currentSession.exercises.find(e => e.exercise_id === exerciseId);
+                
+                if (exists) {
+                    this.showNotification('Cet exercice est déjà dans la séance en cours');
+                    return;
+                }
+
+                appState.currentSession.exercises.push({
+                    exercise_id: exerciseId,
+                    planned_sets: 3,
+                    rest_time: exercise.default_rest_time || 90,
+                    duration: exercise.default_duration || 30,
+                    sets: []
+                });
+
+                this.closeModal('exercise-details-modal');
+                this.showScreen('preparation');
+                this.showNotification(`"${exercise.name}" ajouté à la séance !`);
+            },
+
+            viewExerciseHistory(exerciseId) {
+                // Aller aux stats avec cet exercice sélectionné
+                this.closeModal('exercise-details-modal');
+                this.showScreen('stats');
+                
+                // Sélectionner l'exercice dans le dropdown
+                setTimeout(() => {
+                    const select = document.getElementById('stats-exercise-select');
+                    if (select) {
+                        select.value = exerciseId;
+                        this.updateStats(exerciseId);
+                    }
+                }, 100);
+            },
+
+            shareExercise(exerciseId) {
+                const exercise = appState.exercises.find(e => e.id === exerciseId);
+                const enrichedData = this.getExerciseEnrichedData(exercise);
+                
+                const shareText = `💪 ${exercise.name}\n\n📝 ${enrichedData.description}\n\n🎯 Muscles: ${enrichedData.muscleGroups.primary.join(', ')}\n\nDécouvrez SmartTrack pour vos entraînements !`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: `Exercice: ${exercise.name}`,
+                        text: shareText
+                    });
+                } else if (navigator.clipboard) {
+                    navigator.clipboard.writeText(shareText);
+                    this.showNotification('📋 Informations copiées dans le presse-papier !');
+                } else {
+                    this.showNotification('Partage non supporté sur cet appareil');
+                }
             }
         };
 
