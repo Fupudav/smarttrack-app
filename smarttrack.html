@@ -4562,11 +4562,9 @@
             
             // Statistiques
             updateStats(exerciseId) {
-                const exerciseSelect = document.getElementById('stats-exercise-select');
-                if (exerciseSelect) {
-                    exerciseSelect.dataset.currentValue = exerciseId;
-                }
-                render();
+                console.log('Updating stats for exercise:', exerciseId);
+                // Pas besoin de render() complet, juste re-rendre les stats
+                renderStats();
             },
 
             // Calculer les statistiques générales
@@ -5767,7 +5765,7 @@
         function renderStats() {
             const statsContent = document.getElementById('stats-content');
             
-            // STATISTIQUES GÉNÉRALES (sans select)
+            // STATISTIQUES GÉNÉRALES
             const generalStats = actions.calculateGeneralStats();
             let generalStatsHtml = `
                 <div class="card">
@@ -5824,61 +5822,49 @@
                 </div>
             `;
 
-            // Grouper les exercices par groupes musculaires AVANT de créer le HTML
-            const groupedExercises = {};
-            appState.exercises.forEach(exercise => {
-                const group = exercise.muscle_group || 'autres';
-                if (!groupedExercises[group]) {
-                    groupedExercises[group] = [];
-                }
-                groupedExercises[group].push(exercise);
-            });
+            // UTILISER LE SELECT EXISTANT dans le HTML (pas en créer un nouveau)
+            const exerciseSelect = document.getElementById('stats-exercise-select');
+            
+            // Remplir le select existant s'il est vide
+            if (exerciseSelect && exerciseSelect.children.length <= 1) {
+                // Grouper les exercices par groupes musculaires
+                const groupedExercises = {};
+                appState.exercises.forEach(exercise => {
+                    const group = exercise.muscle_group || 'autres';
+                    if (!groupedExercises[group]) {
+                        groupedExercises[group] = [];
+                    }
+                    groupedExercises[group].push(exercise);
+                });
 
-            // Ordre d'affichage des catégories
-            const groupOrder = ['echauffement', 'biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes', 'autres'];
-
-            // Créer les options du select
-            let selectOptionsHtml = '<option value="">Choisir un exercice...</option>';
-            groupOrder.forEach(group => {
-                if (groupedExercises[group] && groupedExercises[group].length > 0) {
-                    selectOptionsHtml += `<optgroup label="${group.charAt(0).toUpperCase() + group.slice(1)} (${groupedExercises[group].length})">`;
-                    // Trier les exercices par nom dans chaque groupe
-                    groupedExercises[group].sort((a, b) => a.name.localeCompare(b.name));
-                    groupedExercises[group].forEach(exercise => {
-                        // Ajouter l'indicateur de mode
-                        const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
-                            exercise.exercise_mode === 'both' ? '🔄' : '🔢';
-                        selectOptionsHtml += `<option value="${exercise.id}">${modeIcon} ${exercise.name}</option>`;
-                    });
-                    selectOptionsHtml += '</optgroup>';
-                }
-            });
-
-            // Récupérer la valeur actuellement sélectionnée
-            const currentExerciseSelect = document.getElementById('stats-exercise-select');
-            const currentSelectedValue = currentExerciseSelect ? currentExerciseSelect.value : '';
-
-            // STATISTIQUES PAR EXERCICE - Une seule fois
-            let exerciseStatsHtml = `
-                <div class="card">
-                    <h3>📈 Statistiques par exercice</h3>
-                    <div class="input-group">
-                        <label>Sélectionner un exercice</label>
-                        <select id="stats-exercise-select" class="select" onchange="actions.updateStats(this.value)">
-                            ${selectOptionsHtml}
-                        </select>
-                    </div>
-                </div>
-            `;
+                // Ordre d'affichage des catégories
+                const groupOrder = ['echauffement', 'biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes', 'autres'];
+                
+                // Vider le select et ajouter l'option par défaut
+                exerciseSelect.innerHTML = '<option value="">Choisir un exercice...</option>';
+                
+                groupOrder.forEach(group => {
+                    if (groupedExercises[group] && groupedExercises[group].length > 0) {
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = `${group.charAt(0).toUpperCase() + group.slice(1)} (${groupedExercises[group].length})`;
+                        // Trier les exercices par nom dans chaque groupe
+                        groupedExercises[group].sort((a, b) => a.name.localeCompare(b.name));
+                        groupedExercises[group].forEach(exercise => {
+                            const option = document.createElement('option');
+                            option.value = exercise.id;
+                            // Ajouter l'indicateur de mode
+                            const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
+                                exercise.exercise_mode === 'both' ? '🔄' : '🔢';
+                            option.textContent = `${modeIcon} ${exercise.name}`;
+                            optgroup.appendChild(option);
+                        });
+                        exerciseSelect.appendChild(optgroup);
+                    }
+                });
+            }
 
             // Afficher les statistiques de base
-            statsContent.innerHTML = generalStatsHtml + exerciseStatsHtml;
-
-            // Restaurer la valeur sélectionnée
-            const exerciseSelect = document.getElementById('stats-exercise-select');
-            if (exerciseSelect && currentSelectedValue) {
-                exerciseSelect.value = currentSelectedValue;
-            }
+            statsContent.innerHTML = generalStatsHtml;
 
             // Afficher les stats de l'exercice sélectionné
             const selectedExerciseId = parseInt(exerciseSelect?.value || '0');
@@ -5932,7 +5918,6 @@
                 // Générer les cartes de statistiques selon le mode de l'exercice
                 let statsCardsHtml = '';
                 if (hasTimeMode) {
-                    // Pour les exercices utilisés en mode temps
                     statsCardsHtml = `
                         <div class="stats-grid">
                             <div class="stat-card">
@@ -5954,7 +5939,6 @@
                         </div>
                     `;
                 } else {
-                    // Pour les exercices utilisés uniquement en mode répétitions
                     statsCardsHtml = `
                         <div class="stats-grid">
                             <div class="stat-card">
@@ -6027,10 +6011,10 @@
                                                 `${set.duration || 0}s - ${leftResistance}kg (G) | ${rightResistance}kg (D)` :
                                                 `${set.duration || 0}s`;
                                         } else {
-                                        const resistance = set.total_resistance || 0;
-                                        setInfo = resistance > 0 ?
-                                            `${set.duration || 0}s - ${resistance}kg` :
-                                            `${set.duration || 0}s`;
+                                            const resistance = set.total_resistance || 0;
+                                            setInfo = resistance > 0 ?
+                                                `${set.duration || 0}s - ${resistance}kg` :
+                                                `${set.duration || 0}s`;
                                         }
                                     } else {
                                         if (exercise.is_unilateral) {
@@ -6061,13 +6045,16 @@
                     `;
                 }
 
-                // Ajouter les statistiques détaillées de l'exercice
+                // Ajouter les statistiques détaillées
                 const detailedStatsHtml = `
-                    ${statsCardsHtml}
+                    <div class="card">
+                        <h3>📈 Statistiques pour ${exercise.name}</h3>
+                        ${statsCardsHtml}
+                    </div>
                     ${lastSetsHtml}
                     <div class="card">
                         <h3>Évolution des performances</h3>
-                        <div class="chart-container" id="stats-chart">
+                        <div class="chart-container">
                             ${actions.generateSimpleChart(selectedExerciseId, exercise.name)}
                         </div>
                     </div>
@@ -6091,21 +6078,7 @@
                 `;
 
                 // Ajouter les statistiques détaillées après les statistiques générales
-                statsContent.innerHTML = generalStatsHtml + exerciseStatsHtml + detailedStatsHtml;
-
-                // Restaurer la valeur sélectionnée une dernière fois
-                const finalExerciseSelect = document.getElementById('stats-exercise-select');
-                if (finalExerciseSelect) {
-                    finalExerciseSelect.value = selectedExerciseId;
-                }
-            } else {
-                // Aucun exercice sélectionné
-                const noSelectionHtml = `
-                    <p style="text-align: center; color: var(--text-secondary); padding: 40px;">
-                        Sélectionnez un exercice pour voir les statistiques détaillées
-                    </p>
-                `;
-                statsContent.innerHTML = generalStatsHtml + exerciseStatsHtml + noSelectionHtml;
+                statsContent.innerHTML = generalStatsHtml + detailedStatsHtml;
             }
         }
 
