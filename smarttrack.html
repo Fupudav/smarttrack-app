@@ -3428,6 +3428,7 @@
                 console.log('🔍 Debug exercice:', exercise.name);
                 console.log('📊 MediaId:', exercise.mediaId);
                 console.log('📚 MediaLibrary:', appState.mediaLibrary);
+                console.log('🔄 Recherche media avec ID:', exercise.mediaId);
                 
                 if (exercise.mediaId && appState.mediaLibrary) {
                     const media = appState.mediaLibrary.find(m => m.id === exercise.mediaId);
@@ -6652,11 +6653,16 @@
             },
 
             showExerciseDetails(exerciseId) {
+                // Recharger l'exercice depuis les données sauvegardées pour avoir les dernières infos
+                this.loadData();
+                
                 const exercise = appState.exercises.find(e => e.id === exerciseId);
                 if (!exercise) {
                     this.showNotification('Exercice introuvable');
                     return;
                 }
+
+                console.log('🔍 Exercice à afficher:', exercise.name, 'MediaId:', exercise.mediaId);
 
                 const enrichedData = this.getExerciseEnrichedData(exercise);
                 const fullExercise = { ...exercise, ...enrichedData };
