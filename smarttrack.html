@@ -12,15 +12,34 @@
         :root {
             --primary: #007AFF;
             --primary-dark: #0056CC;
+            --primary-light: #007AFF20;
             --secondary: #34C759;
+            --secondary-light: #34C75920;
             --danger: #FF3B30;
+            --danger-light: #FF3B3020;
             --warning: #FF9500;
+            --warning-light: #FF950020;
+            --info: #5856D6;
+            --info-light: #5856D620;
+            --success: #34C759;
+            --success-light: #34C75920;
+            
+            /* Gradients pour les effets */
+            --gradient-primary: linear-gradient(135deg, #007AFF, #5856D6);
+            --gradient-success: linear-gradient(135deg, #34C759, #30D158);
+            --gradient-forge: linear-gradient(135deg, #FF6B35, #FFD700);
+            --gradient-danger: linear-gradient(135deg, #FF3B30, #FF6B6B);
+            
             --background: #F2F2F7;
             --surface: #FFFFFF;
+            --surface-elevated: #FFFFFF;
             --text-primary: #000000;
             --text-secondary: #6D6D70;
+            --text-tertiary: #8E8E93;
             --border: #C6C6C8;
+            --border-light: #E5E5E7;
             --shadow: rgba(0, 0, 0, 0.1);
+            --shadow-elevated: rgba(0, 0, 0, 0.15);
         }
 
         [data-theme="dark"] {
@@ -37,6 +56,97 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            /* Transitions plus naturelles pour tous les éléments */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* === ANIMATIONS D'ACCOMPLISSEMENT === */
+        @keyframes celebration {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes slideInFromLeft {
+            from { 
+                opacity: 0; 
+                transform: translateX(-20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+        }
+
+        @keyframes slideInFromRight {
+            from { 
+                opacity: 0; 
+                transform: translateX(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* === CLASSES D'ANIMATION === */
+        .animate-celebration {
+            animation: celebration 0.6s ease-in-out;
+        }
+
+        .animate-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .animate-slide-in-left {
+            animation: slideInFromLeft 0.4s ease-out;
+        }
+
+        .animate-slide-in-right {
+            animation: slideInFromRight 0.4s ease-out;
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Animation pour les confettis */
+        @keyframes confetti-fall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100vh) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(360deg);
+            }
         }
 
         body {
@@ -202,19 +312,61 @@
         .nav-item {
             flex: 1;
             text-align: center;
-            padding: 8px;
+            padding: 12px 8px;
             cursor: pointer;
             color: var(--text-secondary);
             font-size: 12px;
-            transition: color 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Optimisations tactiles */
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            user-select: none;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 0 0 3px 3px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-50%);
         }
 
         .nav-item.active {
             color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-item.active::before {
+            width: 80%;
         }
 
         .nav-item:hover {
             color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .nav-item:active {
+            transform: translateY(0);
+            background: var(--primary-light);
+        }
+
+        /* Amélioration responsive de la navigation */
+        @media (max-width: 768px) {
+            .nav-item {
+                font-size: 11px;
+                padding: 10px 4px;
+                min-height: 56px;
+            }
         }
 
         /* === COMPONENTS === */
@@ -248,40 +400,103 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: center;
             display: inline-block;
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            /* Optimisations pour les animations */
+            will-change: transform, box-shadow;
+            /* Zones tactiles optimisées */
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        /* Effet de ripple au clic */
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: width 0.3s, height 0.3s;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: var(--gradient-primary);
             color: white;
+            box-shadow: 0 4px 15px var(--primary-light);
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-light);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px var(--primary-light);
         }
 
         .btn-secondary {
             background: var(--surface);
             color: var(--text-primary);
             border: 2px solid var(--border);
+            box-shadow: 0 2px 8px var(--shadow);
         }
 
         .btn-secondary:hover {
             border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 4px var(--shadow);
         }
 
         .btn-danger {
-            background: var(--danger);
+            background: var(--gradient-danger);
             color: white;
+            box-shadow: 0 4px 15px var(--danger-light);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--danger-light);
+        }
+
+        .btn-danger:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px var(--danger-light);
         }
 
         .btn-success {
-            background: var(--secondary);
+            background: var(--gradient-success);
             color: white;
+            box-shadow: 0 4px 15px var(--success-light);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--success-light);
+        }
+
+        .btn-success:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px var(--success-light);
         }
 
         .btn-full {
@@ -1361,7 +1576,7 @@
             border: 1px solid var(--border);
         }
 
-        /* === MODAL === */
+        /* === MODAL AMÉLIORÉE === */
         .modal {
             display: none;
             position: fixed;
@@ -1370,24 +1585,61 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .modal.active {
             display: flex;
+            opacity: 1;
+            animation: modalBackdropEnter 0.3s ease-out;
         }
 
         .modal-content {
-            background: var(--surface);
-            border-radius: 16px;
+            background: var(--surface-elevated);
+            border-radius: 20px;
             padding: 24px;
             max-width: 400px;
             width: 100%;
             max-height: 80vh;
             overflow-y: auto;
+            box-shadow: 0 20px 60px var(--shadow-elevated);
+            border: 1px solid var(--border-light);
+            transform: translateY(-50px) scale(0.9);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0) scale(1);
+            animation: modalContentEnter 0.3s ease-out;
+        }
+
+        /* Animations d'entrée des modales */
+        @keyframes modalBackdropEnter {
+            from {
+                opacity: 0;
+                backdrop-filter: blur(0px);
+            }
+            to {
+                opacity: 1;
+                backdrop-filter: blur(8px);
+            }
+        }
+
+        @keyframes modalContentEnter {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .modal-header {
@@ -1539,41 +1791,96 @@
             border-bottom: none;
         }
 
-        /* === NOTIFICATION === */
+        /* === SYSTÈME DE NOTIFICATIONS AMÉLIORÉ === */
         .notification {
             position: fixed;
             top: 20px;
             left: 50%;
-            transform: translateX(-50%);
-            background: var(--secondary);
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--gradient-success);
             color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 16px 24px;
+            border-radius: 12px;
             z-index: 1001;
             display: none;
-            /* Amélioration pour les séances live */
-            max-width: 300px;
+            max-width: 350px;
             font-size: 14px;
             text-align: center;
+            box-shadow: 0 8px 32px var(--shadow-elevated);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .notification.show {
             display: block;
-            animation: slideDown 0.3s ease-out;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            animation: notificationEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Types de notifications */
+        .notification.success {
+            background: var(--gradient-success);
+        }
+
+        .notification.error {
+            background: var(--gradient-danger);
+        }
+
+        .notification.warning {
+            background: linear-gradient(135deg, var(--warning), #FFB84D);
+        }
+
+        .notification.info {
+            background: var(--gradient-primary);
         }
 
         /* Style spécial pour les notifications en séance */
         .notification.live-session {
             top: 80px;
-            background: var(--primary);
-            opacity: 0.9;
-            font-size: 12px;
-            padding: 8px 16px;
+            background: var(--gradient-primary);
+            opacity: 0.95;
+            font-size: 13px;
+            padding: 12px 20px;
+            max-width: 280px;
         }
 
-        @keyframes slideDown {
-            from { transform: translate(-50%, -100%); }
-            to { transform: translate(-50%, 0); }
+        /* Notifications d'accomplissement */
+        .notification.achievement {
+            background: var(--gradient-forge);
+            color: black;
+            font-weight: 600;
+            font-size: 16px;
+            padding: 20px 28px;
+            animation: achievementEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes notificationEnter {
+            from { 
+                opacity: 0;
+                transform: translateX(-50%) translateY(-100px) scale(0.8);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
+        }
+
+        @keyframes achievementEnter {
+            0% { 
+                opacity: 0;
+                transform: translateX(-50%) translateY(-100px) scale(0.8);
+            }
+            50% { 
+                opacity: 1;
+                transform: translateX(-50%) translateY(0) scale(1.1);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
         }
 
         /* === CHART CONTAINER === */
@@ -1588,6 +1895,143 @@
             align-items: center;
             justify-content: center;
             color: var(--text-secondary);
+        }
+
+        /* === ÉTATS DE CHARGEMENT ET EMPTY STATES === */
+        .skeleton {
+            background: linear-gradient(90deg, 
+                var(--border-light) 25%, 
+                var(--background) 37%, 
+                var(--border-light) 63%);
+            background-size: 400% 100%;
+            animation: skeleton-loading 1.5s ease-in-out infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-text {
+            height: 16px;
+            margin: 8px 0;
+            border-radius: 4px;
+        }
+
+        .skeleton-text.large {
+            height: 24px;
+        }
+
+        .skeleton-text.small {
+            height: 12px;
+        }
+
+        .skeleton-card {
+            height: 100px;
+            margin: 12px 0;
+            border-radius: 12px;
+        }
+
+        .skeleton-button {
+            height: 44px;
+            border-radius: 12px;
+            margin: 8px 0;
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.6;
+            display: block;
+        }
+
+        .empty-state-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .empty-state-description {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .empty-state-action {
+            margin-top: 20px;
+        }
+
+        /* Loading States */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--border-light);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Success States */
+        .success-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--success-light);
+            border-radius: 16px;
+            border: 1px solid var(--success);
+            margin: 20px 0;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .success-state-icon {
+            font-size: 48px;
+            color: var(--success);
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .success-state-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 8px;
+        }
+
+        .success-state-description {
+            color: var(--text-secondary);
+            font-size: 14px;
         }
 
         /* === RESPONSIVE === */
@@ -1770,28 +2214,83 @@
         }
     </style>
     <script>
+        // === GESTION DES GESTES TACTILES ===
+        let touchStartX = null;
+        let touchStartY = null;
+        let touchEndX = null;
+        let touchEndY = null;
+
         // Empêcher le pull-to-refresh par défaut
         document.addEventListener('touchstart', handleTouchStart, { passive: true });
         document.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-        let startY = null;
+        document.addEventListener('touchend', handleTouchEnd, { passive: true });
 
         function handleTouchStart(evt) {
-            startY = evt.touches[0].clientY;
+            touchStartX = evt.touches[0].clientX;
+            touchStartY = evt.touches[0].clientY;
         }
 
         function handleTouchMove(evt) {
-            if (startY === null) return;
+            if (touchStartY === null) return;
             
             const currentY = evt.touches[0].clientY;
-            const diff = currentY - startY;
+            const diff = currentY - touchStartY;
             
             // Si on tire vers le bas depuis le haut de la page
             if (diff > 0 && window.pageYOffset === 0) {
                 evt.preventDefault(); // Empêcher le refresh
             }
+        }
+
+        function handleTouchEnd(evt) {
+            if (touchStartX === null || touchStartY === null) return;
             
-            startY = null;
+            touchEndX = evt.changedTouches[0].clientX;
+            touchEndY = evt.changedTouches[0].clientY;
+            
+            handleSwipeGesture();
+            
+            // Reset
+            touchStartX = null;
+            touchStartY = null;
+            touchEndX = null;
+            touchEndY = null;
+        }
+
+        function handleSwipeGesture() {
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            const minSwipeDistance = 50;
+            
+            // Vérifier si c'est un swipe horizontal (plus de mouvement horizontal que vertical)
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+                if (deltaX > 0) {
+                    // Swipe vers la droite - navigation précédente
+                    navigateBack();
+                } else {
+                    // Swipe vers la gauche - navigation suivante (si applicable)
+                    navigateNext();
+                }
+            }
+        }
+
+        function navigateNext() {
+            // Navigation vers l'écran suivant selon le contexte
+            const currentScreen = appState.currentScreen;
+            const navigationFlow = {
+                'dashboard': 'preparation',
+                'preparation': 'live',
+                'exercises': 'templates',
+                'templates': 'stats'
+            };
+            
+            if (navigationFlow[currentScreen]) {
+                actions.showScreen(navigationFlow[currentScreen]);
+                // Feedback haptique si disponible
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(10);
+                }
+            }
         }
     </script>
 </head>
@@ -2197,7 +2696,7 @@
             <div class="card">
                 <div class="input-group">
                     <label>🔍 Rechercher un exercice</label>
-                    <input type="text" id="exercise-db-search" class="input" placeholder="Nom d'exercice, groupe musculaire..." onkeyup="actions.filterExerciseDatabase()">
+                                                <input type="text" id="exercise-db-search" class="input" placeholder="Nom d'exercice, groupe musculaire..." oninput="debounceManager.debounce(() => actions.filterExerciseDatabase(), 300, 'exerciseSearch')">
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 12px;">
                     <div class="input-group">
@@ -2539,7 +3038,7 @@
             
             <div class="media-search">
                 <div class="input-group">
-                    <input type="text" id="media-search-input" class="input" placeholder="🔍 Rechercher une image..." onkeyup="actions.filterMediaLibrary()">
+                                            <input type="text" id="media-search-input" class="input" placeholder="🔍 Rechercher une image..." oninput="debounceManager.debounce(() => actions.filterMediaLibrary(), 300, 'mediaSearch')">
                 </div>
             
                 <div class="media-categories">
@@ -6286,8 +6785,58 @@
                 localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(data));
                 return true;
                 } catch (e) {
-                console.error('Erreur de sauvegarde:', e);
-                return false;
+                if (e.name === 'QuotaExceededError') {
+                    console.warn('localStorage quota exceeded, attempting cleanup');
+                    this.cleanupOldData();
+                    try {
+                        localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(data));
+                        actions.showNotification('💾 Espace nettoyé et données sauvegardées');
+                        return true;
+                    } catch (retryError) {
+                        console.error('Erreur de sauvegarde après nettoyage:', retryError);
+                        actions.showNotification('❌ Erreur: Espace de stockage insuffisant');
+                        return false;
+                    }
+                } else {
+                    console.error('Erreur de sauvegarde:', e);
+                    actions.showNotification('❌ Erreur de sauvegarde');
+                    return false;
+                }
+                }
+            },
+
+            cleanupOldData() {
+                try {
+                    // Supprimer les anciennes sessions (garder 100 dernières)
+                    const sessions = this.load('sessions', []);
+                    if (sessions.length > 100) {
+                        const recentSessions = sessions.slice(-100);
+                        this.save('sessions', recentSessions);
+                        console.log(`🧹 Nettoyage: ${sessions.length - 100} anciennes sessions supprimées`);
+                    }
+                    
+                    // Nettoyer les médias non utilisés
+                    const mediaLibrary = this.load('mediaLibrary', []);
+                    const exercises = this.load('exercises', []);
+                    const usedMediaIds = exercises.map(ex => ex.mediaId).filter(Boolean);
+                    
+                    const cleanedMedia = mediaLibrary.filter(media => 
+                        usedMediaIds.includes(media.id) || 
+                        (new Date() - new Date(media.dateAdded)) < 30 * 24 * 60 * 60 * 1000 // Garder 30 jours
+                    );
+                    
+                    if (cleanedMedia.length < mediaLibrary.length) {
+                        this.save('mediaLibrary', cleanedMedia);
+                        console.log(`🧹 Nettoyage: ${mediaLibrary.length - cleanedMedia.length} médias non utilisés supprimés`);
+                    }
+                    
+                    // Nettoyer le cache
+                    smartCache.clear();
+                    
+                    return true;
+                } catch (e) {
+                    console.error('Erreur lors du nettoyage:', e);
+                    return false;
                 }
             },
             
@@ -6427,14 +6976,30 @@
         const actions = {
             // Initialisation
             init() {
+                console.log('🚀 Initialisation de SmartTrack...');
+                
                 this.loadData();
                 this.initializeMediaSystem();
                 this.initializeTagsSystem();
                 this.applyTheme();
                 this.setCurrentDate();
+                
+                // Diagnostic automatique de l'application
+                const healthCheck = this.performHealthCheck();
+                if (healthCheck.status === 'repaired') {
+                    this.showNotification('🔧 Application optimisée automatiquement', 'info');
+                } else if (healthCheck.status === 'error') {
+                    this.showNotification('⚠️ Erreur détectée, veuillez redémarrer l\'app', 'error');
+                }
+                
+                // Optimisation des performances
+                this.optimizePerformance();
+                
                 // Restaurer l'écran sauvegardé ou dashboard par défaut
                 const savedScreen = storage.load('currentScreen', 'dashboard');
                 appState.currentScreen = savedScreen;
+                
+                console.log('✅ SmartTrack initialisé avec succès');
                 render();
             },
             
@@ -7669,17 +8234,39 @@
                     'Séance terminée ! 🎉'
                 );
                 
-                // Forcer la mise à jour du calendrier
+                // Vérifier et célébrer les accomplissements
+                this.checkAchievements('session');
+                
+                // Forcer la mise à jour du calendrier avec animation
                 setTimeout(() => {
                     render();
+                    // Animer les nouvelles données
+                    const calendarGrid = document.getElementById('calendar-grid');
+                    if (calendarGrid) {
+                        this.animateElement(calendarGrid, 'animate-fade-in-up');
+                    }
                 }, 50);
             },
 
             saveManualSet() {
                 if (!appState.manualSession) return;
                 
+                // Sécurisation de l'accès aux arrays
+                if (!appState.manualSession.exercises || 
+                    !appState.manualSession.exercises[appState.manualSession.currentExerciseIndex]) {
+                    console.error('Exercise index out of bounds');
+                    this.showNotification('❌ Erreur : Exercice non trouvé');
+                    return;
+                }
+                
                 const currentExercise = appState.manualSession.exercises[appState.manualSession.currentExerciseIndex];
                 const exercise = appState.exercises.find(e => e.id === currentExercise.exercise_id);
+                
+                if (!exercise) {
+                    console.error('Exercise not found in database');
+                    this.showNotification('❌ Erreur : Exercice non trouvé dans la base');
+                    return;
+                }
                 
                 // Récupérer les données de performance selon le mode de l'exercice
                 let performance = {};
@@ -8392,7 +8979,8 @@
                 // Ajouter les nouveaux records
                 if (newRecords.length > 0) {
                     appState.records[exerciseId].push(...newRecords);
-                    this.showNotification('🎉 Nouveau PR !');
+                    // Célébration épique pour les nouveaux records
+                    this.triggerCelebration('record', '🚀 Nouveau Record Personnel ! Tu dépasses tes limites !');
                 }
             },
             
@@ -9206,22 +9794,483 @@
                 this.showNotification(`${added} nouveaux exercices ajoutés (dont ${PREDEFINED_EXERCISES.echauffement ? PREDEFINED_EXERCISES.echauffement.length : 0} d'échauffement) !`);
             },
 
-            // Notifications
-            showNotification(message) {
+            // === UTILITAIRES UX AVANCÉS ===
+            
+            // Créer un état de chargement
+            showLoadingState(container, message = 'Chargement...') {
+                if (typeof container === 'string') {
+                    container = document.getElementById(container);
+                }
+                
+                container.innerHTML = `
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">${message}</div>
+                    </div>
+                `;
+            },
+
+            // Créer un skeleton de chargement
+            showSkeletonLoading(container, type = 'cards') {
+                if (typeof container === 'string') {
+                    container = document.getElementById(container);
+                }
+                
+                let skeletonHTML = '';
+                
+                if (type === 'cards') {
+                    for (let i = 0; i < 3; i++) {
+                        skeletonHTML += `
+                            <div class="card">
+                                <div class="skeleton skeleton-text large"></div>
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-text" style="width: 60%;"></div>
+                                <div class="skeleton skeleton-button"></div>
+                            </div>
+                        `;
+                    }
+                } else if (type === 'list') {
+                    for (let i = 0; i < 5; i++) {
+                        skeletonHTML += `
+                            <div class="card" style="margin-bottom: 8px; padding: 16px;">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-text small" style="width: 40%;"></div>
+                            </div>
+                        `;
+                    }
+                } else if (type === 'stats') {
+                    skeletonHTML = `
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="skeleton skeleton-text large"></div>
+                                <div class="skeleton skeleton-text small"></div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="skeleton skeleton-text large"></div>
+                                <div class="skeleton skeleton-text small"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                container.innerHTML = skeletonHTML;
+            },
+
+            // Créer un empty state attrayant
+            showEmptyState(container, config = {}) {
+                if (typeof container === 'string') {
+                    container = document.getElementById(container);
+                }
+                
+                const {
+                    icon = '📦',
+                    title = 'Aucune donnée',
+                    description = 'Il n\'y a rien à afficher pour le moment.',
+                    actionText = null,
+                    actionCallback = null,
+                    actionIcon = '+'
+                } = config;
+                
+                const actionHTML = actionText ? `
+                    <div class="empty-state-action">
+                        <button class="btn btn-primary" onclick="${actionCallback}">
+                            ${actionIcon} ${actionText}
+                        </button>
+                    </div>
+                ` : '';
+                
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">${icon}</div>
+                        <div class="empty-state-title">${title}</div>
+                        <div class="empty-state-description">${description}</div>
+                        ${actionHTML}
+                    </div>
+                `;
+            },
+
+            // Créer un état de succès
+            showSuccessState(container, config = {}) {
+                if (typeof container === 'string') {
+                    container = document.getElementById(container);
+                }
+                
+                const {
+                    icon = '✅',
+                    title = 'Succès !',
+                    description = 'L\'opération s\'est déroulée avec succès.'
+                } = config;
+                
+                container.innerHTML = `
+                    <div class="success-state">
+                        <div class="success-state-icon">${icon}</div>
+                        <div class="success-state-title">${title}</div>
+                        <div class="success-state-description">${description}</div>
+                    </div>
+                `;
+            },
+
+            // Animation d'élément avec débounce
+            animateElement(element, animationClass = 'animate-fade-in-up', duration = 500) {
+                if (typeof element === 'string') {
+                    element = document.getElementById(element);
+                }
+                
+                element.classList.add(animationClass);
+                
+                setTimeout(() => {
+                    element.classList.remove(animationClass);
+                }, duration);
+            },
+
+            // === SYSTÈME DE DIAGNOSTIC ET RÉPARATION ===
+            
+            // Vérifier et réparer la sanité de l'application
+            performHealthCheck() {
+                console.log('🔧 Diagnostic de l\'application...');
+                let issuesFound = 0;
+                let issuesFixed = 0;
+                
+                // Vérifier la cohérence des données
+                try {
+                    // 1. Vérifier les exercices sans ID
+                    appState.exercises.forEach((exercise, index) => {
+                        if (!exercise.id) {
+                            exercise.id = Date.now() + index;
+                            issuesFound++;
+                            issuesFixed++;
+                        }
+                    });
+                    
+                    // 2. Vérifier les sessions avec exercices supprimés
+                    appState.sessions.forEach(session => {
+                        session.exercises = session.exercises.filter(ex => {
+                            const exerciseExists = appState.exercises.find(e => e.id === ex.exercise_id);
+                            if (!exerciseExists) {
+                                issuesFound++;
+                                return false;
+                            }
+                            return true;
+                        });
+                    });
+                    
+                    // 3. Vérifier les données de localStorage
+                    const storageSize = JSON.stringify(appState).length;
+                    if (storageSize > 4 * 1024 * 1024) { // 4MB
+                        console.warn('⚠️ Données localStorage importantes');
+                        // Déclencher un nettoyage automatique
+                        storage.cleanupOldData();
+                        issuesFound++;
+                        issuesFixed++;
+                    }
+                    
+                    // 4. Vérifier l'intégrité des programmes
+                    if (appState.currentProgram) {
+                        const program = PREDEFINED_PROGRAMS[appState.currentProgram.programme_id];
+                        if (!program) {
+                            console.warn('Programme actuel introuvable, nettoyage...');
+                            appState.currentProgram = null;
+                            issuesFound++;
+                            issuesFixed++;
+                        }
+                    }
+                    
+                    // 5. Nettoyer les médias orphelins
+                    if (appState.mediaLibrary && appState.mediaLibrary.length > 0) {
+                        const usedMediaIds = appState.exercises.map(ex => ex.mediaId).filter(Boolean);
+                        const originalCount = appState.mediaLibrary.length;
+                        appState.mediaLibrary = appState.mediaLibrary.filter(media => 
+                            usedMediaIds.includes(media.id) || 
+                            (new Date() - new Date(media.dateAdded)) < 7 * 24 * 60 * 60 * 1000 // 7 jours
+                        );
+                        
+                        if (appState.mediaLibrary.length < originalCount) {
+                            issuesFound++;
+                            issuesFixed++;
+                        }
+                    }
+                    
+                    // 6. Sauvegarder si des corrections ont été apportées
+                    if (issuesFixed > 0) {
+                        this.saveData();
+                    }
+                    
+                    console.log(`✅ Diagnostic terminé: ${issuesFound} problèmes détectés, ${issuesFixed} corrigés`);
+                    
+                    return {
+                        issuesFound,
+                        issuesFixed,
+                        status: issuesFound === 0 ? 'healthy' : (issuesFixed === issuesFound ? 'repaired' : 'partial')
+                    };
+                    
+                } catch (error) {
+                    console.error('❌ Erreur lors du diagnostic:', error);
+                    return { issuesFound: 1, issuesFixed: 0, status: 'error', error };
+                }
+            },
+
+            // Optimisation des performances de rendu
+            optimizePerformance() {
+                // Limiter les re-rendus avec un debounce global
+                debounceManager.debounce(() => {
+                    // Nettoyer les éléments DOM inutiles
+                    const unusedElements = document.querySelectorAll('.skeleton, .loading-container');
+                    unusedElements.forEach(el => {
+                        if (el.parentNode && !el.classList.contains('active')) {
+                            el.parentNode.removeChild(el);
+                        }
+                    });
+                    
+                    // Optimiser les images lazy loading
+                    const images = document.querySelectorAll('img[loading="lazy"]');
+                    images.forEach(img => {
+                        if (img.complete && img.naturalWidth > 0) {
+                            img.classList.add('loaded');
+                        }
+                    });
+                    
+                }, 1000, 'performanceOptimization');
+            },
+
+            // === SYSTÈME DE GAMIFICATION ===
+            
+            // Déclencher une célébration épique
+            triggerCelebration(type = 'achievement', message = '') {
+                // Animation de célébration sur l'écran
+                const celebrationOverlay = document.createElement('div');
+                celebrationOverlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    pointer-events: none;
+                    z-index: 9999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                `;
+                
+                // Confettis textuels selon le type
+                const confettiEmojis = {
+                    achievement: ['🎉', '🏆', '⭐', '💪', '🔥'],
+                    record: ['📈', '🚀', '💯', '⚡', '👑'],
+                    completion: ['✅', '🎊', '🌟', '💫', '🎁'],
+                    streak: ['🔥', '⚡', '💪', '🏃‍♂️', '💨']
+                };
+                
+                const emojis = confettiEmojis[type] || confettiEmojis.achievement;
+                
+                // Créer des confettis
+                for (let i = 0; i < 20; i++) {
+                    const confetti = document.createElement('div');
+                    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+                    
+                    confetti.textContent = emoji;
+                    confetti.style.cssText = `
+                        position: absolute;
+                        font-size: ${20 + Math.random() * 20}px;
+                        left: ${Math.random() * 100}%;
+                        top: ${Math.random() * 100}%;
+                        animation: confetti-fall ${2 + Math.random() * 2}s ease-out forwards;
+                        opacity: 0;
+                    `;
+                    
+                    celebrationOverlay.appendChild(confetti);
+                }
+                
+                document.body.appendChild(celebrationOverlay);
+                
+                // Retirer après l'animation
+                setTimeout(() => {
+                    celebrationOverlay.remove();
+                }, 4000);
+                
+                // Feedback haptique intense
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([200, 100, 200, 100, 400]);
+                }
+                
+                // Notification spéciale
+                if (message) {
+                    this.showNotification(message, 'achievement');
+                }
+            },
+
+            // Vérifier et célébrer les accomplissements
+            checkAchievements(context = 'session') {
+                if (context === 'session' && appState.sessions.length > 0) {
+                    const sessionCount = appState.sessions.length;
+                    
+                    // Milestones de séances
+                    if (sessionCount === 1) {
+                        this.triggerCelebration('achievement', '🎉 Première séance accomplie ! Bravo !');
+                    } else if (sessionCount === 10) {
+                        this.triggerCelebration('achievement', '🏆 10 séances terminées ! Tu prends le rythme !');
+                    } else if (sessionCount === 25) {
+                        this.triggerCelebration('achievement', '💪 25 séances ! Tu es maintenant un habitué !');
+                    } else if (sessionCount === 50) {
+                        this.triggerCelebration('achievement', '🔥 50 séances ! Incroyable détermination !');
+                    } else if (sessionCount === 100) {
+                        this.triggerCelebration('achievement', '👑 100 séances ! Tu es une légende !');
+                    }
+                }
+                
+                // Vérifier les streaks
+                this.checkStreaks();
+            },
+
+            // Vérifier les séries (streaks)
+            checkStreaks() {
+                const today = new Date();
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                let streak = 0;
+                let currentDate = new Date(today);
+                
+                // Compter les jours consécutifs avec séances
+                while (true) {
+                    const dateStr = currentDate.toISOString().split('T')[0];
+                    const hasSession = appState.sessions.some(session => 
+                        session.date === dateStr
+                    );
+                    
+                    if (hasSession) {
+                        streak++;
+                        currentDate.setDate(currentDate.getDate() - 1);
+                    } else {
+                        break;
+                    }
+                    
+                    // Limiter la recherche à 30 jours
+                    if (streak > 30) break;
+                }
+                
+                // Célébrer les streaks remarquables
+                if (streak >= 7 && !appState.lastCelebratedStreak || appState.lastCelebratedStreak < streak) {
+                    if (streak === 7) {
+                        this.triggerCelebration('streak', '🔥 7 jours consécutifs ! Série de feu !');
+                    } else if (streak === 14) {
+                        this.triggerCelebration('streak', '⚡ 14 jours d\'affilée ! Momentum fantastique !');
+                    } else if (streak === 21) {
+                        this.triggerCelebration('streak', '💪 21 jours consécutifs ! Habitude installée !');
+                    } else if (streak === 30) {
+                        this.triggerCelebration('streak', '👑 30 jours ! Tu es devenu une machine !');
+                    }
+                    
+                    appState.lastCelebratedStreak = streak;
+                    this.saveData();
+                }
+                
+                return streak;
+            },
+
+            // Système de progression visuelle
+            updateProgressBar(elementId, current, total, showText = true) {
+                const element = document.getElementById(elementId);
+                if (!element) return;
+                
+                const percentage = Math.round((current / total) * 100);
+                const progressBar = element.querySelector('.progress-fill') || element;
+                
+                // Animation fluide de la barre
+                progressBar.style.transition = 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                progressBar.style.width = percentage + '%';
+                
+                // Texte de progression
+                if (showText) {
+                    const progressText = element.querySelector('.progress-text');
+                    if (progressText) {
+                        progressText.textContent = `${current}/${total} (${percentage}%)`;
+                    }
+                }
+                
+                // Effets visuels selon le pourcentage
+                if (percentage >= 100) {
+                    progressBar.style.background = 'var(--gradient-success)';
+                    this.animateElement(element, 'animate-celebration');
+                } else if (percentage >= 75) {
+                    progressBar.style.background = 'var(--gradient-primary)';
+                } else if (percentage >= 50) {
+                    progressBar.style.background = 'linear-gradient(135deg, var(--primary), var(--warning))';
+                } else {
+                    progressBar.style.background = 'var(--primary)';
+                }
+            },
+
+            // Système de notifications amélioré
+            showNotification(message, type = 'success', duration = null) {
                 const notification = document.getElementById('notification');
+                
+                // Nettoyer les classes précédentes
+                notification.className = 'notification';
+                
+                // Détecter automatiquement le type basé sur les emojis/contenu
+                if (!type || type === 'success') {
+                    if (message.includes('❌') || message.includes('Erreur')) {
+                        type = 'error';
+                    } else if (message.includes('⚠️') || message.includes('Attention')) {
+                        type = 'warning';
+                    } else if (message.includes('ℹ️') || message.includes('Info')) {
+                        type = 'info';
+                    } else if (message.includes('🎉') || message.includes('🏆') || message.includes('GRADUATION')) {
+                        type = 'achievement';
+                    }
+                }
+                
+                // Appliquer le style selon le type
+                notification.classList.add(type);
                 notification.textContent = message;
                 notification.classList.add('show');
+                
                 // Style spécial pendant les séances live
-                if (appState.liveSession) {
+                if (appState.liveSession && type !== 'achievement') {
                     notification.classList.add('live-session');
-                } else {
-                    notification.classList.remove('live-session');
                 }
-                // Réduire le temps pour les notifications de records pendant les séances
-                const duration = appState.liveSession ? 1500 : 3000;
+                
+                // Déterminer la durée d'affichage
+                if (!duration) {
+                    if (type === 'achievement') {
+                        duration = 5000; // Plus long pour les accomplissements
+                    } else if (appState.liveSession) {
+                        duration = 1500; // Plus court en séance
+                    } else if (type === 'error') {
+                        duration = 4000; // Plus long pour les erreurs
+                    } else {
+                        duration = 3000; // Durée standard
+                    }
+                }
+                
+                // Feedback haptique selon le type
+                if ('vibrate' in navigator) {
+                    switch (type) {
+                        case 'achievement':
+                            navigator.vibrate([200, 100, 200, 100, 200]);
+                            break;
+                        case 'error':
+                            navigator.vibrate([100, 50, 100]);
+                            break;
+                        case 'success':
+                            navigator.vibrate([100]);
+                            break;
+                    }
+                }
+                
+                // Animation d'entrée selon le type
+                if (type === 'achievement') {
+                    // Ajouter une classe spéciale pour déclencher l'animation de célébration
+                    setTimeout(() => {
+                        notification.classList.add('animate-celebration');
+                    }, 200);
+                }
+                
+                // Masquer après la durée spécifiée
                 setTimeout(() => {
                     notification.classList.remove('show');
-                    notification.classList.remove('live-session');
+                    setTimeout(() => {
+                        notification.className = 'notification';
+                    }, 400); // Temps pour l'animation de sortie
                 }, duration);
             },
 
@@ -15192,6 +16241,24 @@
 
             // Intercepter aussi la tentative de fermeture/actualisation
             window.addEventListener('beforeunload', (event) => {
+                // Nettoyer les timers pour éviter les memory leaks
+                if (appState.sessionTimer) {
+                    clearInterval(appState.sessionTimer);
+                    appState.sessionTimer = null;
+                }
+                if (exerciseTimer.interval) {
+                    clearInterval(exerciseTimer.interval);
+                    exerciseTimer.interval = null;
+                }
+                if (exerciseTimer.countdownInterval) {
+                    clearInterval(exerciseTimer.countdownInterval);
+                    exerciseTimer.countdownInterval = null;
+                }
+                
+                // Nettoyer les timers du debounce manager
+                debounceManager.timers.forEach(timer => clearTimeout(timer));
+                debounceManager.timers.clear();
+                
                 // Ne demander confirmation que s'il y a une séance en cours
                 if (appState.liveSession || appState.manualSession) {
                     event.preventDefault();
