@@ -6311,7 +6311,6 @@
                         tags: ['échauffement', 'cardio', 'coordination'],
                         imageUrl: null
                     },
-
                     'Montées de genoux': {
                         difficulty: 'beginner',
                         description: 'Échauffement dynamique pour les jambes et le cardio.',
@@ -6327,7 +6326,36 @@
                         tags: ['échauffement', 'jambes', 'cardio'],
                         imageUrl: null
                     },
-
+                    'Talons-fesses': {
+                        difficulty: 'beginner',
+                        description: 'Échauffement dynamique ciblant les ischio-jambiers.',
+                        instructions: [
+                            'Debout, amenez alternativement les talons vers les fesses',
+                            'Gardez le torse droit',
+                            'Utilisez les bras pour l\'équilibre',
+                            'Maintenez un rythme régulier'
+                        ],
+                        tips: ['Touchez vraiment les fesses avec les talons', 'Gardez les genoux parallèles', 'Respirez naturellement'],
+                        commonMistakes: ['Pencher le torse vers l\'avant', 'Genoux qui s\'écartent', 'Mouvement trop lent'],
+                        muscleGroups: { primary: ['Ischio-jambiers'], secondary: ['Mollets', 'Core'] },
+                        tags: ['échauffement', 'jambes', 'ischio-jambiers'],
+                        imageUrl: null
+                    },
+                    'Burpees': {
+                        difficulty: 'advanced',
+                        description: 'Exercice intense combinant squat, planche et saut.',
+                        instructions: [
+                            'Squat, mains au sol',
+                            'Jetez les pieds vers l\'arrière en planche',
+                            'Ramenez les pieds sous le corps',
+                            'Sautez verticalement bras tendus'
+                        ],
+                        tips: ['Mouvement fluide', 'Gardez le rythme', 'Respirez bien'],
+                        commonMistakes: ['Sauter l\'étape planche', 'Mouvement saccadé', 'Mauvaise respiration'],
+                        muscleGroups: { primary: ['Corps entier'], secondary: [] },
+                        tags: ['cardio', 'intense', 'fonctionnel'],
+                        imageUrl: null
+                    },
                     'Planche': {
                         difficulty: 'intermediate',
                         description: 'Exercice isométrique pour renforcer le core et la stabilité.',
@@ -6343,7 +6371,36 @@
                         tags: ['gainage', 'core', 'isométrique'],
                         imageUrl: null
                     },
-
+                    'Planche latérale': {
+                        difficulty: 'intermediate',
+                        description: 'Planche sur le côté pour renforcer les obliques.',
+                        instructions: [
+                            'Allongé sur le côté, appui sur l\'avant-bras',
+                            'Soulevez le bassin en alignant le corps',
+                            'Maintenez la position',
+                            'Changez de côté'
+                        ],
+                        tips: ['Corps parfaitement aligné', 'Ne laissez pas tomber le bassin', 'Respirez normalement'],
+                        commonMistakes: ['Bassin qui tombe', 'Corps mal aligné', 'Appui instable'],
+                        muscleGroups: { primary: ['Obliques', 'Core'], secondary: ['Épaules', 'Quadratus lumborum'] },
+                        tags: ['gainage', 'unilatéral', 'obliques'],
+                        imageUrl: null
+                    },
+                    'Mountain climbers': {
+                        difficulty: 'intermediate',
+                        description: 'Exercice dynamique combinant gainage et cardio.',
+                        instructions: [
+                            'Position de planche haute',
+                            'Amenez alternativement les genoux vers la poitrine',
+                            'Gardez les hanches stables',
+                            'Maintenez un rythme soutenu'
+                        ],
+                        tips: ['Gardez les hanches basses', 'Mouvement rapide des jambes', 'Appui stable sur les bras'],
+                        commonMistakes: ['Hanches trop hautes', 'Mouvement trop lent', 'Instabilité du haut du corps'],
+                        muscleGroups: { primary: ['Core', 'Hip flexeurs'], secondary: ['Épaules', 'Quadriceps'] },
+                        tags: ['cardio', 'gainage', 'dynamique'],
+                        imageUrl: null
+                    },
                     'Squats au poids du corps': {
                         difficulty: 'beginner',
                         description: 'Version de base du squat pour échauffer les jambes.',
@@ -6359,20 +6416,109 @@
                         tags: ['échauffement', 'jambes', 'fonctionnel'],
                         imageUrl: null
                     },
-
-                    'Burpees': {
-                        difficulty: 'advanced',
-                        description: 'Exercice intense combinant squat, planche et saut.',
+                    'Pompes': {
+                        difficulty: 'intermediate',
+                        description: 'Exercice classique pour le haut du corps.',
                         instructions: [
-                            'Squat, mains au sol',
-                            'Jetez les pieds vers l\'arrière en planche',
-                            'Ramenez les pieds sous le corps',
-                            'Sautez verticalement bras tendus'
+                            'Position de planche, mains sous les épaules',
+                            'Descendez en fléchissant les bras',
+                            'Poussez pour revenir en position haute',
+                            'Gardez le corps aligné'
                         ],
-                        tips: ['Mouvement fluide', 'Gardez le rythme', 'Respirez bien'],
-                        commonMistakes: ['Sauter l\'étape planche', 'Mouvement saccadé', 'Mauvaise respiration'],
+                        tips: ['Corps rigide', 'Amplitude complète', 'Contrôlez la descente'],
+                        commonMistakes: ['Hanches qui tombent', 'Amplitude partielle', 'Mains trop écartées'],
+                        muscleGroups: { primary: ['Pectoraux'], secondary: ['Triceps', 'Épaules', 'Core'] },
+                        tags: ['pectoraux', 'poids du corps', 'classique'],
+                        imageUrl: null
+                    },
+                    'Fentes alternées': {
+                        difficulty: 'intermediate',
+                        description: 'Fentes dynamiques pour échauffer les jambes.',
+                        instructions: [
+                            'Debout, faites un grand pas en avant',
+                            'Descendez en fléchissant les deux genoux',
+                            'Revenez debout et alternez les jambes',
+                            'Gardez le torse droit'
+                        ],
+                        tips: ['Grand pas', 'Descendez bien bas', 'Gardez l\'équilibre'],
+                        commonMistakes: ['Pas trop petit', 'Pencher vers l\'avant', 'Genou avant qui dépasse'],
+                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Ischio-jambiers', 'Mollets'] },
+                        tags: ['échauffement', 'jambes', 'unilatéral'],
+                        imageUrl: null
+                    },
+                    'Rotations épaules': {
+                        difficulty: 'beginner',
+                        description: 'Mobilisation articulaire pour les épaules.',
+                        instructions: [
+                            'Debout, bras le long du corps',
+                            'Effectuez des rotations avec les épaules',
+                            'Commencez petit puis agrandissez',
+                            'Changez de sens'
+                        ],
+                        tips: ['Mouvement lent et contrôlé', 'Amplitude progressive', 'Relâchez les tensions'],
+                        commonMistakes: ['Mouvement trop rapide', 'Épaules crispées', 'Amplitude insuffisante'],
+                        muscleGroups: { primary: ['Deltoïdes'], secondary: ['Trapèzes', 'Rhomboïdes'] },
+                        tags: ['mobilité', 'épaules', 'échauffement'],
+                        imageUrl: null
+                    },
+                    'Cercles de bras': {
+                        difficulty: 'beginner',
+                        description: 'Mobilisation dynamique des bras et épaules.',
+                        instructions: [
+                            'Bras tendus sur les côtés',
+                            'Effectuez des cercles avec les bras',
+                            'Commencez petit puis agrandissez',
+                            'Changez de sens'
+                        ],
+                        tips: ['Bras bien tendus', 'Mouvement contrôlé', 'Respirez naturellement'],
+                        commonMistakes: ['Bras fléchis', 'Mouvement saccadé', 'Épaules remontées'],
+                        muscleGroups: { primary: ['Deltoïdes'], secondary: ['Trapèzes', 'Coiffe des rotateurs'] },
+                        tags: ['mobilité', 'épaules', 'dynamique'],
+                        imageUrl: null
+                    },
+                    'Étirements dynamiques': {
+                        difficulty: 'beginner',
+                        description: 'Mouvements d\'amplitude pour préparer les muscles.',
+                        instructions: [
+                            'Combinez différents mouvements d\'amplitude',
+                            'Balancez les jambes, bras, tronc',
+                            'Mouvement fluide et contrôlé',
+                            'Augmentez progressivement l\'amplitude'
+                        ],
+                        tips: ['Progression graduelle', 'Mouvement fluide', 'Écoutez votre corps'],
+                        commonMistakes: ['Trop d\'amplitude trop vite', 'Mouvement brusque', 'Rester statique'],
                         muscleGroups: { primary: ['Corps entier'], secondary: [] },
-                        tags: ['cardio', 'intense', 'fonctionnel'],
+                        tags: ['mobilité', 'préparation', 'amplitude'],
+                        imageUrl: null
+                    },
+                    'High knees': {
+                        difficulty: 'beginner',
+                        description: 'Course sur place avec genoux hauts.',
+                        instructions: [
+                            'Course sur place',
+                            'Montez les genoux le plus haut possible',
+                            'Utilisez les bras comme en course',
+                            'Maintenez un rythme soutenu'
+                        ],
+                        tips: ['Genoux à hauteur de taille', 'Restez sur l\'avant du pied', 'Bras actifs'],
+                        commonMistakes: ['Genoux pas assez hauts', 'Rythme trop lent', 'Bras passifs'],
+                        muscleGroups: { primary: ['Hip flexeurs', 'Mollets'], secondary: ['Quadriceps', 'Core'] },
+                        tags: ['cardio', 'échauffement', 'dynamique'],
+                        imageUrl: null
+                    },
+                    'Pas chassés': {
+                        difficulty: 'beginner',
+                        description: 'Déplacements latéraux pour échauffer les jambes.',
+                        instructions: [
+                            'Pas sur le côté avec une jambe',
+                            'Ramenez l\'autre jambe',
+                            'Continuez dans la même direction',
+                            'Changez de sens'
+                        ],
+                        tips: ['Gardez les pieds parallèles', 'Fléchissez légèrement les genoux', 'Bras pour l\'équilibre'],
+                        commonMistakes: ['Pieds qui se croisent', 'Jambes tendues', 'Mouvement trop lent'],
+                        muscleGroups: { primary: ['Abducteurs', 'Adducteurs'], secondary: ['Quadriceps', 'Mollets'] },
+                        tags: ['échauffement', 'latéral', 'coordination'],
                         imageUrl: null
                     },
 
@@ -6393,7 +6539,6 @@
                         tags: ['isolation', 'bras', 'force', 'masse'],
                         imageUrl: null
                     },
-
                     'Curl biceps (poulie basse)': {
                         difficulty: 'beginner',
                         description: 'Variante du curl avec ancrage bas pour un angle différent.',
@@ -6410,7 +6555,6 @@
                         tags: ['isolation', 'bras', 'ancrage bas'],
                         imageUrl: null
                     },
-
                     'Curl biceps face à la porte': {
                         difficulty: 'beginner',
                         description: 'Curl biceps avec ancrage frontal pour une résistance constante.',
@@ -6427,7 +6571,6 @@
                         tags: ['isolation', 'biceps', 'ancrage frontal'],
                         imageUrl: null
                     },
-
                     'Curl marteau': {
                         difficulty: 'beginner',
                         description: 'Variante ciblant davantage le brachial et les avant-bras.',
@@ -6444,94 +6587,88 @@
                         tags: ['isolation', 'bras', 'avant-bras'],
                         imageUrl: null
                     },
-
-                    // === TRICEPS ===
-                    'Extension triceps (poulie haute)': {
+                    'Curl marteau (poulie basse)': {
                         difficulty: 'beginner',
-                        description: 'Exercice d\'isolation classique pour développer les triceps.',
+                        description: 'Curl marteau avec ancrage bas pour plus de résistance.',
                         instructions: [
-                            'Ancrez l\'élastique en haut',
-                            'Tenez les poignées, coudes près du corps',
-                            'Étendez les avant-bras vers le bas',
-                            'Contractez les triceps en bas',
-                            'Remontez lentement'
+                            'Ancrez l\'élastique en bas',
+                            'Prise neutre sur les poignées',
+                            'Fléchissez en maintenant la prise neutre',
+                            'Contractez biceps et avant-bras',
+                            'Descendez contrôlé'
                         ],
-                        tips: ['Gardez les coudes fixes', 'Mouvement des avant-bras uniquement', 'Contractez fort en bas'],
-                        commonMistakes: ['Bouger les coudes', 'Utiliser le dos', 'Mouvement partiel'],
-                        muscleGroups: { primary: ['Triceps'], secondary: ['Deltoïdes antérieurs'] },
-                        tags: ['isolation', 'triceps', 'bras'],
+                        tips: ['Prise neutre stricte', 'Coudes collés au corps', 'Contraction maximale'],
+                        commonMistakes: ['Changer la prise en cours', 'Coudes qui bougent', 'Descente trop rapide'],
+                        muscleGroups: { primary: ['Brachial', 'Biceps'], secondary: ['Avant-bras'] },
+                        tags: ['isolation', 'marteau', 'ancrage bas'],
                         imageUrl: null
                     },
-
-                    'Extension triceps verticale': {
-                        difficulty: 'intermediate',
-                        description: 'Extension triceps au-dessus de la tête pour étirer le muscle.',
+                    'Curl biceps avec poignée': {
+                        difficulty: 'beginner',
+                        description: 'Curl biceps utilisant les poignées pour une meilleure prise.',
                         instructions: [
-                            'Élastique derrière le dos, une main en haut',
-                            'Étendez le bras vers le haut',
-                            'Gardez le coude près de l\'oreille',
-                            'Descendez lentement',
-                            'Alternez les bras'
+                            'Tenez fermement les poignées',
+                            'Position debout stable',
+                            'Curl classique avec bonne prise',
+                            'Concentration sur les biceps',
+                            'Mouvement contrôlé'
                         ],
-                        tips: ['Coude près de la tête', 'Mouvement contrôlé', 'Bon étirement en bas'],
-                        commonMistakes: ['Coude qui part sur le côté', 'Mouvement trop rapide', 'Mauvaise position'],
-                        muscleGroups: { primary: ['Triceps (chef long)'], secondary: [] },
-                        tags: ['isolation', 'triceps', 'étirement'],
+                        tips: ['Prise ferme et sécurisée', 'Concentration maximale', 'Qualité avant quantité'],
+                        commonMistakes: ['Prise glissante', 'Mouvement précipité', 'Manque de concentration'],
+                        muscleGroups: { primary: ['Biceps'], secondary: ['Avant-bras'] },
+                        tags: ['isolation', 'poignées', 'concentration'],
                         imageUrl: null
                     },
-
-                    'Kickback triceps': {
+                    'Curl biceps en pronation': {
                         difficulty: 'intermediate',
-                        description: 'Isolation des triceps en position penchée.',
+                        description: 'Curl avec prise pronation pour cibler différemment les avant-bras.',
                         instructions: [
-                            'Penchez-vous vers l\'avant, coude fixe',
-                            'Étendez l\'avant-bras vers l\'arrière',
-                            'Gardez le bras parallèle au sol',
-                            'Contractez en fin de mouvement',
-                            'Revenez lentement'
+                            'Prise en pronation (paumes vers le bas)',
+                            'Même mouvement que le curl classique',
+                            'Focus sur les avant-bras et biceps',
+                            'Contraction intense',
+                            'Descente lente'
                         ],
-                        tips: ['Gardez le coude fixe', 'Bras parallèle au sol', 'Contraction forte'],
-                        commonMistakes: ['Bouger le coude', 'Bras qui descend', 'Utiliser l\'élan'],
-                        muscleGroups: { primary: ['Triceps'], secondary: [] },
-                        tags: ['isolation', 'triceps', 'unilatéral'],
+                        tips: ['Prise pronation ferme', 'Travail intense des avant-bras', 'Mouvement précis'],
+                        commonMistakes: ['Prise qui glisse', 'Négliger les avant-bras', 'Mouvement trop rapide'],
+                        muscleGroups: { primary: ['Avant-bras', 'Biceps'], secondary: ['Brachial'] },
+                        tags: ['avant-bras', 'pronation', 'force'],
                         imageUrl: null
                     },
 
                     // === ÉPAULES ===
-                    'Élévations latérales': {
-                        difficulty: 'beginner',
-                        description: 'Exercice d\'isolation pour développer la largeur des épaules.',
+                    'Cuban press': {
+                        difficulty: 'advanced',
+                        description: 'Exercice complexe combinant rotation externe et développé pour les épaules.',
                         instructions: [
-                            'Placez l\'élastique sous vos pieds',
-                            'Tenez les poignées le long du corps',
-                            'Élevez les bras sur les côtés jusqu\'à l\'horizontale',
-                            'Maintenez 1 seconde en haut',
-                            'Redescendez lentement'
+                            'Coudes fléchis à 90°, bras parallèles au sol',
+                            'Rotation externe en montant les avant-bras',
+                            'Développé vertical complet',
+                            'Redescendez en inversant le mouvement',
+                            'Contrôlez chaque phase'
                         ],
-                        tips: ['Légère flexion des coudes', 'Pas plus haut que les épaules', 'Contrôlez la descente'],
-                        commonMistakes: ['Monter trop haut', 'Utiliser l\'élan', 'Bras tendus', 'Pencher le torse'],
-                        muscleGroups: { primary: ['Deltoïde moyen'], secondary: ['Deltoïde antérieur', 'Trapèzes'] },
-                        tags: ['isolation', 'épaules', 'largeur'],
+                        tips: ['Mouvement décomposé', 'Rotation externe contrôlée', 'Résistance modérée'],
+                        commonMistakes: ['Mouvement trop rapide', 'Sauter la rotation', 'Trop de résistance'],
+                        muscleGroups: { primary: ['Deltoïdes', 'Coiffe des rotateurs'], secondary: ['Trapèzes'] },
+                        tags: ['épaules', 'rotation', 'complexe', 'stabilité'],
                         imageUrl: null
                     },
-
-                    'Élévations frontales': {
-                        difficulty: 'beginner',
-                        description: 'Isolation du deltoïde antérieur.',
+                    'Développé arnold': {
+                        difficulty: 'advanced',
+                        description: 'Développé avec rotation pour solliciter tous les faisceaux des épaules.',
                         instructions: [
-                            'Élastique sous les pieds',
-                            'Levez un bras devant vous',
-                            'Montez jusqu\'à la hauteur des épaules',
-                            'Descendez lentement',
-                            'Alternez les bras'
+                            'Commencez en position curl (paumes vers vous)',
+                            'Montez en tournant les paumes vers l\'avant',
+                            'Développé complet bras tendus',
+                            'Redescendez en inversant la rotation',
+                            'Mouvement fluide et contrôlé'
                         ],
-                        tips: ['Pas plus haut que les épaules', 'Mouvement contrôlé', 'Gardez le torse stable'],
-                        commonMistakes: ['Monter trop haut', 'Utiliser l\'élan', 'Pencher en arrière'],
-                        muscleGroups: { primary: ['Deltoïde antérieur'], secondary: ['Core'] },
-                        tags: ['isolation', 'épaules', 'avant'],
+                        tips: ['Rotation progressive', 'Mouvement continu', 'Contrôle total'],
+                        commonMistakes: ['Rotation trop brusque', 'Pauses dans le mouvement', 'Manque de fluidité'],
+                        muscleGroups: { primary: ['Deltoïdes antérieurs', 'Deltoïdes moyens'], secondary: ['Triceps'] },
+                        tags: ['épaules', 'rotation', 'développé', 'arnold'],
                         imageUrl: null
                     },
-
                     'Développé militaire assis': {
                         difficulty: 'intermediate',
                         description: 'Développé pour les épaules en position assise.',
@@ -6548,7 +6685,38 @@
                         tags: ['composé', 'épaules', 'force'],
                         imageUrl: null
                     },
-
+                    'Élévations frontales': {
+                        difficulty: 'beginner',
+                        description: 'Isolation du deltoïde antérieur.',
+                        instructions: [
+                            'Élastique sous les pieds',
+                            'Levez un bras devant vous',
+                            'Montez jusqu\'à la hauteur des épaules',
+                            'Descendez lentement',
+                            'Alternez les bras'
+                        ],
+                        tips: ['Pas plus haut que les épaules', 'Mouvement contrôlé', 'Gardez le torse stable'],
+                        commonMistakes: ['Monter trop haut', 'Utiliser l\'élan', 'Pencher en arrière'],
+                        muscleGroups: { primary: ['Deltoïde antérieur'], secondary: ['Core'] },
+                        tags: ['isolation', 'épaules', 'avant'],
+                        imageUrl: null
+                    },
+                    'Élévations latérales': {
+                        difficulty: 'beginner',
+                        description: 'Exercice d\'isolation pour développer la largeur des épaules.',
+                        instructions: [
+                            'Placez l\'élastique sous vos pieds',
+                            'Tenez les poignées le long du corps',
+                            'Élevez les bras sur les côtés jusqu\'à l\'horizontale',
+                            'Maintenez 1 seconde en haut',
+                            'Redescendez lentement'
+                        ],
+                        tips: ['Légère flexion des coudes', 'Pas plus haut que les épaules', 'Contrôlez la descente'],
+                        commonMistakes: ['Monter trop haut', 'Utiliser l\'élan', 'Bras tendus', 'Pencher le torse'],
+                        muscleGroups: { primary: ['Deltoïde moyen'], secondary: ['Deltoïde antérieur', 'Trapèzes'] },
+                        tags: ['isolation', 'épaules', 'largeur'],
+                        imageUrl: null
+                    },
                     'Oiseau': {
                         difficulty: 'intermediate',
                         description: 'Excellent pour les deltoïdes postérieurs et la posture.',
@@ -6563,6 +6731,86 @@
                         commonMistakes: ['Plier les bras', 'Utiliser le dos', 'Mouvement trop rapide'],
                         muscleGroups: { primary: ['Deltoïdes postérieurs'], secondary: ['Rhomboïdes', 'Trapèzes'] },
                         tags: ['isolation', 'épaules', 'posture'],
+                        imageUrl: null
+                    },
+                    'Overhead press': {
+                        difficulty: 'intermediate',
+                        description: 'Développé vertical pour force et masse des épaules.',
+                        instructions: [
+                            'Position debout, élastique sous les pieds',
+                            'Poignées à hauteur d\'épaules',
+                            'Poussez verticalement au-dessus de la tête',
+                            'Extension complète des bras',
+                            'Redescendez contrôlé'
+                        ],
+                        tips: ['Trajectory verticale', 'Core engagé', 'Extension complète'],
+                        commonMistakes: ['Poussée vers l\'avant', 'Dos cambré', 'Extension partielle'],
+                        muscleGroups: { primary: ['Deltoïdes'], secondary: ['Triceps', 'Core'] },
+                        tags: ['développé', 'vertical', 'force'],
+                        imageUrl: null
+                    },
+                    'Reverse fly': {
+                        difficulty: 'intermediate',
+                        description: 'Mouvement inverse pour les deltoïdes postérieurs.',
+                        instructions: [
+                            'Ancrage frontal à hauteur poitrine',
+                            'Bras tendus, écartez vers l\'arrière',
+                            'Contractez fortement les omoplates',
+                            'Focus sur l\'arrière des épaules',
+                            'Retour contrôlé'
+                        ],
+                        tips: ['Bras tendus', 'Contraction omoplates', 'Mouvement précis'],
+                        commonMistakes: ['Plier les bras', 'Négliger la contraction', 'Mouvement trop large'],
+                        muscleGroups: { primary: ['Deltoïdes postérieurs'], secondary: ['Rhomboïdes'] },
+                        tags: ['arrière épaules', 'posture', 'isolation'],
+                        imageUrl: null
+                    },
+                    'Reverse fly unilatéral': {
+                        difficulty: 'intermediate',
+                        description: 'Version unilatérale du reverse fly pour plus de focus.',
+                        instructions: [
+                            'Un bras, ancrage frontal',
+                            'Écartez le bras vers l\'arrière',
+                            'Contraction maximale du deltoïde postérieur',
+                            'Alternez les bras',
+                            'Mouvement précis et contrôlé'
+                        ],
+                        tips: ['Focus sur un côté', 'Contraction maximale', 'Pas de compensation'],
+                        commonMistakes: ['Rotation du tronc', 'Mouvement trop rapide', 'Manque de focus'],
+                        muscleGroups: { primary: ['Deltoïde postérieur'], secondary: ['Rhomboïdes'] },
+                        tags: ['unilatéral', 'arrière épaules', 'précision'],
+                        imageUrl: null
+                    },
+                    'Shrug': {
+                        difficulty: 'beginner',
+                        description: 'Haussements d\'épaules pour les trapèzes.',
+                        instructions: [
+                            'Élastique sous les pieds',
+                            'Bras tendus le long du corps',
+                            'Haussez les épaules vers les oreilles',
+                            'Contractez les trapèzes',
+                            'Redescendez lentement'
+                        ],
+                        tips: ['Mouvement vertical pur', 'Contraction forte', 'Pas de rotation'],
+                        commonMistakes: ['Rotation des épaules', 'Utiliser les bras', 'Mouvement partiel'],
+                        muscleGroups: { primary: ['Trapèzes supérieurs'], secondary: [] },
+                        tags: ['trapèzes', 'haussements', 'isolation'],
+                        imageUrl: null
+                    },
+                    'Tirage menton': {
+                        difficulty: 'intermediate',
+                        description: 'Tirage vertical étroit pour épaules et trapèzes.',
+                        instructions: [
+                            'Élastique sous les pieds',
+                            'Prise rapprochée',
+                            'Tirez vers le menton coudes hauts',
+                            'Menez avec les coudes',
+                            'Descendez contrôlé'
+                        ],
+                        tips: ['Coudes plus hauts que les mains', 'Prise rapprochée', 'Tirage vers le menton'],
+                        commonMistakes: ['Coudes bas', 'Prise trop large', 'Tirage partiel'],
+                        muscleGroups: { primary: ['Deltoïdes', 'Trapèzes'], secondary: ['Biceps'] },
+                        tags: ['vertical', 'trapèzes', 'épaules'],
                         imageUrl: null
                     },
 
@@ -6583,41 +6831,38 @@
                         tags: ['isolation', 'dos', 'posture'],
                         imageUrl: null
                     },
-
-                    'Tirage horizontal unilatéral': {
+                    'Face pull (poulie basse)': {
                         difficulty: 'intermediate',
-                        description: 'Tirage horizontal pour développer l\'épaisseur du dos.',
+                        description: 'Face pull depuis un ancrage bas pour un angle différent.',
                         instructions: [
-                            'Ancrage à hauteur de poitrine',
-                            'Un bras tendu devant vous',
-                            'Tirez le coude vers l\'arrière',
-                            'Contractez le dos',
-                            'Alternez les bras'
+                            'Ancrage en bas, tirez vers le visage',
+                            'Trajectoire légèrement ascendante',
+                            'Coudes écartés',
+                            'Contraction du haut du dos',
+                            'Retour contrôlé'
                         ],
-                        tips: ['Coude près du corps', 'Contractez le dos', 'Mouvement contrôlé'],
-                        commonMistakes: ['Tirer avec le bras', 'Coude qui s\'écarte', 'Rotation du torse'],
-                        muscleGroups: { primary: ['Grand dorsal', 'Rhomboïdes'], secondary: ['Biceps'] },
-                        tags: ['unilatéral', 'dos', 'épaisseur'],
+                        tips: ['Angle ascendant', 'Coudes écartés', 'Focus haut du dos'],
+                        commonMistakes: ['Trajectoire horizontale', 'Coudes bas', 'Manque de contraction'],
+                        muscleGroups: { primary: ['Deltoïdes postérieurs', 'Rhomboïdes'], secondary: ['Trapèzes moyens'] },
+                        tags: ['face pull', 'ancrage bas', 'posture'],
                         imageUrl: null
                     },
-
-                    'Tirage vertical': {
+                    'Pull-Over': {
                         difficulty: 'intermediate',
-                        description: 'Simulation de tractions pour la largeur du dos.',
+                        description: 'Mouvement d\'amplitude pour les dorsaux et la cage thoracique.',
                         instructions: [
-                            'Ancrez l\'élastique en haut',
-                            'Bras tendus au-dessus de la tête',
-                            'Tirez les coudes vers les côtes',
-                            'Contractez le dos',
-                            'Remontez lentement'
+                            'Allongé, ancrage derrière la tête',
+                            'Bras tendus, amenez au-dessus de la poitrine',
+                            'Grand mouvement d\'amplitude',
+                            'Étirement des dorsaux',
+                            'Retour contrôlé'
                         ],
-                        tips: ['Penchez-vous légèrement', 'Contractez les dorsaux', 'Tirez avec le dos'],
-                        commonMistakes: ['Tirer avec les bras', 'Pas assez penché', 'Mouvement rapide'],
-                        muscleGroups: { primary: ['Grand dorsal'], secondary: ['Biceps', 'Rhomboïdes'] },
-                        tags: ['composé', 'dos', 'largeur'],
+                        tips: ['Grande amplitude', 'Bras tendus', 'Étirement en position basse'],
+                        commonMistakes: ['Amplitude réduite', 'Bras fléchis', 'Mouvement trop rapide'],
+                        muscleGroups: { primary: ['Grand dorsal'], secondary: ['Pectoraux', 'Triceps'] },
+                        tags: ['amplitude', 'dorsaux', 'étirement'],
                         imageUrl: null
                     },
-
                     'Rowing buste penché': {
                         difficulty: 'intermediate',
                         description: 'Exercice de base pour l\'épaisseur du dos.',
@@ -6634,8 +6879,490 @@
                         tags: ['composé', 'dos', 'force'],
                         imageUrl: null
                     },
+                    'Rowing buste penché (prise large)': {
+                        difficulty: 'intermediate',
+                        description: 'Rowing avec prise large pour cibler différemment le dos.',
+                        instructions: [
+                            'Même position que rowing classique',
+                            'Prise plus large sur l\'élastique',
+                            'Tirez coudes écartés',
+                            'Focus sur les rhomboïdes',
+                            'Contraction forte'
+                        ],
+                        tips: ['Prise large', 'Coudes écartés', 'Rhomboïdes et trapèzes'],
+                        commonMistakes: ['Prise trop étroite', 'Coudes collés', 'Mauvais focus'],
+                        muscleGroups: { primary: ['Rhomboïdes', 'Trapèzes moyens'], secondary: ['Grand dorsal', 'Biceps'] },
+                        tags: ['rowing', 'prise large', 'rhomboïdes'],
+                        imageUrl: null
+                    },
+                    'Rowing buste penché (prise serrée)': {
+                        difficulty: 'intermediate',
+                        description: 'Rowing prise serrée pour focus sur les dorsaux.',
+                        instructions: [
+                            'Position rowing classique',
+                            'Prise rapprochée',
+                            'Tirez coudes près du corps',
+                            'Focus dorsaux et rhomboïdes',
+                            'Contraction maximale'
+                        ],
+                        tips: ['Prise serrée', 'Coudes collés', 'Focus dorsaux'],
+                        commonMistakes: ['Prise trop large', 'Coudes écartés', 'Mauvaise trajectoire'],
+                        muscleGroups: { primary: ['Grand dorsal'], secondary: ['Rhomboïdes', 'Biceps'] },
+                        tags: ['rowing', 'prise serrée', 'dorsaux'],
+                        imageUrl: null
+                    },
+                    'Soulevé de terre': {
+                        difficulty: 'intermediate',
+                        description: 'Mouvement de charnière de hanche fondamental.',
+                        instructions: [
+                            'Élastique sous les pieds',
+                            'Penchez-vous en poussant les hanches arrière',
+                            'Gardez le dos droit',
+                            'Tirez en contractant les fessiers',
+                            'Revenez debout'
+                        ],
+                        tips: ['Charnière de hanche', 'Dos droit', 'Contractez les fessiers'],
+                        commonMistakes: ['Dos rond', 'Plier les genoux', 'Pas de poussée de hanches'],
+                        muscleGroups: { primary: ['Fessiers', 'Ischio-jambiers'], secondary: ['Dos', 'Trapèzes'] },
+                        tags: ['composé', 'chaîne postérieure', 'force'],
+                        imageUrl: null
+                    },
+                    'Soulevé de terre (prise large)': {
+                        difficulty: 'intermediate',
+                        description: 'Soulevé de terre avec prise large pour plus de challenge.',
+                        instructions: [
+                            'Même mouvement, prise plus large',
+                            'Augmente la difficulté',
+                            'Charnière de hanche stricte',
+                            'Focus chaîne postérieure',
+                            'Mouvement puissant'
+                        ],
+                        tips: ['Prise large sécurisée', 'Même technique', 'Plus de challenge'],
+                        commonMistakes: ['Prise instable', 'Compenser par le dos', 'Mouvement précipité'],
+                        muscleGroups: { primary: ['Fessiers', 'Ischio-jambiers'], secondary: ['Dos', 'Avant-bras'] },
+                        tags: ['soulevé', 'prise large', 'challenge'],
+                        imageUrl: null
+                    },
+                    'Tirage Bucheron (poulie basse)': {
+                        difficulty: 'intermediate',
+                        description: 'Tirage unilatéral en position penchée.',
+                        instructions: [
+                            'Position fendue, appui sur un genou',
+                            'Ancrage bas, tirez vers la hanche',
+                            'Mouvement unilatéral',
+                            'Focus sur un côté du dos',
+                            'Alternez les côtés'
+                        ],
+                        tips: ['Position stable', 'Tirage vers la hanche', 'Contraction maximale'],
+                        commonMistakes: ['Position instable', 'Mauvaise trajectoire', 'Rotation du tronc'],
+                        muscleGroups: { primary: ['Grand dorsal'], secondary: ['Rhomboïdes', 'Biceps'] },
+                        tags: ['unilatéral', 'bucheron', 'dorsaux'],
+                        imageUrl: null
+                    },
+                    'Tirage horizontal unilatéral': {
+                        difficulty: 'intermediate',
+                        description: 'Tirage horizontal pour développer l\'épaisseur du dos.',
+                        instructions: [
+                            'Ancrage à hauteur de poitrine',
+                            'Un bras tendu devant vous',
+                            'Tirez le coude vers l\'arrière',
+                            'Contractez le dos',
+                            'Alternez les bras'
+                        ],
+                        tips: ['Coude près du corps', 'Contractez le dos', 'Mouvement contrôlé'],
+                        commonMistakes: ['Tirer avec le bras', 'Coude qui s\'écarte', 'Rotation du torse'],
+                        muscleGroups: { primary: ['Grand dorsal', 'Rhomboïdes'], secondary: ['Biceps'] },
+                        tags: ['unilatéral', 'dos', 'épaisseur'],
+                        imageUrl: null
+                    },
+                    'Tirage poulie basse': {
+                        difficulty: 'intermediate',
+                        description: 'Tirage horizontal depuis un ancrage bas.',
+                        instructions: [
+                            'Assis ou debout, ancrage en bas',
+                            'Tirez vers l\'abdomen',
+                            'Coudes près du corps',
+                            'Contractez les omoplates',
+                            'Retour contrôlé'
+                        ],
+                        tips: ['Position stable', 'Tirage vers l\'abdomen', 'Omoplates serrées'],
+                        commonMistakes: ['Position instable', 'Tirage trop haut', 'Manque de contraction'],
+                        muscleGroups: { primary: ['Grand dorsal', 'Rhomboïdes'], secondary: ['Biceps'] },
+                        tags: ['horizontal', 'poulie basse', 'masse'],
+                        imageUrl: null
+                    },
+                    'Tirage poulie basse (supination)': {
+                        difficulty: 'intermediate',
+                        description: 'Tirage poulie basse avec prise supination.',
+                        instructions: [
+                            'Même position, prise en supination',
+                            'Paumes vers le haut',
+                            'Tirage vers l\'abdomen',
+                            'Plus de sollicitation des biceps',
+                            'Contraction dorsaux et biceps'
+                        ],
+                        tips: ['Prise supination ferme', 'Tirage strict', 'Double sollicitation'],
+                        commonMistakes: ['Prise qui glisse', 'Tirer avec les biceps uniquement', 'Oublier le dos'],
+                        muscleGroups: { primary: ['Grand dorsal', 'Biceps'], secondary: ['Rhomboïdes'] },
+                        tags: ['supination', 'biceps', 'dorsaux'],
+                        imageUrl: null
+                    },
+                    'Tirage vertical': {
+                        difficulty: 'intermediate',
+                        description: 'Simulation de tractions pour la largeur du dos.',
+                        instructions: [
+                            'Ancrez l\'élastique en haut',
+                            'Bras tendus au-dessus de la tête',
+                            'Tirez les coudes vers les côtes',
+                            'Contractez le dos',
+                            'Remontez lentement'
+                        ],
+                        tips: ['Penchez-vous légèrement', 'Contractez les dorsaux', 'Tirez avec le dos'],
+                        commonMistakes: ['Tirer avec les bras', 'Pas assez penché', 'Mouvement rapide'],
+                        muscleGroups: { primary: ['Grand dorsal'], secondary: ['Biceps', 'Rhomboïdes'] },
+                        tags: ['composé', 'dos', 'largeur'],
+                        imageUrl: null
+                    },
+                    'Tirage vertical (prise serrée)': {
+                        difficulty: 'intermediate',
+                        description: 'Tirage vertical avec prise rapprochée.',
+                        instructions: [
+                            'Ancrage haut, prise serrée',
+                            'Tirez vers la poitrine',
+                            'Focus sur les dorsaux',
+                            'Coudes près du corps',
+                            'Contraction maximale'
+                        ],
+                        tips: ['Prise rapprochée', 'Coudes collés', 'Focus dorsaux'],
+                        commonMistakes: ['Prise trop large', 'Coudes écartés', 'Tirage partiel'],
+                        muscleGroups: { primary: ['Grand dorsal'], secondary: ['Biceps'] },
+                        tags: ['vertical', 'prise serrée', 'dorsaux'],
+                        imageUrl: null
+                    },
+                    'Tirage vertical (supination)': {
+                        difficulty: 'intermediate',
+                        description: 'Tirage vertical en supination pour plus de biceps.',
+                        instructions: [
+                            'Ancrage haut, paumes vers soi',
+                            'Tirage en supination',
+                            'Sollicitation dorsaux et biceps',
+                            'Mouvement puissant',
+                            'Double contraction'
+                        ],
+                        tips: ['Prise supination ferme', 'Double focus', 'Mouvement puissant'],
+                        commonMistakes: ['Négliger les dorsaux', 'Prise instable', 'Déséquilibre'],
+                        muscleGroups: { primary: ['Grand dorsal', 'Biceps'], secondary: ['Rhomboïdes'] },
+                        tags: ['supination', 'biceps', 'vertical'],
+                        imageUrl: null
+                    },
+                    'Tirage vertical unilatéral': {
+                        difficulty: 'intermediate',
+                        description: 'Tirage vertical un bras pour plus de focus.',
+                        instructions: [
+                            'Ancrage haut, un bras',
+                            'Tirage unilatéral vers la côte',
+                            'Focus sur un côté',
+                            'Contraction maximale',
+                            'Alternez les bras'
+                        ],
+                        tips: ['Focus sur un côté', 'Pas de compensation', 'Contraction maximale'],
+                        commonMistakes: ['Rotation du tronc', 'Manque de focus', 'Mouvement compensé'],
+                        muscleGroups: { primary: ['Grand dorsal'], secondary: ['Biceps'] },
+                        tags: ['unilatéral', 'vertical', 'focus'],
+                        imageUrl: null
+                    },
+
+                    // === JAMBES ===
+                    'Abduction de hanches': {
+                        difficulty: 'beginner',
+                        description: 'Exercice pour les muscles abducteurs (côté des hanches).',
+                        instructions: [
+                            'Élastique autour des chevilles ou genoux',
+                            'Écartez la jambe sur le côté',
+                            'Gardez le tronc stable',
+                            'Contractez les fessiers',
+                            'Revenez contrôlé'
+                        ],
+                        tips: ['Mouvement latéral pur', 'Tronc stable', 'Contraction fessiers'],
+                        commonMistakes: ['Pencher le tronc', 'Mouvement vers l\'avant', 'Manque de contrôle'],
+                        muscleGroups: { primary: ['Abducteurs', 'Moyen fessier'], secondary: ['Core'] },
+                        tags: ['abducteurs', 'fessiers', 'stabilité'],
+                        imageUrl: null
+                    },
+                    'Adduction de hanches': {
+                        difficulty: 'beginner',
+                        description: 'Exercice pour les muscles adducteurs (intérieur des cuisses).',
+                        instructions: [
+                            'Élastique fixé, jambe vers l\'intérieur',
+                            'Ramenez la jambe vers la ligne médiane',
+                            'Contractez l\'intérieur de la cuisse',
+                            'Mouvement contrôlé',
+                            'Alternez les jambes'
+                        ],
+                        tips: ['Mouvement vers l\'intérieur', 'Contraction adducteurs', 'Contrôle total'],
+                        commonMistakes: ['Mouvement trop ample', 'Vitesse excessive', 'Position instable'],
+                        muscleGroups: { primary: ['Adducteurs'], secondary: ['Core'] },
+                        tags: ['adducteurs', 'intérieur cuisse', 'isolation'],
+                        imageUrl: null
+                    },
+                    'Donkey kick': {
+                        difficulty: 'beginner',
+                        description: 'Excellent exercice pour les fessiers.',
+                        instructions: [
+                            'À quatre pattes, élastique sous le pied',
+                            'Poussez la jambe vers l\'arrière et le haut',
+                            'Contractez fortement les fessiers',
+                            'Gardez le dos droit',
+                            'Alternez les jambes'
+                        ],
+                        tips: ['Poussée puissante', 'Contraction fessiers', 'Dos stable'],
+                        commonMistakes: ['Dos qui bouge', 'Jambe trop haute', 'Manque de contraction'],
+                        muscleGroups: { primary: ['Fessiers'], secondary: ['Ischio-jambiers'] },
+                        tags: ['fessiers', 'unilatéral', 'isolation'],
+                        imageUrl: null
+                    },
+                    'Donkey kick (jambes fléchies)': {
+                        difficulty: 'beginner',
+                        description: 'Variante du donkey kick avec jambe fléchie.',
+                        instructions: [
+                            'Position quadrupédie',
+                            'Jambe fléchie à 90°',
+                            'Poussez le talon vers le plafond',
+                            'Contraction intense des fessiers',
+                            'Jambe reste fléchie'
+                        ],
+                        tips: ['Jambe toujours fléchie', 'Poussée du talon', 'Focus fessiers'],
+                        commonMistakes: ['Tendre la jambe', 'Mouvement du dos', 'Vitesse excessive'],
+                        muscleGroups: { primary: ['Fessiers'], secondary: ['Ischio-jambiers'] },
+                        tags: ['fessiers', 'jambe fléchie', 'isolation'],
+                        imageUrl: null
+                    },
+                    'Extensions mollets': {
+                        difficulty: 'beginner',
+                        description: 'Exercice pour développer les mollets.',
+                        instructions: [
+                            'Debout, élastique sous les pieds',
+                            'Montez sur la pointe des pieds',
+                            'Contractez les mollets en haut',
+                            'Descendez lentement',
+                            'Amplitude complète'
+                        ],
+                        tips: ['Montée haute', 'Contraction en haut', 'Descente lente'],
+                        commonMistakes: ['Amplitude réduite', 'Descente rapide', 'Manque de contraction'],
+                        muscleGroups: { primary: ['Mollets'], secondary: [] },
+                        tags: ['mollets', 'extension', 'isolation'],
+                        imageUrl: null
+                    },
+                    'Extensions mollets unilatérales': {
+                        difficulty: 'intermediate',
+                        description: 'Extensions de mollets sur une jambe pour plus d\'intensité.',
+                        instructions: [
+                            'Debout sur une jambe',
+                            'Extension du mollet unilatérale',
+                            'Équilibre et contraction',
+                            'Amplitude maximale',
+                            'Alternez les jambes'
+                        ],
+                        tips: ['Équilibre parfait', 'Contraction maximale', 'Une jambe à la fois'],
+                        commonMistakes: ['Perte d\'équilibre', 'Amplitude réduite', 'Manque de focus'],
+                        muscleGroups: { primary: ['Mollets'], secondary: ['Core'] },
+                        tags: ['mollets', 'unilatéral', 'équilibre'],
+                        imageUrl: null
+                    },
+                    'Fentes': {
+                        difficulty: 'intermediate',
+                        description: 'Exercice unilatéral pour jambes et équilibre.',
+                        instructions: [
+                            'Élastique sous le pied avant',
+                            'Grand pas en arrière',
+                            'Descendez en fléchissant les genoux',
+                            'Genou arrière frôle le sol',
+                            'Remontez sur le pied avant'
+                        ],
+                        tips: ['Gardez le torse droit', 'Poids sur le pied avant', 'Descendez bien bas'],
+                        commonMistakes: ['Pas assez grand', 'Pencher avant', 'Pas assez bas'],
+                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Ischio-jambiers', 'Core'] },
+                        tags: ['unilatéral', 'jambes', 'équilibre'],
+                        imageUrl: null
+                    },
+                    'Fentes bulgares': {
+                        difficulty: 'advanced',
+                        description: 'Fentes avec pied arrière surélevé.',
+                        instructions: [
+                            'Pied arrière sur support élevé',
+                            'Fente sur la jambe avant',
+                            'Plus d\'amplitude et de difficulté',
+                            'Focus sur la jambe avant',
+                            'Stabilité maximale'
+                        ],
+                        tips: ['Support stable', 'Focus jambe avant', 'Amplitude maximale'],
+                        commonMistakes: ['Support instable', 'Répartition du poids', 'Amplitude réduite'],
+                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Ischio-jambiers'] },
+                        tags: ['fentes', 'avancé', 'surélevé'],
+                        imageUrl: null
+                    },
+                    'Front squat': {
+                        difficulty: 'intermediate',
+                        description: 'Squat avec résistance frontale, plus difficile.',
+                        instructions: [
+                            'Élastique sous les pieds',
+                            'Tenez les poignées devant les épaules',
+                            'Squat normal en gardant les coudes hauts',
+                            'Résistance frontale constante',
+                            'Remontez en poussant les talons'
+                        ],
+                        tips: ['Coudes hauts', 'Gardez le torse droit', 'Résistance constante'],
+                        commonMistakes: ['Coudes qui descendent', 'Pencher vers l\'avant', 'Mauvaise posture'],
+                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Core', 'Ischio-jambiers'] },
+                        tags: ['composé', 'jambes', 'core'],
+                        imageUrl: null
+                    },
+                    'Hip thrust': {
+                        difficulty: 'intermediate',
+                        description: 'Excellent pour développer les fessiers.',
+                        instructions: [
+                            'Allongé, élastique sur les hanches',
+                            'Pieds au sol, genoux fléchis',
+                            'Poussez les hanches vers le haut',
+                            'Contractez les fessiers en haut',
+                            'Redescendez lentement'
+                        ],
+                        tips: ['Contractez fort les fessiers', 'Gardez le dos droit', 'Poussée vers le haut'],
+                        commonMistakes: ['Pousser avec le dos', 'Pas de contraction', 'Mouvement partiel'],
+                        muscleGroups: { primary: ['Fessiers'], secondary: ['Ischio-jambiers', 'Core'] },
+                        tags: ['isolation', 'fessiers', 'force'],
+                        imageUrl: null
+                    },
+                    'Leg curl': {
+                        difficulty: 'intermediate',
+                        description: 'Flexion des jambes pour les ischio-jambiers.',
+                        instructions: [
+                            'Allongé ventre, élastique aux chevilles',
+                            'Fléchissez les jambes vers les fessiers',
+                            'Contractez les ischio-jambiers',
+                            'Descendez lentement',
+                            'Amplitude complète'
+                        ],
+                        tips: ['Contraction ischio-jambiers', 'Mouvement contrôlé', 'Amplitude maximale'],
+                        commonMistakes: ['Mouvement trop rapide', 'Amplitude partielle', 'Compensation avec le dos'],
+                        muscleGroups: { primary: ['Ischio-jambiers'], secondary: ['Mollets'] },
+                        tags: ['ischio-jambiers', 'flexion', 'isolation'],
+                        imageUrl: null
+                    },
+                    'Leg extension unilatérale': {
+                        difficulty: 'intermediate',
+                        description: 'Extension de jambe unilatérale pour les quadriceps.',
+                        instructions: [
+                            'Assis, élastique sous le pied',
+                            'Extension de jambe vers l\'avant',
+                            'Contraction des quadriceps',
+                            'Une jambe à la fois',
+                            'Mouvement contrôlé'
+                        ],
+                        tips: ['Extension complète', 'Contraction quadriceps', 'Mouvement isolé'],
+                        commonMistakes: ['Extension partielle', 'Mouvement brusque', 'Compensation corporelle'],
+                        muscleGroups: { primary: ['Quadriceps'], secondary: [] },
+                        tags: ['quadriceps', 'unilatéral', 'extension'],
+                        imageUrl: null
+                    },
+                    'Soulevé de terre jambes tendues': {
+                        difficulty: 'intermediate',
+                        description: 'Variante du soulevé ciblant plus les ischio-jambiers.',
+                        instructions: [
+                            'Jambes tendues ou légèrement fléchies',
+                            'Penchez-vous en gardant les jambes droites',
+                            'Focus sur les ischio-jambiers',
+                            'Étirement en bas',
+                            'Remontée contrôlée'
+                        ],
+                        tips: ['Jambes quasi-tendues', 'Étirement ischio-jambiers', 'Dos droit'],
+                        commonMistakes: ['Trop plier les genoux', 'Dos rond', 'Amplitude insuffisante'],
+                        muscleGroups: { primary: ['Ischio-jambiers', 'Fessiers'], secondary: ['Dos'] },
+                        tags: ['ischio-jambiers', 'étirement', 'jambes tendues'],
+                        imageUrl: null
+                    },
+                    'Squat': {
+                        difficulty: 'beginner',
+                        description: 'Exercice roi pour les jambes et les fessiers.',
+                        instructions: [
+                            'Élastique sous les pieds',
+                            'Pieds écartés largeur d\'épaules',
+                            'Descendez en poussant les hanches arrière',
+                            'Gardez le dos droit',
+                            'Remontez en poussant sur les talons'
+                        ],
+                        tips: ['Genoux dans l\'axe', 'Descendez bien bas', 'Gardez la poitrine haute'],
+                        commonMistakes: ['Genoux vers l\'intérieur', 'Dos rond', 'Pas assez profond'],
+                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Ischio-jambiers', 'Mollets'] },
+                        tags: ['composé', 'jambes', 'force', 'fonctionnel'],
+                        imageUrl: null
+                    },
+                    'Squat sumo': {
+                        difficulty: 'intermediate',
+                        description: 'Squat avec position large pour cibler différemment.',
+                        instructions: [
+                            'Position très large, pieds tournés vers l\'extérieur',
+                            'Squat avec cette position sumo',
+                            'Plus de sollicitation des adducteurs',
+                            'Descendez entre les jambes',
+                            'Poussée puissante'
+                        ],
+                        tips: ['Position très large', 'Pieds tournés', 'Descendre profond'],
+                        commonMistakes: ['Position pas assez large', 'Pieds parallèles', 'Amplitude insuffisante'],
+                        muscleGroups: { primary: ['Quadriceps', 'Fessiers', 'Adducteurs'], secondary: ['Ischio-jambiers'] },
+                        tags: ['sumo', 'adducteurs', 'large'],
+                        imageUrl: null
+                    },
+                    'Squat swing': {
+                        difficulty: 'intermediate',
+                        description: 'Squat avec mouvement de balancier dynamique.',
+                        instructions: [
+                            'Squat avec mouvement de balancier',
+                            'Momentum contrôlé',
+                            'Aspect cardio et force',
+                            'Rythmé et fluide',
+                            'Stabilité du core'
+                        ],
+                        tips: ['Mouvement fluide', 'Rythme constant', 'Core engagé'],
+                        commonMistakes: ['Perte de contrôle', 'Mouvement saccadé', 'Instabilité'],
+                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Core', 'Cardio'] },
+                        tags: ['dynamique', 'cardio', 'swing'],
+                        imageUrl: null
+                    },
+                    'Thruster': {
+                        difficulty: 'advanced',
+                        description: 'Combinaison squat + développé pour tout le corps.',
+                        instructions: [
+                            'Squat avec élastique',
+                            'En remontant, développé au-dessus de la tête',
+                            'Mouvement combiné fluide',
+                            'Explosif et complet',
+                            'Corps entier sollicité'
+                        ],
+                        tips: ['Mouvement fluide', 'Transition squat-développé', 'Explosivité'],
+                        commonMistakes: ['Pause entre les mouvements', 'Manque de fluidité', 'Déséquilibre'],
+                        muscleGroups: { primary: ['Corps entier'], secondary: [] },
+                        tags: ['corps entier', 'explosif', 'combiné'],
+                        imageUrl: null
+                    },
 
                     // === PECTORAUX ===
+                    'Développé épaules debout': {
+                        difficulty: 'intermediate',
+                        description: 'Développé debout ciblant épaules et haut des pectoraux.',
+                        instructions: [
+                            'Debout, élastique sous les pieds',
+                            'Développé vers le haut et l\'avant',
+                            'Sollicitation épaules et pectoraux',
+                            'Trajectoire légèrement oblique',
+                            'Extension complète'
+                        ],
+                        tips: ['Trajectoire optimale', 'Extension complète', 'Stabilité corporelle'],
+                        commonMistakes: ['Mauvaise trajectoire', 'Instabilité', 'Extension partielle'],
+                        muscleGroups: { primary: ['Deltoïdes', 'Pectoraux'], secondary: ['Triceps'] },
+                        tags: ['développé', 'épaules', 'debout'],
+                        imageUrl: null
+                    },
                     'Développé debout (poulie moyenne)': {
                         difficulty: 'intermediate',
                         description: 'Développé pour les pectoraux en position debout.',
@@ -6652,7 +7379,38 @@
                         tags: ['composé', 'pectoraux', 'poussée'],
                         imageUrl: null
                     },
-
+                    'Développé debout (2 ancrages)': {
+                        difficulty: 'advanced',
+                        description: 'Développé avec deux points d\'ancrage pour plus de résistance.',
+                        instructions: [
+                            'Deux ancrages symétriques',
+                            'Développé avec double résistance',
+                            'Plus de stabilité requise',
+                            'Mouvement coordonné',
+                            'Résistance équilibrée'
+                        ],
+                        tips: ['Ancrages symétriques', 'Mouvement coordonné', 'Stabilité renforcée'],
+                        commonMistakes: ['Ancrages déséquilibrés', 'Mouvement non coordonné', 'Instabilité'],
+                        muscleGroups: { primary: ['Pectoraux'], secondary: ['Deltoïdes', 'Triceps', 'Core'] },
+                        tags: ['double ancrage', 'stabilité', 'avancé'],
+                        imageUrl: null
+                    },
+                    'Développé décliné': {
+                        difficulty: 'intermediate',
+                        description: 'Développé vers le bas pour le bas des pectoraux.',
+                        instructions: [
+                            'Ancrage en haut',
+                            'Poussée vers le bas et l\'avant',
+                            'Cible le bas des pectoraux',
+                            'Angle descendant',
+                            'Contraction spécifique'
+                        ],
+                        tips: ['Angle décliné', 'Focus bas pectoraux', 'Trajectoire descendante'],
+                        commonMistakes: ['Mauvais angle', 'Trajectoire horizontale', 'Manque de focus'],
+                        muscleGroups: { primary: ['Pectoraux (partie basse)'], secondary: ['Triceps', 'Deltoïdes'] },
+                        tags: ['décliné', 'bas pectoraux', 'angle'],
+                        imageUrl: null
+                    },
                     'Développé incliné': {
                         difficulty: 'intermediate',
                         description: 'Variante inclinée pour cibler le haut des pectoraux.',
@@ -6669,7 +7427,86 @@
                         tags: ['composé', 'pectoraux', 'incliné'],
                         imageUrl: null
                     },
-
+                    'Développé incliné (poulie basse)': {
+                        difficulty: 'intermediate',
+                        description: 'Développé incliné depuis un ancrage bas.',
+                        instructions: [
+                            'Ancrage très bas',
+                            'Trajectoire ascendante marquée',
+                            'Cible spécifiquement le haut des pectoraux',
+                            'Angle optimal',
+                            'Extension complète'
+                        ],
+                        tips: ['Ancrage bas', 'Trajectoire ascendante', 'Focus haut pectoraux'],
+                        commonMistakes: ['Ancrage pas assez bas', 'Trajectoire plate', 'Mauvais focus'],
+                        muscleGroups: { primary: ['Pectoraux (partie haute)'], secondary: ['Deltoïdes antérieurs'] },
+                        tags: ['incliné', 'poulie basse', 'haut pectoraux'],
+                        imageUrl: null
+                    },
+                    'Développé joint (poulie basse)': {
+                        difficulty: 'intermediate',
+                        description: 'Développé avec les mains jointes depuis un ancrage bas.',
+                        instructions: [
+                            'Mains jointes, ancrage bas',
+                            'Poussée avec mains ensemble',
+                            'Sollicitation différente',
+                            'Stabilité accrue',
+                            'Contraction centrale'
+                        ],
+                        tips: ['Mains bien jointes', 'Mouvement stable', 'Focus central'],
+                        commonMistakes: ['Mains qui se séparent', 'Instabilité', 'Mouvement désordonné'],
+                        muscleGroups: { primary: ['Pectoraux'], secondary: ['Triceps', 'Core'] },
+                        tags: ['mains jointes', 'stabilité', 'central'],
+                        imageUrl: null
+                    },
+                    'Développé joint (poulie haute)': {
+                        difficulty: 'intermediate',
+                        description: 'Développé mains jointes depuis un ancrage haut.',
+                        instructions: [
+                            'Ancrage haut, mains jointes',
+                            'Poussée vers le bas et l\'avant',
+                            'Angle descendant',
+                            'Stabilité maximale',
+                            'Contraction spécifique'
+                        ],
+                        tips: ['Union des mains', 'Trajectoire descendante', 'Stabilité corporelle'],
+                        commonMistakes: ['Mains instables', 'Mauvaise trajectoire', 'Déséquilibre'],
+                        muscleGroups: { primary: ['Pectoraux'], secondary: ['Triceps', 'Deltoïdes'] },
+                        tags: ['poulie haute', 'mains jointes', 'descendant'],
+                        imageUrl: null
+                    },
+                    'Développé 1 ancrage (poulie haute)': {
+                        difficulty: 'advanced',
+                        description: 'Développé avec un seul ancrage haut pour plus de challenge.',
+                        instructions: [
+                            'Un seul ancrage en haut',
+                            'Plus de défi d\'équilibre',
+                            'Développé asymétrique',
+                            'Stabilisation corporelle',
+                            'Focus sur la coordination'
+                        ],
+                        tips: ['Équilibre parfait', 'Stabilisation active', 'Mouvement contrôlé'],
+                        commonMistakes: ['Perte d\'équilibre', 'Compensation corporelle', 'Mouvement désordonné'],
+                        muscleGroups: { primary: ['Pectoraux'], secondary: ['Core', 'Stabilisateurs'] },
+                        tags: ['un ancrage', 'équilibre', 'challenge'],
+                        imageUrl: null
+                    },
+                    'Développé joint (poulie moyenne)': {
+                        difficulty: 'intermediate',
+                        description: 'Développé mains jointes depuis un ancrage moyen.',
+                        instructions: [
+                            'Ancrage à hauteur poitrine',
+                            'Mains jointes ensemble',
+                            'Développé horizontal',
+                            'Stabilité et coordination',
+                            'Mouvement unifié'
+                        ],
+                        tips: ['Mains solidaires', 'Mouvement horizontal', 'Coordination parfaite'],
+                        commonMistakes: ['Séparation des mains', 'Mouvement désordonné', 'Instabilité'],
+                        muscleGroups: { primary: ['Pectoraux'], secondary: ['Triceps', 'Core'] },
+                        tags: ['poulie moyenne', 'horizontal', 'coordination'],
+                        imageUrl: null
+                    },
                     'Écarté unilatéral': {
                         difficulty: 'intermediate',
                         description: 'Isolation des pectoraux avec étirement.',
@@ -6686,7 +7523,38 @@
                         tags: ['isolation', 'pectoraux', 'étirement'],
                         imageUrl: null
                     },
-
+                    'Écarté unilatéral (poulie basse)': {
+                        difficulty: 'intermediate',
+                        description: 'Écarté unilatéral depuis un ancrage bas.',
+                        instructions: [
+                            'Ancrage bas, écarté vers le haut',
+                            'Trajectoire ascendante',
+                            'Focus sur le haut des pectoraux',
+                            'Bras tendu',
+                            'Étirement maximal'
+                        ],
+                        tips: ['Trajectoire ascendante', 'Bras tendu', 'Étirement en bas'],
+                        commonMistakes: ['Trajectoire plate', 'Bras fléchi', 'Amplitude réduite'],
+                        muscleGroups: { primary: ['Pectoraux (partie haute)'], secondary: [] },
+                        tags: ['écarté', 'poulie basse', 'ascendant'],
+                        imageUrl: null
+                    },
+                    'Écarté unilatéral (poulie haute)': {
+                        difficulty: 'intermediate',
+                        description: 'Écarté unilatéral depuis un ancrage haut.',
+                        instructions: [
+                            'Ancrage haut, écarté vers le bas',
+                            'Trajectoire descendante',
+                            'Focus bas des pectoraux',
+                            'Amplitude maximale',
+                            'Contraction intense'
+                        ],
+                        tips: ['Trajectoire descendante', 'Amplitude maximale', 'Focus bas pectoraux'],
+                        commonMistakes: ['Trajectoire horizontale', 'Amplitude réduite', 'Manque de focus'],
+                        muscleGroups: { primary: ['Pectoraux (partie basse)'], secondary: [] },
+                        tags: ['écarté', 'poulie haute', 'descendant'],
+                        imageUrl: null
+                    },
                     'Pompes lestées': {
                         difficulty: 'advanced',
                         description: 'Pompes avec résistance élastique pour plus de difficulté.',
@@ -6704,95 +7572,105 @@
                         imageUrl: null
                     },
 
-                    // === JAMBES ===
-                    'Squat': {
+                    // === TRICEPS ===
+                    'Triceps barre au front': {
+                        difficulty: 'intermediate',
+                        description: 'Extension des triceps en position allongée.',
+                        instructions: [
+                            'Allongé, élastique ancré derrière',
+                            'Bras tendus vers le plafond',
+                            'Fléchissez seulement les avant-bras',
+                            'Extension vers le front',
+                            'Mouvement des avant-bras uniquement'
+                        ],
+                        tips: ['Coudes fixes', 'Mouvement des avant-bras seuls', 'Étirement en bas'],
+                        commonMistakes: ['Bouger les coudes', 'Mouvement des bras entiers', 'Amplitude partielle'],
+                        muscleGroups: { primary: ['Triceps'], secondary: [] },
+                        tags: ['extension', 'allongé', 'isolation'],
+                        imageUrl: null
+                    },
+                    'Extension triceps (poulie haute)': {
                         difficulty: 'beginner',
-                        description: 'Exercice roi pour les jambes et les fessiers.',
+                        description: 'Exercice d\'isolation classique pour développer les triceps.',
                         instructions: [
-                            'Élastique sous les pieds',
-                            'Pieds écartés largeur d\'épaules',
-                            'Descendez en poussant les hanches arrière',
-                            'Gardez le dos droit',
-                            'Remontez en poussant sur les talons'
+                            'Ancrez l\'élastique en haut',
+                            'Tenez les poignées, coudes près du corps',
+                            'Étendez les avant-bras vers le bas',
+                            'Contractez les triceps en bas',
+                            'Remontez lentement'
                         ],
-                        tips: ['Genoux dans l\'axe', 'Descendez bien bas', 'Gardez la poitrine haute'],
-                        commonMistakes: ['Genoux vers l\'intérieur', 'Dos rond', 'Pas assez profond'],
-                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Ischio-jambiers', 'Mollets'] },
-                        tags: ['composé', 'jambes', 'force', 'fonctionnel'],
+                        tips: ['Gardez les coudes fixes', 'Mouvement des avant-bras uniquement', 'Contractez fort en bas'],
+                        commonMistakes: ['Bouger les coudes', 'Utiliser le dos', 'Mouvement partiel'],
+                        muscleGroups: { primary: ['Triceps'], secondary: ['Deltoïdes antérieurs'] },
+                        tags: ['isolation', 'triceps', 'bras'],
                         imageUrl: null
                     },
-
-                    'Front squat': {
+                    'Extension triceps verticale': {
                         difficulty: 'intermediate',
-                        description: 'Squat avec résistance frontale, plus difficile.',
+                        description: 'Extension triceps au-dessus de la tête pour étirer le muscle.',
                         instructions: [
-                            'Élastique sous les pieds',
-                            'Tenez les poignées devant les épaules',
-                            'Squat normal en gardant les coudes hauts',
-                            'Résistance frontale constante',
-                            'Remontez en poussant les talons'
+                            'Élastique derrière le dos, une main en haut',
+                            'Étendez le bras vers le haut',
+                            'Gardez le coude près de l\'oreille',
+                            'Descendez lentement',
+                            'Alternez les bras'
                         ],
-                        tips: ['Coudes hauts', 'Gardez le torse droit', 'Résistance constante'],
-                        commonMistakes: ['Coudes qui descendent', 'Pencher vers l\'avant', 'Mauvaise posture'],
-                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Core', 'Ischio-jambiers'] },
-                        tags: ['composé', 'jambes', 'core'],
+                        tips: ['Coude près de la tête', 'Mouvement contrôlé', 'Bon étirement en bas'],
+                        commonMistakes: ['Coude qui part sur le côté', 'Mouvement trop rapide', 'Mauvaise position'],
+                        muscleGroups: { primary: ['Triceps (chef long)'], secondary: [] },
+                        tags: ['isolation', 'triceps', 'étirement'],
                         imageUrl: null
                     },
-
-                    'Fentes': {
+                    'Extension triceps verticale (poulie basse)': {
                         difficulty: 'intermediate',
-                        description: 'Exercice unilatéral pour jambes et équilibre.',
+                        description: 'Extension verticale depuis un ancrage bas.',
                         instructions: [
-                            'Élastique sous le pied avant',
-                            'Grand pas en arrière',
-                            'Descendez en fléchissant les genoux',
-                            'Genou arrière frôle le sol',
-                            'Remontez sur le pied avant'
+                            'Ancrage bas, bras au-dessus de la tête',
+                            'Extension verticale des triceps',
+                            'Coudes fixes près des oreilles',
+                            'Mouvement des avant-bras',
+                            'Étirement maximal'
                         ],
-                        tips: ['Gardez le torse droit', 'Poids sur le pied avant', 'Descendez bien bas'],
-                        commonMistakes: ['Pas assez grand', 'Pencher avant', 'Pas assez bas'],
-                        muscleGroups: { primary: ['Quadriceps', 'Fessiers'], secondary: ['Ischio-jambiers', 'Core'] },
-                        tags: ['unilatéral', 'jambes', 'équilibre'],
+                        tips: ['Coudes hauts et fixes', 'Mouvement vertical pur', 'Étirement en bas'],
+                        commonMistakes: ['Coudes qui bougent', 'Mouvement oblique', 'Amplitude réduite'],
+                        muscleGroups: { primary: ['Triceps'], secondary: ['Core'] },
+                        tags: ['vertical', 'poulie basse', 'étirement'],
                         imageUrl: null
                     },
-
-                    'Hip thrust': {
+                    'Kickback triceps (poulie basse)': {
                         difficulty: 'intermediate',
-                        description: 'Excellent pour développer les fessiers.',
+                        description: 'Kickback depuis un ancrage bas.',
                         instructions: [
-                            'Allongé, élastique sur les hanches',
-                            'Pieds au sol, genoux fléchis',
-                            'Poussez les hanches vers le haut',
-                            'Contractez les fessiers en haut',
-                            'Redescendez lentement'
+                            'Ancrage bas, buste penché',
+                            'Extension du bras vers l\'arrière',
+                            'Bras parallèle au sol',
+                            'Contraction maximale',
+                            'Mouvement de l\'avant-bras'
                         ],
-                        tips: ['Contractez fort les fessiers', 'Gardez le dos droit', 'Poussée vers le haut'],
-                        commonMistakes: ['Pousser avec le dos', 'Pas de contraction', 'Mouvement partiel'],
-                        muscleGroups: { primary: ['Fessiers'], secondary: ['Ischio-jambiers', 'Core'] },
-                        tags: ['isolation', 'fessiers', 'force'],
+                        tips: ['Bras parallèle au sol', 'Coude fixe', 'Contraction forte'],
+                        commonMistakes: ['Bras qui descend', 'Mouvement du coude', 'Contraction insuffisante'],
+                        muscleGroups: { primary: ['Triceps'], secondary: [] },
+                        tags: ['kickback', 'poulie basse', 'isolation'],
                         imageUrl: null
                     },
-
-                    'Soulevé de terre': {
+                    'Kickback triceps unilatéral': {
                         difficulty: 'intermediate',
-                        description: 'Mouvement de charnière de hanche fondamental.',
+                        description: 'Isolation des triceps en position penchée.',
                         instructions: [
-                            'Élastique sous les pieds',
-                            'Penchez-vous en poussant les hanches arrière',
-                            'Gardez le dos droit',
-                            'Tirez en contractant les fessiers',
-                            'Revenez debout'
+                            'Penchez-vous vers l\'avant, coude fixe',
+                            'Étendez l\'avant-bras vers l\'arrière',
+                            'Gardez le bras parallèle au sol',
+                            'Contractez en fin de mouvement',
+                            'Revenez lentement'
                         ],
-                        tips: ['Charnière de hanche', 'Dos droit', 'Contractez les fessiers'],
-                        commonMistakes: ['Dos rond', 'Plier les genoux', 'Pas de poussée de hanches'],
-                        muscleGroups: { primary: ['Fessiers', 'Ischio-jambiers'], secondary: ['Dos', 'Trapèzes'] },
-                        tags: ['composé', 'chaîne postérieure', 'force'],
+                        tips: ['Gardez le coude fixe', 'Bras parallèle au sol', 'Contraction forte'],
+                        commonMistakes: ['Bouger le coude', 'Bras qui descend', 'Utiliser l\'élan'],
+                        muscleGroups: { primary: ['Triceps'], secondary: [] },
+                        tags: ['isolation', 'triceps', 'unilatéral'],
                         imageUrl: null
-                    },
-
-                    // Ajoutez plus d'exercices selon vos besoins...
+                    }
                 };
-                
+
                 // Données par défaut pour exercices non référencés
                 const defaultData = {
                     difficulty: 'beginner',
@@ -6820,7 +7698,7 @@
                     tags: ['elastique', exercise.muscle_group || 'general'],
                     imageUrl: null
                 };
-                
+
                 return enrichedDatabase[exercise.name] || defaultData;
             },
 
