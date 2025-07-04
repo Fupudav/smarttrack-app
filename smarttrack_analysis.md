@@ -7,13 +7,13 @@
 **Analyse** : Le code HTML montre que tous les jours sont bien définis (lignes 5509-5521)
 **Statut** : Pas de bug réel - tous les jours sont présents dans le code
 
-### 2. ✅ Échauffement manquant (PARTIELLEMENT RÉSOLU)
-**Problème** : L'échauffement n'apparaît pas dans les séances
+### 2. ✅ Échauffement manquant (RÉSOLU)
+**Problème** : Les exercices d'échauffement prévus dans les programmes n'apparaissaient pas dans les séances
 **Analyse** : 
-- Code d'échauffement présent (lignes 13611-13834)
-- Séparation échauffement/principal implémentée (lignes 16432-16455)
-- Exercices d'échauffement disponibles
-**Amélioration nécessaire** : Ajouter automatiquement l'échauffement aux séances
+- Les programmes contiennent des `phase_eveil` avec exercices d'échauffement détaillés
+- La fonction `chargerSeance()` ne chargeait que les exercices principaux
+- Les exercices d'échauffement étaient ignorés lors du chargement
+**Correction appliquée** : Modification de `chargerSeance()` pour inclure les exercices de la `phase_eveil` avant les exercices principaux
 
 ### 3. ✅ Problèmes de photos (RÉSOLU)
 **Analyse** : 
@@ -39,8 +39,9 @@
 **Problème** : Valeurs NaN% et "undefined" dans les statistiques
 **Analyse** : Corrections déjà appliquées (lignes 18932-18936)
 
-### 7. ⚠️ Exercices d'échauffement non automatiquement ajoutés
-**Problème** : Pas d'ajout automatique d'échauffement aux nouvelles séances
+### 7. ✅ Exercices d'échauffement des programmes non chargés (RÉSOLU)
+**Problème** : Les exercices d'échauffement prévus dans les programmes n'étaient pas chargés
+**Correction** : Modification de la fonction `chargerSeance()` pour extraire et inclure les exercices de la `phase_eveil`
 
 ## 🚀 AMÉLIORATIONS PERFORMANCES
 
@@ -100,8 +101,8 @@
 ## 🎯 RECOMMANDATIONS PRIORITAIRES
 
 ### Haute priorité
-1. Ajouter checkBadgeUnlocks() dans finishLiveSession()
-2. Échauffement automatique dans nouvelles séances
+1. ✅ Ajouter checkBadgeUnlocks() dans finishLiveSession() (FAIT)
+2. ✅ Échauffement des programmes dans les séances (FAIT)
 3. Optimisation des requêtes de statistiques
 
 ### Moyenne priorité

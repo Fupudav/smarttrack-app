@@ -9380,9 +9380,6 @@
                     difficulty: null
                 };
                 
-                // Ajouter automatiquement des exercices d'échauffement
-                this.addWarmupExercises();
-                
                 this.showScreen('preparation');
                 this.showNotification('⚔️ Nouvelle bataille initiée !', 'success');
             },
@@ -9398,70 +9395,7 @@
                 }
             },
 
-            addWarmupExercises() {
-                // Ajouter automatiquement des exercices d'échauffement recommandés
-                const warmupExercises = [
-                    {
-                        name: 'Jumping Jacks',
-                        muscle_group: 'echauffement',
-                        category: 'warmup',
-                        exercise_mode: 'time',
-                        default_duration: 30,
-                        default_rest_time: 30
-                    },
-                    {
-                        name: 'Rotations épaules',
-                        muscle_group: 'echauffement',
-                        category: 'warmup',
-                        exercise_mode: 'time',
-                        default_duration: 30,
-                        default_rest_time: 30
-                    },
-                    {
-                        name: 'Montées de genoux',
-                        muscle_group: 'echauffement',
-                        category: 'warmup',
-                        exercise_mode: 'time',
-                        default_duration: 30,
-                        default_rest_time: 30
-                    }
-                ];
 
-                warmupExercises.forEach(warmupEx => {
-                    // Chercher l'exercice dans la base de données
-                    let exercise = appState.exercises.find(e => 
-                        e.name === warmupEx.name && e.muscle_group === 'echauffement'
-                    );
-
-                    // Si l'exercice n'existe pas, le créer
-                    if (!exercise) {
-                        exercise = {
-                            id: Date.now() + Math.random(),
-                            name: warmupEx.name,
-                            muscle_group: warmupEx.muscle_group,
-                            category: warmupEx.category,
-                            exercise_type: 'bodyweight',
-                            exercise_mode: warmupEx.exercise_mode,
-                            default_duration: warmupEx.default_duration,
-                            default_rest_time: warmupEx.default_rest_time,
-                            anchor_point: 'none',
-                            is_unilateral: false
-                        };
-                        appState.exercises.push(exercise);
-                    }
-
-                    // Ajouter à la session courante
-                    appState.currentSession.exercises.push({
-                        exercise_id: exercise.id,
-                        planned_sets: 1,
-                        rest_time: exercise.default_rest_time || 30,
-                        duration: exercise.default_duration || 30,
-                        sets: []
-                    });
-                });
-
-                this.saveData();
-            },
 
             showTemplates() {
                 this.showModal('templates-modal');
@@ -19087,10 +19021,38 @@
             }
 
             // Créer une nouvelle session basée sur la séance du programme
-            const newSession = {
-                date: new Date().toISOString().split('T')[0],
-                notes: `${seance.nom} - ${program.nom}${seance.philosophie ? '\n\n💭 "' + seance.philosophie + '"' : ''}`,
-                exercises: seance.exercices.map(ex => ({
+            const allExercises = [];
+            
+            // Ajouter les exercices d'échauffement de la phase_eveil
+            if (seance.phase_eveil && seance.phase_eveil.exercices) {
+                seance.phase_eveil.exercices.forEach(exerciceEveil => {
+                    // Extraire le nom de l'exercice (avant le " - ")
+                    const nomExercice = exerciceEveil.split(' - ')[0].trim();
+                    
+                    allExercises.push({
+                        exercise_id: this.findOrCreateExercise(nomExercice),
+                        planned_sets: 1, // Échauffement = 1 série généralement
+                        rest_time: 30, // Repos court pour l'échauffement
+                        duration: 30, // Durée par défaut pour l'échauffement
+                        sets: [],
+                        program_exercise: {
+                            nom: nomExercice,
+                            description: exerciceEveil,
+                            type: 'warmup'
+                        },
+                        program_info: {
+                            groupe: '🔥 ÉCHAUFFEMENT',
+                            resistance: 'Poids du corps',
+                            conseil: exerciceEveil.includes(' - ') ? exerciceEveil.split(' - ')[1] : 'Mouvement d\'échauffement',
+                            repetitions: 'Selon instructions'
+                        }
+                    });
+                });
+            }
+            
+            // Ajouter les exercices principaux
+            seance.exercices.forEach(ex => {
+                allExercises.push({
                     exercise_id: this.findOrCreateExercise(ex.nom),
                     planned_sets: ex.series || 2,
                     rest_time: this.parseRestTime(ex.temps_repos),
@@ -19103,7 +19065,13 @@
                         conseil: ex.conseil,
                         repetitions: ex.repetitions
                     }
-                })),
+                });
+            });
+
+            const newSession = {
+                date: new Date().toISOString().split('T')[0],
+                notes: `${seance.nom} - ${program.nom}${seance.philosophie ? '\n\n💭 "' + seance.philosophie + '"' : ''}${seance.phase_eveil ? '\n\n🔥 Phase d\'éveil (' + seance.phase_eveil.duree + ') :\n' + seance.phase_eveil.exercices.join('\n') : ''}`,
+                exercises: allExercises,
                 globalSettings: {
                     restBetweenExercises: 120,
                     restBetweenSets: 90
