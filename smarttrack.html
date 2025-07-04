@@ -30,6 +30,19 @@
             --gradient-forge: linear-gradient(135deg, #FF6B35, #FFD700);
             --gradient-danger: linear-gradient(135deg, #FF3B30, #FF6B6B);
             
+            /* === COULEURS GUERRIER === */
+            --forge-primary: #8B4513;    /* Bronze forgé */
+            --forge-secondary: #DAA520;  /* Or battu */
+            --forge-accent: #B22222;     /* Rouge sang */
+            --forge-dark: #2F1B14;       /* Acier sombre */
+            --forge-light: #F5DEB3;      /* Parchemin */
+            
+            /* === GRADIENTS GUERRIER === */
+            --gradient-battle: linear-gradient(135deg, #B22222, #FF6347);
+            --gradient-victory: linear-gradient(135deg, #228B22, #32CD32);
+            --gradient-legendary: linear-gradient(135deg, #8B4513, #DAA520, #B22222);
+            --gradient-armor: linear-gradient(135deg, #2F1B14, #8B4513);
+            
             --background: #F2F2F7;
             --surface: #FFFFFF;
             --surface-elevated: #FFFFFF;
@@ -507,6 +520,173 @@
         .btn-small {
             padding: 8px 16px;
             font-size: 14px;
+        }
+
+        /* === COMPOSANTS GUERRIER === */
+        
+        /* Boutons de bataille */
+        .btn-battle {
+            background: var(--gradient-battle);
+            color: white;
+            border: 2px solid var(--forge-accent);
+            border-radius: 12px;
+            padding: 16px 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(178, 34, 34, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-battle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-battle:hover::before {
+            left: 100%;
+        }
+
+        .btn-battle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(178, 34, 34, 0.4);
+            border-color: var(--forge-secondary);
+        }
+
+        .btn-battle:active {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(178, 34, 34, 0.3);
+        }
+
+        /* Cartes de quête */
+        .quest-card {
+            background: var(--gradient-forge);
+            border: 2px solid var(--forge-secondary);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 16px 0;
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.3);
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .quest-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-legendary);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .quest-card h3 {
+            color: var(--forge-light);
+            margin-bottom: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .quest-card label {
+            color: var(--forge-light) !important;
+            font-weight: 600;
+        }
+
+        .quest-card .input, .quest-card .textarea, .quest-card .select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .quest-card .input::placeholder, .quest-card .textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .quest-card .input:focus, .quest-card .textarea:focus, .quest-card .select:focus {
+            border-color: var(--forge-light);
+            box-shadow: 0 0 0 2px rgba(245, 222, 179, 0.3);
+        }
+
+        /* Titres épiques */
+        .epic-title {
+            color: var(--forge-secondary);
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            background: var(--gradient-legendary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: epicPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes epicPulse {
+            0%, 100% { 
+                transform: scale(1);
+                filter: brightness(1);
+            }
+            50% { 
+                transform: scale(1.05);
+                filter: brightness(1.2);
+            }
+        }
+
+        /* Animations guerrier */
+        @keyframes epicEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.8);
+                filter: blur(5px);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translateY(-10px) scale(1.1);
+                filter: blur(1px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes victoryPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); filter: brightness(1.5); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes forgeGlow {
+            0% { box-shadow: 0 0 5px var(--forge-secondary); }
+            50% { box-shadow: 0 0 20px var(--forge-secondary), 0 0 30px var(--forge-accent); }
+            100% { box-shadow: 0 0 5px var(--forge-secondary); }
+        }
+
+        /* Classes d'animation guerrier */
+        .animate-epic-entrance {
+            animation: epicEntrance 0.8s ease-out;
+        }
+
+        .animate-victory {
+            animation: victoryPulse 0.6s ease-in-out;
+        }
+
+        .animate-forge-glow {
+            animation: forgeGlow 2s ease-in-out infinite;
         }
 
         .input-group {
@@ -2296,96 +2476,96 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Écran 0: Tableau de Bord -->
+        <!-- Écran 0: Forge du Guerrier -->
         <div id="screen-dashboard" class="screen active">
             <div class="header">
-                <h1>SmartTrack</h1>
-                <button class="btn btn-small btn-secondary" onclick="actions.showSettings()">⚙️</button>
+                <h1 class="epic-title">🏰 FORGE DU GUERRIER</h1>
+                <button class="btn btn-small btn-secondary" onclick="actions.showSettings()">⚙️ Forge</button>
             </div>
             
-            <div class="card">
-                <h3>Calendrier de Régularité</h3>
+            <div class="quest-card">
+                <h3>⚔️ Chroniques de Bataille</h3>
                 <div id="calendar-grid" class="calendar-grid"></div>
             </div>
             
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-value" id="total-sessions">0</div>
-                    <div class="stat-label">Séances Total</div>
+                    <div class="stat-label">Batailles Remportées</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="current-streak">0</div>
-                    <div class="stat-label">Série Actuelle</div>
+                    <div class="stat-label">Série Victorieuse</div>
                 </div>
             </div>
             
-            <button class="btn btn-primary btn-full" onclick="actions.startNewSession()">
-                🚀 Démarrer une séance vide
+            <button class="btn btn-battle btn-full" onclick="actions.startNewSession()">
+                ⚔️ Engager une nouvelle bataille
             </button>
             <button class="btn btn-secondary btn-full" onclick="actions.resumeLastSession()">
-                📋 Reprendre la dernière séance
+                🛡️ Reprendre le dernier combat
             </button>
         </div>
 
-        <!-- Écran 1: Préparation de Séance -->
+        <!-- Écran 1: Armurerie -->
         <div id="screen-preparation" class="screen">
             <div class="header">
-                <button class="btn btn-small btn-secondary" onclick="actions.showScreen('dashboard')">← Retour</button>
-                <h1>Préparation</h1>
+                <button class="btn btn-small btn-secondary" onclick="actions.showScreen('dashboard')">🏰 Retraite</button>
+                <h1 class="epic-title">🗡️ ARMURERIE</h1>
                 <div></div>
             </div>
             
-            <div class="card">
+            <div class="quest-card">
                 <div class="input-group">
-                    <label>Date de la séance</label>
+                    <label>Date de la bataille</label>
                     <input type="date" id="session-date" class="input" onchange="actions.updateSessionDate(this.value)">
                 </div>
                 
                 <div class="input-group">
-                    <label>Notes de séance</label>
-                    <textarea id="session-notes" class="textarea" placeholder="Notes optionnelles..." onchange="actions.updateSessionNotes(this.value)"></textarea>
+                    <label>Notes de guerre</label>
+                    <textarea id="session-notes" class="textarea" placeholder="Stratégies et réflexions..." onchange="actions.updateSessionNotes(this.value)"></textarea>
                 </div>
                 
                 <button class="btn btn-secondary btn-full" onclick="actions.showTemplates()">
-                    📋 Charger un modèle
+                    📜 Invoquer un plan de bataille
                 </button>
             </div>
 
-            <div class="card">
-                <h3>Ajouter un exercice</h3>
+            <div class="quest-card">
+                <h3>⚔️ Sélectionner un mouvement</h3>
                 <div class="input-group">
-                    <label>Rechercher un exercice</label>
+                    <label>Rechercher dans l'arsenal</label>
                     <div style="position: relative;">
-                        <input type="text" id="exercise-search" class="input" placeholder="Tapez le nom d'un exercice ou groupe musculaire..." autocomplete="off">
+                        <input type="text" id="exercise-search" class="input" placeholder="Nom du mouvement ou groupe musculaire..." autocomplete="off">
                         <div id="exercise-search-results" class="search-results" style="display: none;"></div>
                     </div>
                     <div id="search-history" style="margin-top: 8px; display: none;"></div>
                 </div>
                 <button class="btn btn-primary btn-full" onclick="actions.addExerciseToSession()">
-                    ➕ Ajouter à la séance
+                    ⚡ Ajouter au combat
                 </button>
             </div>
             
-            <div class="card">
-                <h3>Exercices prévus</h3>
+            <div class="quest-card">
+                <h3>🛡️ Mouvements prévus</h3>
                 <div id="planned-exercises"></div>
             </div>
             
-            <button class="btn btn-success btn-full" onclick="actions.startLiveSession()" id="start-live-btn" style="display: none;">
-                🚀 Démarrer la Séance Live
+            <button class="btn btn-battle btn-full" onclick="actions.startLiveSession()" id="start-live-btn" style="display: none;">
+                ⚔️ Engager le combat !
             </button>
 
             <button class="btn btn-secondary btn-full" onclick="actions.saveSessionManually()" id="save-manual-btn" style="display: none;">
-                💾 Sauvegarder sans Live
+                📖 Graver sans bataille
             </button>
         </div>
 
-        <!-- Écran 2: Séance Live -->
+        <!-- Écran 2: Champ de Bataille -->
         <div id="screen-live" class="screen">
             <div class="header">
-                <button class="btn btn-small btn-warning" onclick="actions.pauseLiveSession()">⏸️ Pause</button>
+                <button class="btn btn-small btn-warning" onclick="actions.pauseLiveSession()">⏸️ Trêve</button>
                 <div class="session-timer" id="live-timer">00:00</div>
-                <button class="btn btn-small btn-danger" onclick="actions.stopLiveSession()">⏹️ Arrêter</button>
+                <button class="btn btn-small btn-danger" onclick="actions.stopLiveSession()">🏁 Victoire</button>
             </div>
             <div id="live-content"></div>
         </div>
@@ -2917,35 +3097,35 @@
             <div id="program-weeks-container"></div>
         </div>
 
-        <!-- Navigation -->
+        <!-- Navigation Guerrier -->
         <nav class="nav-bar">
             <div class="nav-item active" onclick="actions.showScreen('dashboard')">
-                <div>🏠</div>
-                <div>Accueil</div>
+                <div>🏰</div>
+                <div>Forge</div>
             </div>
             <div class="nav-item" onclick="actions.goToSession()">
-                <div>⚡</div>
-                <div>Séance</div>
+                <div>⚔️</div>
+                <div>Bataille</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('programmes')">
-                <div>🏆</div>
-                <div>Programmes</div>
+                <div>🛡️</div>
+                <div>Quêtes</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('exercise-database')">
-                <div>💪</div>
-                <div>Exercices</div>
+                <div>🗡️</div>
+                <div>Arsenal</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('history')">
-                <div>📊</div>
-                <div>Historique</div>
+                <div>📜</div>
+                <div>Chroniques</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('stats')">
-                <div>📈</div>
-                <div>Stats</div>
+                <div>🏺</div>
+                <div>Reliques</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('body')">
-                <div>⚖️</div>
-                <div>Corporel</div>
+                <div>🏋️</div>
+                <div>Mesures</div>
             </div>
         </nav>
     </div>
@@ -7074,6 +7254,325 @@
             showSettings() {
                 appState.currentScreen = 'settings';
                 render();
+            },
+
+            // === ACTIONS MANQUANTES POUR L'INTERFACE ===
+            
+            startNewSession() {
+                // Réinitialiser la session courante
+                appState.currentSession = {
+                    id: Date.now(),
+                    date: new Date().toISOString().split('T')[0],
+                    exercises: [],
+                    notes: '',
+                    startTime: null,
+                    endTime: null,
+                    difficulty: null
+                };
+                
+                this.showScreen('preparation');
+                this.showNotification('⚔️ Nouvelle bataille initiée !', 'success');
+            },
+
+            resumeLastSession() {
+                const lastSession = appState.sessions[appState.sessions.length - 1];
+                if (lastSession && !lastSession.endTime) {
+                    appState.currentSession = lastSession;
+                    this.showScreen('preparation');
+                    this.showNotification('🛡️ Combat repris !', 'success');
+                } else {
+                    this.startNewSession();
+                }
+            },
+
+            showTemplates() {
+                this.showModal('templates-modal');
+                this.renderTemplatesModal();
+            },
+
+            addExerciseToSession() {
+                const searchInput = document.getElementById('exercise-search');
+                const exerciseName = searchInput.value.trim();
+                
+                if (!exerciseName) {
+                    this.showNotification('⚠️ Veuillez entrer le nom d\'un mouvement', 'warning');
+                    return;
+                }
+                
+                // Initialiser la session si nécessaire
+                if (!appState.currentSession) {
+                    appState.currentSession = {
+                        id: Date.now(),
+                        date: new Date().toISOString().split('T')[0],
+                        exercises: [],
+                        notes: ''
+                    };
+                }
+                
+                // Ajouter l'exercice
+                appState.currentSession.exercises.push({
+                    id: Date.now(),
+                    name: exerciseName,
+                    sets: [],
+                    resistance: 10,
+                    reps: 10,
+                    rest: 90
+                });
+                
+                searchInput.value = '';
+                this.showNotification('⚡ Mouvement ajouté au combat !', 'success');
+                render();
+            },
+
+            startLiveSession() {
+                if (!appState.currentSession || !appState.currentSession.exercises.length) {
+                    this.showNotification('⚠️ Ajoutez au moins un mouvement avant de commencer !', 'warning');
+                    return;
+                }
+                
+                appState.currentSession.startTime = new Date().toISOString();
+                appState.liveSession = true;
+                this.showScreen('live');
+                this.showNotification('⚔️ Bataille engagée !', 'success');
+            },
+
+            saveSessionManually() {
+                if (!appState.currentSession) {
+                    this.showNotification('⚠️ Aucune session à sauvegarder', 'warning');
+                    return;
+                }
+                
+                appState.currentSession.endTime = new Date().toISOString();
+                appState.sessions = appState.sessions || [];
+                appState.sessions.push(appState.currentSession);
+                this.saveData();
+                
+                this.showNotification('📖 Bataille gravée dans les chroniques !', 'success');
+                this.showScreen('dashboard');
+            },
+
+            pauseLiveSession() {
+                appState.liveSession = false;
+                this.showNotification('⏸️ Trêve accordée', 'info');
+            },
+
+            stopLiveSession() {
+                if (appState.currentSession) {
+                    appState.currentSession.endTime = new Date().toISOString();
+                    appState.sessions = appState.sessions || [];
+                    appState.sessions.push(appState.currentSession);
+                    this.saveData();
+                    
+                    this.showNotification('🏁 Victoire ! Bataille terminée !', 'success');
+                    this.showScreen('dashboard');
+                }
+                appState.liveSession = false;
+            },
+
+            addMeasurement() {
+                const date = document.getElementById('measurement-date').value;
+                const weight = document.getElementById('measurement-weight').value;
+                const height = document.getElementById('measurement-height').value;
+                const waist = document.getElementById('measurement-waist').value;
+                const chest = document.getElementById('measurement-chest').value;
+                const arm = document.getElementById('measurement-arm').value;
+                const thigh = document.getElementById('measurement-thigh').value;
+                
+                if (!date || !weight) {
+                    this.showNotification('⚠️ Date et poids sont requis', 'warning');
+                    return;
+                }
+                
+                appState.measurements = appState.measurements || [];
+                appState.measurements.push({
+                    date, 
+                    weight: parseFloat(weight), 
+                    height: parseFloat(height) || null,
+                    waist: parseFloat(waist) || null, 
+                    chest: parseFloat(chest) || null,
+                    arm: parseFloat(arm) || null, 
+                    thigh: parseFloat(thigh) || null
+                });
+                
+                this.saveData();
+                this.showNotification('🏋️ Mesures du guerrier enregistrées !', 'success');
+                
+                // Effacer le formulaire
+                document.getElementById('measurement-date').value = '';
+                document.getElementById('measurement-weight').value = '';
+                document.getElementById('measurement-height').value = '';
+                document.getElementById('measurement-waist').value = '';
+                document.getElementById('measurement-chest').value = '';
+                document.getElementById('measurement-arm').value = '';
+                document.getElementById('measurement-thigh').value = '';
+                
+                render();
+            },
+
+            loadPredefinedExercises() {
+                // Charger les exercices SmartWorkout prédéfinis
+                const predefinedExercises = [
+                    {
+                        id: 'sw_curl_biceps',
+                        name: 'Curl biceps',
+                        muscle_group: 'biceps',
+                        anchor_point: 'floor',
+                        default_rest_time: 90,
+                        category: 'strength'
+                    },
+                    {
+                        id: 'sw_extension_triceps',
+                        name: 'Extension triceps',
+                        muscle_group: 'triceps',
+                        anchor_point: 'door-high',
+                        default_rest_time: 90,
+                        category: 'strength'
+                    },
+                    {
+                        id: 'sw_elevation_laterale',
+                        name: 'Élévations latérales',
+                        muscle_group: 'epaules',
+                        anchor_point: 'floor',
+                        default_rest_time: 90,
+                        category: 'strength'
+                    }
+                ];
+                
+                // Ajouter les exercices qui n'existent pas encore
+                predefinedExercises.forEach(exercise => {
+                    if (!appState.exercises.find(e => e.id === exercise.id)) {
+                        appState.exercises.push(exercise);
+                    }
+                });
+                
+                this.saveData();
+                this.showNotification('📚 Arsenal SmartWorkout chargé !', 'success');
+                render();
+            },
+
+            cancelExerciseEdit() {
+                appState.editingExercise = null;
+                this.clearExerciseForm();
+                render();
+            },
+
+            saveTemplate() {
+                const name = document.getElementById('template-name').value.trim();
+                if (!name) {
+                    this.showNotification('⚠️ Nom du modèle requis', 'warning');
+                    return;
+                }
+                
+                appState.templates = appState.templates || [];
+                appState.templates.push({
+                    id: Date.now(),
+                    name,
+                    exercises: appState.currentSession?.exercises || []
+                });
+                
+                this.saveData();
+                this.showNotification('📜 Plan de bataille créé !', 'success');
+                render();
+            },
+
+            toggleTheme() {
+                const currentTheme = document.body.getAttribute('data-theme') || 'light';
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                document.body.setAttribute('data-theme', newTheme);
+                
+                appState.settings.theme = newTheme;
+                this.saveData();
+                this.showNotification(`🎨 Thème ${newTheme === 'dark' ? 'sombre' : 'clair'} activé`, 'success');
+            },
+
+            exportData() {
+                const data = {
+                    sessions: appState.sessions,
+                    exercises: appState.exercises,
+                    measurements: appState.measurements,
+                    templates: appState.templates,
+                    settings: appState.settings
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'smarttrack-backup.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                this.showNotification('📤 Données exportées !', 'success');
+            },
+
+            showImportModal() {
+                this.showModal('import-modal');
+            },
+
+            importData() {
+                const importText = document.getElementById('import-data').value;
+                if (!importText.trim()) {
+                    this.showNotification('⚠️ Veuillez coller vos données JSON', 'warning');
+                    return;
+                }
+                
+                try {
+                    const data = JSON.parse(importText);
+                    
+                    if (data.sessions) appState.sessions = data.sessions;
+                    if (data.exercises) appState.exercises = data.exercises;
+                    if (data.measurements) appState.measurements = data.measurements;
+                    if (data.templates) appState.templates = data.templates;
+                    if (data.settings) appState.settings = data.settings;
+                    
+                    this.saveData();
+                    this.closeModal('import-modal');
+                    this.showNotification('📥 Données importées avec succès !', 'success');
+                    render();
+                } catch (e) {
+                    this.showNotification('❌ Format de données invalide !', 'error');
+                }
+            },
+
+            clearAllData() {
+                if (confirm('🗑️ Êtes-vous sûr de vouloir effacer toutes les données ?')) {
+                    localStorage.clear();
+                    appState.sessions = [];
+                    appState.exercises = [];
+                    appState.measurements = [];
+                    appState.templates = [];
+                    appState.settings = { theme: 'light' };
+                    
+                    this.showNotification('🗑️ Toutes les données ont été effacées !', 'info');
+                    render();
+                }
+            },
+
+            startCustomProgram() {
+                this.showNotification('🚧 Création de programmes personnalisés en cours de développement !', 'info');
+            },
+
+            // === FONCTIONS UTILITAIRES ===
+            
+            clearExerciseForm() {
+                document.getElementById('exercise-name').value = '';
+                document.getElementById('exercise-category').value = 'strength';
+                document.getElementById('exercise-muscle-group').value = 'biceps';
+                document.getElementById('exercise-anchor').value = 'none';
+                document.getElementById('exercise-rest').value = '90';
+                document.getElementById('exercise-unilateral').checked = false;
+            },
+
+            updateSessionDate(date) {
+                if (appState.currentSession) {
+                    appState.currentSession.date = date;
+                }
+            },
+
+            updateSessionNotes(notes) {
+                if (appState.currentSession) {
+                    appState.currentSession.notes = notes;
+                }
             },
             
             // Gestion des exercices
