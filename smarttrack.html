@@ -8410,6 +8410,8 @@
                 this.resetProgressPhotosUpload();
                 
                 render();
+                // Mettre à jour spécifiquement la galerie d'évolution
+                this.renderEvolutionGallery();
             },
 
             // Gestion des photos de progression
@@ -8600,6 +8602,8 @@
                     this.saveData();
                     this.showNotification('📊 Mesure supprimée', 'info');
                     render();
+                    // Mettre à jour spécifiquement la galerie d'évolution
+                    this.renderEvolutionGallery();
                 }
             },
 
@@ -17475,6 +17479,22 @@
             
             if (existing) return existing.id;
 
+            // Liste des exercices d'échauffement connus
+            const warmupExercises = [
+                'jumping jacks', 'montées de genoux', 'talons-fesses', 'burpees', 'planche',
+                'planche latérale', 'mountain climbers', 'squats au poids du corps', 'pompes',
+                'fentes alternées', 'rotations épaules', 'cercles de bras', 'étirements dynamiques',
+                'high knees', 'pas chassés', 'échauffement articulaire', 'mobilité',
+                'échauffement', 'activation', 'préparation', 'réveil musculaire', 'activation articulaire',
+                'cardio léger', 'mobilisation', 'éveil', 'préparatoire', 'warm up', 'warmup'
+            ];
+
+            // Vérifier si c'est un exercice d'échauffement
+            const isWarmupExercise = warmupExercises.some(warmup => 
+                exerciseName.toLowerCase().includes(warmup) || 
+                warmup.includes(exerciseName.toLowerCase())
+            );
+
             // Chercher dans les exercices prédéfinis
             for (const [category, exercises] of Object.entries(PREDEFINED_EXERCISES)) {
                 const found = exercises.find(ex => 
@@ -17487,10 +17507,10 @@
                         id: Date.now() + Math.random(),
                         name: found.name,
                         is_unilateral: found.unilateral || false,
-                        default_rest_time: 90,
+                        default_rest_time: category === 'echauffement' ? 30 : 90,
                         category: category === 'echauffement' ? 'warmup' : 'strength',
                         exercise_mode: found.timeBase ? 'time' : 'reps',
-                        default_duration: 30,
+                        default_duration: found.timeBase ? 30 : null,
                         exercise_type: category === 'echauffement' ? 'bodyweight' : 'elastics',
                         anchor_point: found.anchor || 'none',
                         muscle_group: category
@@ -17498,11 +17518,33 @@
                     
                     appState.exercises.push(newExercise);
                     this.saveData();
+                    console.log(`✅ Exercice créé: ${newExercise.name} (${newExercise.category}, ${newExercise.muscle_group})`);
                     return newExercise.id;
                 }
             }
 
-            // Si pas trouvé, créer un exercice générique
+            // Si pas trouvé mais détecté comme échauffement, créer un exercice d'échauffement
+            if (isWarmupExercise) {
+                const newExercise = {
+                    id: Date.now() + Math.random(),
+                    name: exerciseName,
+                    is_unilateral: false,
+                    default_rest_time: 30,
+                    category: 'warmup',
+                    exercise_mode: 'time',
+                    default_duration: 30,
+                    exercise_type: 'bodyweight',
+                    anchor_point: 'none',
+                    muscle_group: 'echauffement'
+                };
+                
+                appState.exercises.push(newExercise);
+                this.saveData();
+                console.log(`✅ Exercice d'échauffement créé: ${newExercise.name}`);
+                return newExercise.id;
+            }
+
+            // Si pas trouvé, créer un exercice générique de renforcement
             const newExercise = {
                 id: Date.now() + Math.random(),
                 name: exerciseName,
@@ -17518,6 +17560,7 @@
             
             appState.exercises.push(newExercise);
             this.saveData();
+            console.log(`✅ Exercice générique créé: ${newExercise.name}`);
             return newExercise.id;
         };
 
