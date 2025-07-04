@@ -496,6 +496,26 @@
             box-shadow: 0 2px 10px var(--danger-light);
         }
 
+        .btn-battle {
+            background: var(--gradient-battle);
+            color: white;
+            box-shadow: 0 4px 15px rgba(178, 34, 34, 0.3);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-battle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(178, 34, 34, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-battle:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(178, 34, 34, 0.3);
+        }
+
         .btn-success {
             background: var(--gradient-success);
             color: white;
@@ -632,6 +652,25 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: epicPulse 3s ease-in-out infinite;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .subtitle-epic {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            color: var(--forge-primary);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(135deg, var(--forge-primary), var(--forge-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-top: 8px;
+            animation: none;
         }
 
         @keyframes epicPulse {
@@ -891,6 +930,108 @@
         .muscle-secondary {
             background: var(--border);
             color: var(--text-secondary);
+        }
+
+        /* === STYLES PHOTOS DE PROGRESSION === */
+        .progress-photo-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            background: var(--surface);
+            transition: all 0.3s ease;
+        }
+
+        .progress-photo-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--shadow);
+        }
+
+        .progress-photo-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .progress-photo-overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(255, 59, 48, 0.9);
+            color: white;
+            border: none;
+            padding: 4px 6px;
+            font-size: 10px;
+            cursor: pointer;
+            border-radius: 0 0 0 8px;
+            transition: all 0.2s ease;
+        }
+
+        .progress-photo-overlay:hover {
+            background: rgba(255, 59, 48, 1);
+            transform: scale(1.1);
+        }
+
+        .progress-photo-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 8px 6px 4px;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .evolution-gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            background: var(--surface);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .evolution-gallery-item:hover {
+            border-color: var(--primary);
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px var(--shadow);
+        }
+
+        .evolution-gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .evolution-gallery-date {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            color: white;
+            padding: 12px 8px 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .evolution-gallery-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--primary);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
         }
 
         /* === STYLES PROGRAMMES === */
@@ -2476,10 +2617,10 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Écran 0: Forge du Guerrier -->
+        <!-- Écran 0: SmartTrack - Forge du Guerrier -->
         <div id="screen-dashboard" class="screen active">
             <div class="header">
-                <h1 class="epic-title">🏰 FORGE DU GUERRIER</h1>
+                <h1 class="epic-title">⚔️ SMARTTRACK ⚔️<br><span class="subtitle-epic">La Forge du Guerrier Moderne</span></h1>
                 <button class="btn btn-small btn-secondary" onclick="actions.showSettings()">⚙️ Forge</button>
             </div>
             
@@ -2507,11 +2648,11 @@
             </button>
         </div>
 
-        <!-- Écran 1: Armurerie -->
+        <!-- Écran 1: Préparation de Bataille -->
         <div id="screen-preparation" class="screen">
             <div class="header">
                 <button class="btn btn-small btn-secondary" onclick="actions.showScreen('dashboard')">🏰 Retraite</button>
-                <h1 class="epic-title">🗡️ ARMURERIE</h1>
+                <h1 class="epic-title">⚔️ PRÉPARATION DE BATAILLE</h1>
                 <div></div>
             </div>
             
@@ -2601,13 +2742,13 @@
         <!-- Écran 5: Suivi Corporel -->
         <div id="screen-body" class="screen">
             <div class="header">
-                <h1>Mensurations</h1>
+                <h1 class="epic-title">🏋️ MESURES DU GUERRIER</h1>
             </div>
             
             <div class="card">
-                <h3>Nouvelle mensuration</h3>
+                <h3>⚔️ Nouvelle mensuration de bataille</h3>
                 <div class="input-group">
-                    <label>Date</label>
+                    <label>Date de mesure</label>
                     <input type="date" id="measurement-date" class="input">
                 </div>
                 <div class="input-group">
@@ -2634,15 +2775,77 @@
                     <label>Tour de cuisse (cm)</label>
                     <input type="number" id="measurement-thigh" class="input" step="0.5">
                 </div>
-                <button class="btn btn-primary btn-full" onclick="actions.addMeasurement()">
-                    ➕ Ajouter la mensuration
+                
+                <!-- Nouvelle section photos d'évolution -->
+                <div class="input-group">
+                    <label>📸 Photos de progression (optionnel)</label>
+                    <div id="progress-photos-container" style="border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center; background: linear-gradient(135deg, var(--surface) 0%, rgba(var(--primary-rgb), 0.05) 100%);">
+                        <div id="progress-photos-preview" style="display: none;">
+                            <div id="photos-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 16px;"></div>
+                            <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                                <button type="button" class="btn btn-small btn-secondary" onclick="document.getElementById('progress-photos-input').click()">
+                                    ➕ Ajouter photo
+                                </button>
+                                <button type="button" class="btn btn-small btn-danger" onclick="actions.clearAllProgressPhotos()">
+                                    🗑️ Supprimer toutes
+                                </button>
+                            </div>
+                        </div>
+                        <div id="progress-photos-upload" style="display: block;">
+                            <input type="file" id="progress-photos-input" accept="image/*" multiple style="display: none;" onchange="actions.handleProgressPhotosUpload(event)">
+                            <div style="margin-bottom: 16px;">
+                                <div style="font-size: 48px; margin-bottom: 12px;">📸</div>
+                                <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--primary);">Ajoutez vos photos de progression</div>
+                                <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">
+                                    Documentez votre transformation physique au fil du temps
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-secondary); padding: 12px; background: var(--background); border-radius: 8px; border: 1px solid var(--border);">
+                                    📋 <strong>Conseils pour de meilleures photos :</strong><br>
+                                    • Même éclairage et même angle à chaque fois<br>
+                                    • Photos face, profil et dos pour un suivi complet<br>
+                                    • Formats supportés : JPG, PNG, WebP • Max : 5MB par photo<br>
+                                    • Vous pouvez ajouter plusieurs photos par session
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="document.getElementById('progress-photos-input').click()">
+                                📁 Choisir des photos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-battle btn-full" onclick="actions.addMeasurement()">
+                    ⚡ Graver cette progression
                 </button>
             </div>
             
             <div class="card">
-                <h3>Évolution des mensurations</h3>
+                <h3>📊 Évolution de votre forge</h3>
                 <div class="chart-container">
-                    📊 Graphiques d'évolution des mensurations
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                        <div class="stat-card">
+                            <div class="stat-value" id="weight-trend">-</div>
+                            <div class="stat-label">Évolution Poids</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="muscle-trend">-</div>
+                            <div class="stat-label">Masse Musculaire</div>
+                        </div>
+                    </div>
+                    <div id="measurements-chart" style="margin-top: 16px; padding: 16px; background: var(--background); border-radius: 8px; text-align: center; color: var(--text-secondary);">
+                        📊 Graphiques d'évolution disponibles après 3 mesures
+                    </div>
+                </div>
+            </div>
+
+            <!-- Galerie photos d'évolution -->
+            <div class="card">
+                <h3>🖼️ Galerie de progression</h3>
+                <div id="evolution-gallery" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
+                    <div style="text-align: center; color: var(--text-secondary); grid-column: 1 / -1; padding: 40px;">
+                        📸 Vos photos de progression apparaîtront ici<br>
+                        <small>Ajoutez des photos à vos mesures pour suivre votre transformation</small>
+                    </div>
                 </div>
             </div>
             
@@ -7384,20 +7587,26 @@
                 }
                 
                 appState.measurements = appState.measurements || [];
-                appState.measurements.push({
+                
+                // Créer la nouvelle mesure avec les photos
+                const newMeasurement = {
+                    id: Date.now(),
                     date, 
                     weight: parseFloat(weight), 
                     height: parseFloat(height) || null,
                     waist: parseFloat(waist) || null, 
                     chest: parseFloat(chest) || null,
                     arm: parseFloat(arm) || null, 
-                    thigh: parseFloat(thigh) || null
-                });
+                    thigh: parseFloat(thigh) || null,
+                    photos: appState.currentProgressPhotos || []
+                };
+                
+                appState.measurements.push(newMeasurement);
                 
                 this.saveData();
                 this.showNotification('🏋️ Mesures du guerrier enregistrées !', 'success');
                 
-                // Effacer le formulaire
+                // Effacer le formulaire et photos temporaires
                 document.getElementById('measurement-date').value = '';
                 document.getElementById('measurement-weight').value = '';
                 document.getElementById('measurement-height').value = '';
@@ -7406,7 +7615,202 @@
                 document.getElementById('measurement-arm').value = '';
                 document.getElementById('measurement-thigh').value = '';
                 
+                // Réinitialiser les photos temporaires
+                appState.currentProgressPhotos = [];
+                this.resetProgressPhotosUpload();
+                
                 render();
+            },
+
+            // Gestion des photos de progression
+            handleProgressPhotosUpload(event) {
+                const files = Array.from(event.target.files);
+                
+                if (!files.length) return;
+                
+                // Valider les fichiers
+                const validFiles = files.filter(file => {
+                    if (!file.type.startsWith('image/')) {
+                        this.showNotification(`❌ ${file.name} n'est pas une image valide`, 'error');
+                        return false;
+                    }
+                    if (file.size > 5 * 1024 * 1024) { // 5MB
+                        this.showNotification(`❌ ${file.name} est trop volumineux (max 5MB)`, 'error');
+                        return false;
+                    }
+                    return true;
+                });
+                
+                if (!validFiles.length) return;
+                
+                // Initialiser les photos temporaires si nécessaire
+                appState.currentProgressPhotos = appState.currentProgressPhotos || [];
+                
+                // Traiter chaque fichier
+                validFiles.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const photoData = {
+                            id: Date.now() + Math.random(),
+                            name: file.name,
+                            data: e.target.result,
+                            size: file.size,
+                            uploadedAt: new Date().toISOString()
+                        };
+                        
+                        appState.currentProgressPhotos.push(photoData);
+                        this.updateProgressPhotosPreview();
+                    };
+                    reader.readAsDataURL(file);
+                });
+                
+                this.showNotification(`📸 ${validFiles.length} photo(s) ajoutée(s)`, 'success');
+            },
+
+            updateProgressPhotosPreview() {
+                const uploadDiv = document.getElementById('progress-photos-upload');
+                const previewDiv = document.getElementById('progress-photos-preview');
+                const gridDiv = document.getElementById('photos-grid');
+                
+                if (!appState.currentProgressPhotos || !appState.currentProgressPhotos.length) {
+                    uploadDiv.style.display = 'block';
+                    previewDiv.style.display = 'none';
+                    return;
+                }
+                
+                uploadDiv.style.display = 'none';
+                previewDiv.style.display = 'block';
+                
+                gridDiv.innerHTML = appState.currentProgressPhotos.map(photo => `
+                    <div class="progress-photo-item">
+                        <img src="${photo.data}" alt="${photo.name}">
+                        <button class="progress-photo-overlay" onclick="actions.removeProgressPhoto('${photo.id}')" title="Supprimer">
+                            ✕
+                        </button>
+                        <div class="progress-photo-info">
+                            ${photo.name}
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            removeProgressPhoto(photoId) {
+                if (!appState.currentProgressPhotos) return;
+                
+                appState.currentProgressPhotos = appState.currentProgressPhotos.filter(photo => photo.id !== photoId);
+                this.updateProgressPhotosPreview();
+                this.showNotification('📸 Photo supprimée', 'info');
+            },
+
+            clearAllProgressPhotos() {
+                if (!appState.currentProgressPhotos || !appState.currentProgressPhotos.length) return;
+                
+                if (confirm('Supprimer toutes les photos de cette session ?')) {
+                    appState.currentProgressPhotos = [];
+                    this.updateProgressPhotosPreview();
+                    this.showNotification('📸 Toutes les photos supprimées', 'info');
+                }
+            },
+
+            resetProgressPhotosUpload() {
+                const uploadDiv = document.getElementById('progress-photos-upload');
+                const previewDiv = document.getElementById('progress-photos-preview');
+                
+                uploadDiv.style.display = 'block';
+                previewDiv.style.display = 'none';
+                
+                // Réinitialiser l'input file
+                const fileInput = document.getElementById('progress-photos-input');
+                if (fileInput) {
+                    fileInput.value = '';
+                }
+            },
+
+            viewProgressPhoto(photoData) {
+                // Créer une modal pour afficher la photo en grand
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.9);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1000;
+                    cursor: pointer;
+                `;
+                
+                modal.innerHTML = `
+                    <img src="${photoData.data}" 
+                         style="max-width: 90%; max-height: 90%; border-radius: 8px;"
+                         alt="Photo de progression">
+                    <div style="position: absolute; top: 20px; right: 20px; color: white; font-size: 24px; cursor: pointer;">✕</div>
+                `;
+                
+                modal.onclick = () => document.body.removeChild(modal);
+                document.body.appendChild(modal);
+            },
+
+            renderEvolutionGallery() {
+                const galleryContainer = document.getElementById('evolution-gallery');
+                if (!galleryContainer) return;
+                
+                // Collecter toutes les photos de toutes les mesures
+                const allPhotos = [];
+                if (appState.measurements) {
+                    appState.measurements.forEach(measurement => {
+                        if (measurement.photos && measurement.photos.length > 0) {
+                            measurement.photos.forEach(photo => {
+                                allPhotos.push({
+                                    ...photo,
+                                    measurementDate: measurement.date,
+                                    measurementId: measurement.id
+                                });
+                            });
+                        }
+                    });
+                }
+                
+                // Trier par date de mesure (plus récent en premier)
+                allPhotos.sort((a, b) => new Date(b.measurementDate) - new Date(a.measurementDate));
+                
+                if (allPhotos.length === 0) {
+                    galleryContainer.innerHTML = `
+                        <div style="text-align: center; color: var(--text-secondary); grid-column: 1 / -1; padding: 40px;">
+                            📸 Vos photos de progression apparaîtront ici<br>
+                            <small>Ajoutez des photos à vos mesures pour suivre votre transformation</small>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Créer la galerie
+                galleryContainer.innerHTML = allPhotos.map((photo, index) => {
+                    const date = new Date(photo.measurementDate);
+                    const isRecent = index < 3;
+                    
+                    return `
+                        <div class="evolution-gallery-item" onclick="actions.viewProgressPhoto({data: '${photo.data}', name: '${photo.name}'})">
+                            ${isRecent ? '<div class="evolution-gallery-badge">Récent</div>' : ''}
+                            <img src="${photo.data}" alt="Photo du ${date.toLocaleDateString('fr-FR')}">
+                            <div class="evolution-gallery-date">
+                                ${date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            deleteMeasurement(measurementId) {
+                if (confirm('🗑️ Supprimer cette mesure et ses photos ?')) {
+                    appState.measurements = appState.measurements.filter(m => m.id !== measurementId);
+                    this.saveData();
+                    this.showNotification('📊 Mesure supprimée', 'info');
+                    render();
+                }
             },
 
             loadPredefinedExercises() {
@@ -14722,6 +15126,9 @@
             } else {
                 measurementsList.innerHTML = '<div class="card"><p style="text-align: center; color: var(--text-secondary);">Aucune mensuration enregistrée</p></div>';
             }
+            
+            // Rendre la galerie d'évolution
+            actions.renderEvolutionGallery();
         }
 
         function renderExerciseDatabase() {
