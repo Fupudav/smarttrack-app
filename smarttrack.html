@@ -3765,10 +3765,10 @@
             <div class="card badges-collection">
                 <h3>🏆 Collection de Badges</h3>
                 <div class="badges-tabs">
-                    <button class="badge-tab active" onclick="actions.switchBadgeTab('all')">Tous</button>
-                    <button class="badge-tab" onclick="actions.switchBadgeTab('regularity')">Régularité</button>
-                    <button class="badge-tab" onclick="actions.switchBadgeTab('performance')">Performance</button>
-                    <button class="badge-tab" onclick="actions.switchBadgeTab('exploration')">Exploration</button>
+                                            <button class="badge-tab active" onclick="actions.switchBadgeTab(event, 'all')">Tous</button>
+                        <button class="badge-tab" onclick="actions.switchBadgeTab(event, 'regularity')">Régularité</button>
+                        <button class="badge-tab" onclick="actions.switchBadgeTab(event, 'performance')">Performance</button>
+                        <button class="badge-tab" onclick="actions.switchBadgeTab(event, 'exploration')">Exploration</button>
                 </div>
                 <div id="badges-grid" class="badges-grid">
                     <!-- Généré dynamiquement -->
@@ -19093,7 +19093,7 @@
         };
 
         // Basculer entre les onglets de badges
-        actions.switchBadgeTab = function(category) {
+        actions.switchBadgeTab = function(event, category) {
             document.querySelectorAll('.badge-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
