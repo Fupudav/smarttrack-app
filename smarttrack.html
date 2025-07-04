@@ -1387,13 +1387,16 @@
         /* Responsive Analytics */
         @media (max-width: 768px) {
             .analytics-tabs {
-                overflow-x: auto;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 4px;
             }
 
-            .analytics-tabs::-webkit-scrollbar {
-                display: none;
+            .tab-btn {
+                min-width: 80px;
+                padding: 8px 12px;
+                font-size: 12px;
+                flex: 0 0 auto;
             }
 
             .metrics-grid {
@@ -3486,7 +3489,7 @@
             color: white;
             padding: 16px 24px;
             border-radius: 12px;
-            z-index: 1001;
+            z-index: 99;
             display: none;
             max-width: 350px;
             font-size: 14px;
@@ -3933,7 +3936,8 @@
             touchEndX = evt.changedTouches[0].clientX;
             touchEndY = evt.changedTouches[0].clientY;
             
-            handleSwipeGesture();
+            // Navigation par swipe désactivée à la demande de l'utilisateur
+            // handleSwipeGesture();
             
             // Reset
             touchStartX = null;
@@ -4692,9 +4696,9 @@
             <!-- Contenu Mes Programmes -->
             <div id="tab-custom" class="tab-content">
                 <div class="card">
-                    <h3>✏️ Créer un programme personnalisé</h3>
-                    <button class="btn btn-primary btn-full" onclick="actions.startCustomProgram()">
-                        ➕ Nouveau programme
+                    <h3>✏️ Mes programmes personnalisés</h3>
+                    <button class="btn btn-primary btn-full" onclick="actions.showScreen('program-creator')">
+                        🏗️ Créateur de programmes
                     </button>
                 </div>
                 <div id="custom-programs-list"></div>
@@ -5181,60 +5185,53 @@
 
     <!-- Menu Arsenal -->
     <div id="arsenal-menu" class="contextual-menu">
-        <div class="contextual-menu-item" onclick="actions.showScreen('exercise-database')">
+        <div class="contextual-menu-item" onclick="actions.showScreen('exercise-database'); actions.closeContextualMenus()">
             <div class="icon">🗡️</div>
             <div class="content">
                 <div class="title">Base d'exercices</div>
                 <div class="description">Bibliothèque complète d'exercices</div>
             </div>
         </div>
-        <div class="contextual-menu-item" onclick="actions.showScreen('exercises')">
+        <div class="contextual-menu-item" onclick="actions.showScreen('exercises'); actions.closeContextualMenus()">
             <div class="icon">⚙️</div>
             <div class="content">
                 <div class="title">Mes exercices</div>
                 <div class="description">Créer et gérer vos exercices</div>
             </div>
         </div>
-        <div class="contextual-menu-item" onclick="actions.showScreen('templates')">
+        <div class="contextual-menu-item" onclick="actions.showScreen('templates'); actions.closeContextualMenus()">
             <div class="icon">📋</div>
             <div class="content">
                 <div class="title">Modèles</div>
                 <div class="description">Séances pré-configurées</div>
             </div>
         </div>
-        <div class="contextual-menu-item" onclick="actions.showScreen('programmes')">
+        <div class="contextual-menu-item" onclick="actions.showScreen('programmes'); actions.closeContextualMenus()">
             <div class="icon">🛡️</div>
             <div class="content">
                 <div class="title">Programmes</div>
                 <div class="description">Programmes d'entraînement</div>
             </div>
         </div>
-        <div class="contextual-menu-item" onclick="actions.showScreen('program-creator')">
-            <div class="icon">🏗️</div>
-            <div class="content">
-                <div class="title">Créateur de programmes</div>
-                <div class="description">Construire vos propres programmes</div>
-            </div>
-        </div>
     </div>
 
     <!-- Menu Progression -->
     <div id="progression-menu" class="contextual-menu">
-        <div class="contextual-menu-item" onclick="actions.showScreen('analytics')">
+        <div class="contextual-menu-item" onclick="actions.showScreen('analytics'); actions.closeContextualMenus()">
             <div class="icon">📊</div>
             <div class="content">
                 <div class="title">Statistiques</div>
                 <div class="description">Analyses détaillées de performance</div>
             </div>
         </div>
-        <div class="contextual-menu-item" onclick="actions.showScreen('gamification')">
+        <div class="contextual-menu-item" onclick="actions.showScreen('gamification'); actions.closeContextualMenus()">
             <div class="icon">🏆</div>
             <div class="content">
                 <div class="title">Gloire</div>
                 <div class="description">Badges, défis et accomplissements</div>
             </div>
         </div>
-        <div class="contextual-menu-item" onclick="actions.showScreen('body')">
+        <div class="contextual-menu-item" onclick="actions.showScreen('body'); actions.closeContextualMenus()">
             <div class="icon">🏋️</div>
             <div class="content">
                 <div class="title">Mesures</div>
@@ -9398,6 +9395,8 @@
                 }
             },
 
+
+
             showTemplates() {
                 this.showModal('templates-modal');
                 this.renderTemplatesModal();
@@ -9893,9 +9892,48 @@
                     appState.templates = [];
                     appState.settings = { theme: 'light' };
                     
+                    // Réinitialiser la gamification
+                    appState.gamification = {
+                        level: 1,
+                        xp: 0,
+                        title: 'Apprenti Guerrier',
+                        badges: [],
+                        currentWeeklyChallenge: null
+                    };
+                    
                     this.showNotification('🗑️ Toutes les données ont été effacées !', 'info');
                     render();
                 }
+            },
+
+            // Fonction d'optimisation des performances
+            optimizePerformance() {
+                // Nettoyer le cache si trop volumineux
+                if (smartCache.size > 100) {
+                    smartCache.clear();
+                }
+                
+                // Limiter les sessions stockées (garder les 100 dernières)
+                if (appState.sessions.length > 100) {
+                    appState.sessions = appState.sessions.slice(-100);
+                    this.saveData();
+                }
+                
+                // Optimiser les photos (compression basique)
+                if (appState.measurements) {
+                    appState.measurements.forEach(measurement => {
+                        if (measurement.photos && measurement.photos.length > 0) {
+                            measurement.photos.forEach(photo => {
+                                // Vérifier la taille des photos et alerter si nécessaire
+                                if (photo.size > 2 * 1024 * 1024) { // 2MB
+                                    console.warn(`Photo ${photo.name} est volumineuse (${Math.round(photo.size / 1024 / 1024)}MB)`);
+                                }
+                            });
+                        }
+                    });
+                }
+                
+                this.showNotification('⚡ Performances optimisées !', 'success');
             },
 
             startCustomProgram() {
@@ -12138,6 +12176,10 @@
                 if (exerciseTimer.isRunning) {
                     exerciseTimer.stop();
                 }
+                
+                // Vérifier les badges et défis après la séance
+                this.checkBadgeUnlocks();
+                this.checkWeeklyChallengeProgress();
                 
                 // Nettoyer les variables de session en cours
                 appState.liveSession = null;
@@ -18913,9 +18955,14 @@
 
         // Calculer la progression du programme
         actions.calculerProgression = function(suiviProgramme) {
-            const seancesTotales = suiviProgramme.progression.seances_totales;
-            const seancesRealisees = suiviProgramme.seances_realisees.length;
-            const pourcentage = Math.round((seancesRealisees / seancesTotales) * 100);
+            // Obtenir le programme prédéfini pour connaître le nombre total de séances
+            const program = PREDEFINED_PROGRAMS[suiviProgramme.programme_id];
+            const seancesTotales = program && program.seances ? program.seances.length : 
+                                  (suiviProgramme.progression && suiviProgramme.progression.seances_totales) || 
+                                  program.duree_semaines * program.seances_par_semaine;
+            
+            const seancesRealisees = suiviProgramme.seances_realisees ? suiviProgramme.seances_realisees.length : 0;
+            const pourcentage = seancesTotales > 0 ? Math.round((seancesRealisees / seancesTotales) * 100) : 0;
             
             const dateDebut = new Date(suiviProgramme.date_debut);
             const dateFin = new Date(suiviProgramme.date_fin_prevue);
@@ -18924,15 +18971,15 @@
             const joursRestants = Math.max(0, Math.ceil((dateFin - aujourd_hui) / (1000 * 60 * 60 * 24)));
             const semaineActuelle = Math.min(
                 Math.floor((aujourd_hui - dateDebut) / (1000 * 60 * 60 * 24 * 7)) + 1,
-                PREDEFINED_PROGRAMS[suiviProgramme.programme_id].duree_semaines
+                program.duree_semaines
             );
 
             return {
-                pourcentage,
-                seancesRealisees,
-                seancesTotales,
+                pourcentage: isNaN(pourcentage) ? 0 : pourcentage,
+                seancesRealisees: seancesRealisees,
+                seancesTotales: seancesTotales,
                 semaineActuelle: Math.max(1, semaineActuelle),
-                joursRestants
+                joursRestants: isNaN(joursRestants) ? 0 : joursRestants
             };
         };
 
@@ -18974,10 +19021,38 @@
             }
 
             // Créer une nouvelle session basée sur la séance du programme
-            const newSession = {
-                date: new Date().toISOString().split('T')[0],
-                notes: `${seance.nom} - ${program.nom}${seance.philosophie ? '\n\n💭 "' + seance.philosophie + '"' : ''}`,
-                exercises: seance.exercices.map(ex => ({
+            const allExercises = [];
+            
+            // Ajouter les exercices d'échauffement de la phase_eveil
+            if (seance.phase_eveil && seance.phase_eveil.exercices) {
+                seance.phase_eveil.exercices.forEach(exerciceEveil => {
+                    // Extraire le nom de l'exercice (avant le " - ")
+                    const nomExercice = exerciceEveil.split(' - ')[0].trim();
+                    
+                    allExercises.push({
+                        exercise_id: this.findOrCreateExercise(nomExercice),
+                        planned_sets: 1, // Échauffement = 1 série généralement
+                        rest_time: 30, // Repos court pour l'échauffement
+                        duration: 30, // Durée par défaut pour l'échauffement
+                        sets: [],
+                        program_exercise: {
+                            nom: nomExercice,
+                            description: exerciceEveil,
+                            type: 'warmup'
+                        },
+                        program_info: {
+                            groupe: '🔥 ÉCHAUFFEMENT',
+                            resistance: 'Poids du corps',
+                            conseil: exerciceEveil.includes(' - ') ? exerciceEveil.split(' - ')[1] : 'Mouvement d\'échauffement',
+                            repetitions: 'Selon instructions'
+                        }
+                    });
+                });
+            }
+            
+            // Ajouter les exercices principaux
+            seance.exercices.forEach(ex => {
+                allExercises.push({
                     exercise_id: this.findOrCreateExercise(ex.nom),
                     planned_sets: ex.series || 2,
                     rest_time: this.parseRestTime(ex.temps_repos),
@@ -18990,7 +19065,13 @@
                         conseil: ex.conseil,
                         repetitions: ex.repetitions
                     }
-                })),
+                });
+            });
+
+            const newSession = {
+                date: new Date().toISOString().split('T')[0],
+                notes: `${seance.nom} - ${program.nom}${seance.philosophie ? '\n\n💭 "' + seance.philosophie + '"' : ''}${seance.phase_eveil ? '\n\n🔥 Phase d\'éveil (' + seance.phase_eveil.duree + ') :\n' + seance.phase_eveil.exercices.join('\n') : ''}`,
+                exercises: allExercises,
                 globalSettings: {
                     restBetweenExercises: 120,
                     restBetweenSets: 90
@@ -19527,6 +19608,8 @@
             // Charger les données spécifiques à l'onglet
             if (tab === 'dashboard') {
                 this.loadAnalyticsDashboard();
+            } else if (tab === 'exercises') {
+                this.loadAnalyticsExercises();
             } else if (tab === 'insights') {
                 this.loadAnalyticsInsights();
             } else if (tab === 'progress') {
@@ -20216,6 +20299,49 @@
         };
         
         // Charger le dashboard analytics
+        // Charger l'onglet exercices des analytics
+        actions.loadAnalyticsExercises = function() {
+            const exerciseSelect = document.getElementById('stats-exercise-select');
+            
+            if (exerciseSelect && exerciseSelect.children.length <= 1) {
+                // Grouper les exercices par groupes musculaires
+                const groupedExercises = {};
+                appState.exercises.forEach(exercise => {
+                    const group = exercise.muscle_group || 'autres';
+                    if (!groupedExercises[group]) {
+                        groupedExercises[group] = [];
+                    }
+                    groupedExercises[group].push(exercise);
+                });
+
+                // Ordre d'affichage des catégories
+                const groupOrder = ['echauffement', 'biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes', 'autres'];
+                
+                // Vider le select et ajouter l'option par défaut
+                exerciseSelect.innerHTML = '<option value="">Choisir un exercice...</option>';
+                
+                groupOrder.forEach(group => {
+                    if (groupedExercises[group] && groupedExercises[group].length > 0) {
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = `${group.charAt(0).toUpperCase() + group.slice(1)} (${groupedExercises[group].length})`;
+                        
+                        // Trier les exercices par nom dans chaque groupe
+                        groupedExercises[group].sort((a, b) => a.name.localeCompare(b.name));
+                        groupedExercises[group].forEach(exercise => {
+                            const option = document.createElement('option');
+                            option.value = exercise.id;
+                            // Ajouter l'indicateur de mode
+                            const modeIcon = exercise.exercise_mode === 'time' ? '⏱️' :
+                                exercise.exercise_mode === 'both' ? '🔄' : '🔢';
+                            option.textContent = `${modeIcon} ${exercise.name}`;
+                            optgroup.appendChild(option);
+                        });
+                        exerciseSelect.appendChild(optgroup);
+                    }
+                });
+            }
+        };
+
         actions.loadAnalyticsDashboard = function() {
             this.updateMetricsCards();
             this.updateVolumeChart();
