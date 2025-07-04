@@ -8890,8 +8890,17 @@
                 
                 appState.measurements.push(newMeasurement);
                 
+                // Debug: vérifier que les photos ont bien été copiées
+                console.log('📸 Photos temporaires:', appState.currentProgressPhotos?.length || 0);
+                console.log('📸 Photos dans la mesure:', newMeasurement.photos?.length || 0);
+                
                 this.saveData();
-                this.showNotification('🏋️ Mesures du guerrier enregistrées !', 'success');
+                
+                if (newMeasurement.photos && newMeasurement.photos.length > 0) {
+                    this.showNotification(`🏋️ Mesures enregistrées avec ${newMeasurement.photos.length} photo(s) !`, 'success');
+                } else {
+                    this.showNotification('🏋️ Mesures du guerrier enregistrées !', 'success');
+                }
                 
                 // Effacer le formulaire et photos temporaires
                 document.getElementById('measurement-date').value = '';
@@ -8907,8 +8916,13 @@
                 this.resetProgressPhotosUpload();
                 
                 render();
-                // Mettre à jour spécifiquement la galerie d'évolution
-                this.renderEvolutionGallery();
+                
+                // Forcer la mise à jour de la galerie après un court délai
+                setTimeout(() => {
+                    if (appState.currentScreen === 'body') {
+                        this.renderEvolutionGallery();
+                    }
+                }, 300);
             },
 
             // Gestion des photos de progression
@@ -8949,6 +8963,13 @@
                         
                         appState.currentProgressPhotos.push(photoData);
                         this.updateProgressPhotosPreview();
+                        
+                        // Forcer la mise à jour de la galerie si on est sur l'écran body
+                        if (appState.currentScreen === 'body') {
+                            setTimeout(() => {
+                                this.renderEvolutionGallery();
+                            }, 100);
+                        }
                     };
                     reader.readAsDataURL(file);
                 });
@@ -9050,13 +9071,19 @@
 
             renderEvolutionGallery() {
                 const galleryContainer = document.getElementById('evolution-gallery');
-                if (!galleryContainer) return;
+                if (!galleryContainer) {
+                    console.log('🖼️ Galerie non trouvée dans le DOM');
+                    return;
+                }
                 
                 // Collecter toutes les photos de toutes les mesures
                 const allPhotos = [];
+                console.log('📊 Nombre total de mesures:', appState.measurements?.length || 0);
+                
                 if (appState.measurements) {
                     appState.measurements.forEach(measurement => {
                         if (measurement.photos && measurement.photos.length > 0) {
+                            console.log(`📸 Mesure ${measurement.date} a ${measurement.photos.length} photo(s)`);
                             measurement.photos.forEach(photo => {
                                 allPhotos.push({
                                     ...photo,
@@ -9067,6 +9094,8 @@
                         }
                     });
                 }
+                
+                console.log('🖼️ Total photos collectées pour la galerie:', allPhotos.length);
                 
                 // Trier par date de mesure (plus récent en premier)
                 allPhotos.sort((a, b) => new Date(b.measurementDate) - new Date(a.measurementDate));
@@ -9104,8 +9133,6 @@
                     this.saveData();
                     this.showNotification('📊 Mesure supprimée', 'info');
                     render();
-                    // Mettre à jour spécifiquement la galerie d'évolution
-                    this.renderEvolutionGallery();
                 }
             },
 
