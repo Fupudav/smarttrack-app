@@ -3159,98 +3159,315 @@
                     '48h de récupération minimum entre chaque bataille'
                 ],
                 seances: [
-                    // Semaine 1 - Initiation
+                    // ⚔️ SEMAINE 1 - RÉVÉLATION DES LIMITES
                     {
-                        id: 's1_j1',
+                        id: 's1_bataille_a',
                         semaine: 1,
                         jour: 1,
-                        nom: 'Découverte des mouvements',
-                        duree_minutes: 30,
+                        jour_semaine: 'Lundi',
+                        nom: 'Bataille A - Assaut du Haut',
+                        type: 'strength',
+                        duree_minutes: 45,
+                        difficulte: 1,
+                        philosophie: 'Cette semaine, tu découvres de quoi tu es vraiment capable. Chaque série jusqu\'à l\'échec révèle un fragment de ton potentiel.',
+                        phase_eveil: {
+                            duree: '8-10 minutes',
+                            exercices: [
+                                'Rotations épaules - 10 rotations avant/arrière',
+                                'Cercles de bras - 10 cercles petits/grands', 
+                                'Étirements dynamiques - 30 secondes chaque bras',
+                                'Jumping jacks - 30 secondes',
+                                'Montées de genoux - 20 répétitions'
+                            ]
+                        },
                         exercices: [
-                            { nom: 'Échauffement - Cercles de bras', series: 1, repetitions: '30 sec', temps_repos: 30, charge_base: 0, progression_type: 'none' },
-                            { nom: 'Curl biceps', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
-                            { nom: 'Extension triceps (poulie haute)', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
-                            { nom: 'Élévations latérales', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
-                            { nom: 'Tirage horizontal unilatéral', series: 2, repetitions: '8-10 chaque bras', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
-                            { nom: 'Squat', series: 2, repetitions: '8-10', temps_repos: 90, charge_base: 20, progression_type: 'linear' }
+                            {
+                                nom: 'Développé épaules debout',
+                                groupe: 'PECTORAUX - "Forge ta cuirasse"',
+                                resistance: '10-15 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Pieds écartés, tronc gainé, pousser jusqu\'à l\'extension complète',
+                                charge_base: 12,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Développé debout (poulie moyenne)',
+                                groupe: 'PECTORAUX - "Forge ta cuirasse"',
+                                resistance: '10-15 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Position de boxeur, contrôle la phase de retour',
+                                charge_base: 12,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Rowing buste penché',
+                                groupe: 'DOS - "Bâtis ton bouclier"',
+                                resistance: '10-15 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Buste penché à 45°, tire vers le sternum',
+                                charge_base: 12,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Tirage poulie basse',
+                                groupe: 'DOS - "Bâtis ton bouclier"',
+                                resistance: '10-15 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Assis, torse droit, squeeze les omoplates',
+                                charge_base: 12,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Élévations latérales',
+                                groupe: 'ÉPAULES - "Couronne du guerrier"',
+                                resistance: '5-10 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Bras légèrement fléchis, monte jusqu\'aux épaules',
+                                charge_base: 7,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Curl biceps',
+                                groupe: 'BICEPS - "Épées du bras"',
+                                resistance: '5-10 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Coudes fixes, contraction maximale en haut',
+                                charge_base: 7,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Extension triceps verticale',
+                                groupe: 'TRICEPS - "Marteaux de force"',
+                                resistance: '5-10 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Bras au-dessus de la tête, seuls les avant-bras bougent',
+                                charge_base: 7,
+                                progression_type: 'adaptive'
+                            }
                         ]
                     },
                     {
-                        id: 's1_j2',
-                        semaine: 1,
-                        jour: 2,
-                        nom: 'Renforcement fondamental',
-                        duree_minutes: 35,
-                        exercices: [
-                            { nom: 'Échauffement - Jumping Jacks', series: 1, repetitions: '30 sec', temps_repos: 30, charge_base: 0, progression_type: 'none' },
-                            { nom: 'Développé debout (poulie moyenne)', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
-                            { nom: 'Rowing buste penché', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 15, progression_type: 'linear' },
-                            { nom: 'Fentes', series: 2, repetitions: '6-8 chaque jambe', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
-                            { nom: 'Curl marteau', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
-                            { nom: 'Planche', series: 2, repetitions: '15-20 sec', temps_repos: 45, charge_base: 0, progression_type: 'time' }
-                        ]
-                    },
-                    {
-                        id: 's1_j3',
+                        id: 's1_bataille_b',
                         semaine: 1,
                         jour: 3,
-                        nom: 'Coordination et équilibre',
-                        duree_minutes: 30,
+                        jour_semaine: 'Mercredi',
+                        nom: 'Bataille B - Conquête du Bas',
+                        type: 'strength',
+                        duree_minutes: 40,
+                        difficulte: 1,
+                        philosophie: 'Cette semaine, tu découvres de quoi tu es vraiment capable. Chaque série jusqu\'à l\'échec révèle un fragment de ton potentiel.',
+                        phase_eveil: {
+                            duree: '8-10 minutes',
+                            exercices: [
+                                'Squats au poids du corps - 15 répétitions',
+                                'Fentes alternées - 10 de chaque jambe',
+                                'High knees - 30 secondes',
+                                'Pas chassés - 20 répétitions',
+                                'Rotations de chevilles - 10 chaque pied'
+                            ]
+                        },
                         exercices: [
-                            { nom: 'Échauffement - Rotations épaules', series: 1, repetitions: '30 sec', temps_repos: 30, charge_base: 0, progression_type: 'none' },
-                            { nom: 'Face Pull', series: 2, repetitions: '10-12', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
-                            { nom: 'Élévations frontales', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
-                            { nom: 'Extension triceps verticale', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
-                            { nom: 'Hip thrust', series: 2, repetitions: '10-12', temps_repos: 60, charge_base: 25, progression_type: 'linear' },
-                            { nom: 'Étirements dynamiques', series: 1, repetitions: '2 min', temps_repos: 0, charge_base: 0, progression_type: 'none' }
+                            {
+                                nom: 'Squat',
+                                groupe: 'QUADRICEPS/FESSIERS - "Piliers du royaume"',
+                                resistance: '15-20 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Pieds largeur d\'épaules, descente contrôlée, remontée explosive',
+                                charge_base: 17,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Front squat',
+                                groupe: 'QUADRICEPS/FESSIERS - "Piliers du royaume"',
+                                resistance: '15-20 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Élastique devant les épaules, torse plus droit',
+                                charge_base: 17,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Soulevé de terre jambes tendues',
+                                groupe: 'ISCHIO-JAMBIERS - "Ressorts de puissance"',
+                                resistance: '15-20 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Jambes semi-tendues, penche le buste en gardant le dos droit',
+                                charge_base: 17,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Extensions mollets',
+                                groupe: 'MOLLETS - "Ressorts d\'acier"',
+                                resistance: '10-15 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Monte sur la pointe des pieds, contraction maximale',
+                                charge_base: 12,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Développé joint (poulie basse)',
+                                groupe: 'HAUT DU CORPS (Récupération active)',
+                                resistance: '5-10 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60 secondes',
+                                conseil: 'Mouvement lent et contrôlé',
+                                charge_base: 7,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Face Pull',
+                                groupe: 'HAUT DU CORPS (Récupération active)',
+                                resistance: '5-10 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60 secondes',
+                                conseil: 'Tire vers le visage, coudes hauts',
+                                charge_base: 7,
+                                progression_type: 'adaptive'
+                            }
                         ]
                     },
                     {
-                        id: 's1_j4',
-                        semaine: 1,
-                        jour: 4,
-                        nom: 'Développement musculaire',
-                        duree_minutes: 35,
-                        exercices: [
-                            { nom: 'Échauffement - High knees', series: 1, repetitions: '30 sec', temps_repos: 30, charge_base: 0, progression_type: 'none' },
-                            { nom: 'Squat sumo', series: 2, repetitions: '8-10', temps_repos: 90, charge_base: 20, progression_type: 'linear' },
-                            { nom: 'Développé incliné', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
-                            { nom: 'Tirage vertical', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 15, progression_type: 'linear' },
-                            { nom: 'Curl biceps (poulie basse)', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
-                            { nom: 'Kickback triceps', series: 2, repetitions: '8-10 chaque bras', temps_repos: 60, charge_base: 5, progression_type: 'linear' }
-                        ]
-                    },
-                    {
-                        id: 's1_j5',
+                        id: 's1_bataille_c',
                         semaine: 1,
                         jour: 5,
-                        nom: 'Stabilité et force',
-                        duree_minutes: 30,
+                        jour_semaine: 'Vendredi',
+                        nom: 'Bataille C - Unification Totale',
+                        type: 'fullbody',
+                        duree_minutes: 50,
+                        difficulte: 1,
+                        philosophie: 'Cette semaine, tu découvres de quoi tu es vraiment capable. Chaque série jusqu\'à l\'échec révèle un fragment de ton potentiel.',
+                        phase_eveil: {
+                            duree: '8-10 minutes',
+                            exercices: [
+                                'Mix complet - 2 minutes d\'échauffement dynamique',
+                                'Planche - 20-30 secondes',
+                                'Mountain climbers - 20 répétitions',
+                                'Burpees - 5 répétitions',
+                                'Étirements complets - 3 minutes'
+                            ]
+                        },
                         exercices: [
-                            { nom: 'Échauffement - Pas chassés', series: 1, repetitions: '30 sec', temps_repos: 30, charge_base: 0, progression_type: 'none' },
-                            { nom: 'Soulevé de terre', series: 2, repetitions: '6-8', temps_repos: 90, charge_base: 25, progression_type: 'linear' },
-                            { nom: 'Oiseau', series: 2, repetitions: '10-12', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
-                            { nom: 'Extensions mollets', series: 2, repetitions: '12-15', temps_repos: 45, charge_base: 15, progression_type: 'linear' },
-                            { nom: 'Écarté unilatéral', series: 2, repetitions: '8-10 chaque bras', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
-                            { nom: 'Planche latérale', series: 2, repetitions: '10-15 sec chaque côté', temps_repos: 45, charge_base: 0, progression_type: 'time' }
-                        ]
-                    },
-                    {
-                        id: 's1_j6',
-                        semaine: 1,
-                        jour: 6,
-                        nom: 'Récupération active',
-                        duree_minutes: 25,
-                        exercices: [
-                            { nom: 'Échauffement - Montées de genoux', series: 1, repetitions: '30 sec', temps_repos: 30, charge_base: 0, progression_type: 'none' },
-                            { nom: 'Fentes bulgares', series: 2, repetitions: '6-8 chaque jambe', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
-                            { nom: 'Tirage poulie basse', series: 2, repetitions: '10-12', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
-                            { nom: 'Développé épaules debout', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
-                            { nom: 'Abduction de hanches', series: 2, repetitions: '10-12 chaque jambe', temps_repos: 45, charge_base: 10, progression_type: 'linear' },
-                            { nom: 'Étirements dynamiques', series: 1, repetitions: '3 min', temps_repos: 0, charge_base: 0, progression_type: 'none' }
-                        ]
+                            {
+                                nom: 'Thruster',
+                                groupe: 'FULL BODY - "Harmonie du guerrier"',
+                                resistance: '15-20 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '90 secondes',
+                                conseil: 'Squat + développé militaire en un mouvement fluide',
+                                charge_base: 17,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Tirage vertical',
+                                groupe: 'DOS - "Colonne vertébrale du héros"',
+                                resistance: '10-15 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Tire vers la poitrine, penche légèrement le buste',
+                                charge_base: 12,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Développé incliné',
+                                groupe: 'PECTORAUX - "Armure frontale"',
+                                resistance: '10-15 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Angle 45°, presse vers le haut et l\'avant',
+                                charge_base: 12,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Fentes',
+                                groupe: 'JAMBES - "Fondations mobiles"',
+                                resistance: '15-20 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec (chaque jambe)',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Grand pas, genou arrière frôle le sol',
+                                charge_base: 17,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Hip thrust',
+                                groupe: 'JAMBES - "Fondations mobiles"',
+                                resistance: '15-20 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Allongé, pousse les hanches vers le ciel',
+                                charge_base: 17,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Overhead press',
+                                groupe: 'ÉPAULES/BRAS - "Armes de précision"',
+                                resistance: '5-10 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Debout, presse au-dessus de la tête',
+                                charge_base: 7,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Curl marteau',
+                                groupe: 'ÉPAULES/BRAS - "Armes de précision"',
+                                resistance: '5-10 kg',
+                                series: 2,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-90 secondes',
+                                conseil: 'Poignets neutres, contrôle total',
+                                charge_base: 7,
+                                progression_type: 'adaptive'
+                            }
+                        ],
+                        consignes_semaine: {
+                            mission_principale: 'DÉCOUVRIR TES VRAIS LIMITES',
+                            instructions: [
+                                'Teste différentes résistances pour trouver ton échec entre 8-15 répétitions',
+                                'Note tes performances pour la semaine suivante',
+                                'La technique prime sur la résistance'
+                            ],
+                            signaux_alarme: [
+                                'Douleur articulaire → Stop immédiat',
+                                'Technique qui se dégrade → Diminue la résistance', 
+                                'Pas d\'échec musculaire → Augmente la résistance'
+                            ],
+                            journal_guerrier: [
+                                'Résistance utilisée',
+                                'Nombre de répétitions à l\'échec',
+                                'Sensation (facile/modéré/difficile/impossible)'
+                            ]
+                        }
                     }
-                    // ... Semaines 2-6 suivront le même format avec progression des charges
+                    // ... Semaines 2-6 suivront le même format avec progression des phases
                 ]
             },
             
@@ -12263,22 +12480,39 @@
             const objectivesList = program.objectifs.map(obj => `<li>${obj}</li>`).join('');
             const conseilsList = program.conseils ? program.conseils.map(conseil => `<li>${conseil}</li>`).join('') : '';
 
-            // Aperçu du planning (première semaine seulement)
+            // Aperçu épique du planning (première semaine)
             let planningPreview = '';
             if (program.seances && program.seances.length > 0) {
                 const semaine1 = program.seances.filter(s => s.semaine === 1);
                 planningPreview = `
                     <div class="card">
-                        <h3>📅 Aperçu du planning (Semaine 1)</h3>
-                        <div style="display: grid; gap: 8px;">
+                        <h3 style="color: #ff6b35; margin-bottom: 20px;">📅 Planning de Guerre - Semaine 1</h3>
+                        ${semaine1.length > 0 && semaine1[0].philosophie ? `
+                            <div style="background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(212, 56, 13, 0.1) 100%); padding: 16px; border-radius: 8px; margin-bottom: 16px; text-align: center; font-style: italic; color: var(--text-secondary);">
+                                "${semaine1[0].philosophie}"
+                            </div>
+                        ` : ''}
+                        <div style="display: grid; gap: 12px;">
                             ${semaine1.map(seance => `
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--background); border-radius: 8px;">
-                                    <div>
-                                        <strong>Jour ${seance.jour}</strong>
-                                        <div style="font-size: 14px; color: var(--text-secondary);">${seance.nom}</div>
+                                <div style="border: 2px solid #ff6b35; border-radius: 12px; padding: 16px; background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(212, 56, 13, 0.05) 100%);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                        <div>
+                                            <strong style="color: #ff6b35;">${seance.jour_semaine || 'Jour ' + seance.jour}</strong>
+                                            <div style="font-size: 16px; font-weight: 600; margin-top: 4px;">${seance.nom}</div>
+                                        </div>
+                                        <div style="text-align: right; font-size: 13px; color: var(--text-secondary);">
+                                            ${seance.duree_minutes} min<br>
+                                            ${seance.exercices.length} exercices
+                                        </div>
                                     </div>
-                                    <div style="font-size: 13px; color: var(--text-secondary);">
-                                        ${seance.duree_minutes} min • ${seance.exercices.length} exercices
+                                    ${seance.phase_eveil ? `
+                                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+                                            <strong>🔥 Phase d'éveil :</strong> ${seance.phase_eveil.duree}
+                                        </div>
+                                    ` : ''}
+                                    <div style="font-size: 12px; color: var(--text-secondary);">
+                                        <strong>⚔️ Groupes ciblés :</strong> 
+                                        ${[...new Set(seance.exercices.map(ex => ex.groupe ? ex.groupe.split(' - ')[0] : 'Général'))].join(' • ')}
                                     </div>
                                 </div>
                             `).join('')}
@@ -12770,14 +13004,20 @@
             // Créer une nouvelle session basée sur la séance du programme
             const newSession = {
                 date: new Date().toISOString().split('T')[0],
-                notes: `Séance ${seance.nom} - ${program.nom}`,
+                notes: `${seance.nom} - ${program.nom}${seance.philosophie ? '\n\n💭 "' + seance.philosophie + '"' : ''}`,
                 exercises: seance.exercices.map(ex => ({
                     exercise_id: this.findOrCreateExercise(ex.nom),
-                    planned_sets: ex.series,
-                    rest_time: ex.temps_repos,
+                    planned_sets: ex.series || 2,
+                    rest_time: this.parseRestTime(ex.temps_repos),
                     duration: ex.duration || 30,
                     sets: [],
-                    program_exercise: ex // Conserver les infos du programme
+                    program_exercise: ex, // Conserver les infos du programme
+                    program_info: {
+                        groupe: ex.groupe,
+                        resistance: ex.resistance,
+                        conseil: ex.conseil,
+                        repetitions: ex.repetitions
+                    }
                 })),
                 globalSettings: {
                     restBetweenExercises: 120,
@@ -12786,13 +13026,27 @@
                 fromProgram: {
                     programId: appState.currentProgram.programme_id,
                     sessionId: seanceId,
-                    sessionName: seance.nom
+                    sessionName: seance.nom,
+                    jour_semaine: seance.jour_semaine,
+                    phase_eveil: seance.phase_eveil,
+                    philosophie: seance.philosophie
                 }
             };
 
             appState.currentSession = newSession;
             this.showScreen('preparation');
-            this.showNotification(`Séance "${seance.nom}" chargée !`);
+            this.showNotification(`🔥 Bataille "${seance.nom}" chargée ! Prêt pour l'assaut ?`);
+        };
+
+        // Helper pour parser le temps de repos
+        actions.parseRestTime = function(tempsRepos) {
+            if (typeof tempsRepos === 'number') return tempsRepos;
+            if (typeof tempsRepos === 'string') {
+                // Extraire le premier nombre de la chaîne "60-90 secondes"
+                const match = tempsRepos.match(/(\d+)/);
+                return match ? parseInt(match[1]) : 90;
+            }
+            return 90; // Valeur par défaut
         };
 
         // Trouver ou créer un exercice
