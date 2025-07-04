@@ -793,6 +793,81 @@
             }
         }
 
+        /* === MENUS CONTEXTUELS === */
+        .contextual-menu {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--surface);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px var(--shadow-elevated);
+            border: 1px solid var(--border);
+            z-index: 1000;
+            padding: 8px;
+            display: none;
+            min-width: 280px;
+        }
+
+        .contextual-menu.active {
+            display: block;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .contextual-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .contextual-menu-item:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .contextual-menu-item .icon {
+            font-size: 24px;
+            width: 32px;
+            text-align: center;
+        }
+
+        .contextual-menu-item .content {
+            flex: 1;
+        }
+
+        .contextual-menu-item .title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .contextual-menu-item .description {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Overlay pour fermer les menus */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            display: none;
+        }
+
+        .menu-overlay.active {
+            display: block;
+        }
+
         /* === STYLES ANALYTICS AVANCÉES (v1.4) === */
         
         /* Onglets Analytics */
@@ -2523,6 +2598,330 @@
             transition: all 0.2s;
         }
 
+        /* === STYLES CRÉATEUR DE PROGRAMMES === */
+        .program-structure {
+            padding: 16px;
+            background: var(--background);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .structure-summary {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--surface);
+            border-radius: 8px;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .summary-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .progression-settings {
+            margin-top: 20px;
+        }
+
+        .progression-options {
+            display: grid;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .program-planner {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .program-planner {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .exercise-library {
+            background: var(--background);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            max-height: 600px;
+        }
+
+        .exercise-search {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .exercises-drag-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .draggable-exercise {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: grab;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .draggable-exercise:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .draggable-exercise:active {
+            cursor: grabbing;
+        }
+
+        .exercise-muscle-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .exercise-muscle-icon.echauffement { background: #FF6B35; }
+        .exercise-muscle-icon.biceps { background: #007AFF; }
+        .exercise-muscle-icon.triceps { background: #34C759; }
+        .exercise-muscle-icon.epaules { background: #FF9500; }
+        .exercise-muscle-icon.dos { background: #5856D6; }
+        .exercise-muscle-icon.pectoraux { background: #FF3B30; }
+        .exercise-muscle-icon.jambes { background: #8E8E93; }
+
+        .exercise-info {
+            flex: 1;
+        }
+
+        .exercise-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .exercise-details {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .program-timeline {
+            background: var(--background);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .timeline-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .program-timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .program-week {
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .week-title-bar {
+            background: var(--primary);
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .week-title-text {
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .week-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .week-action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .week-sessions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .session-slot {
+            background: var(--background);
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 150px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .session-slot.drag-over {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .session-day-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .session-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .session-exercises {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .planned-exercise {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            cursor: move;
+        }
+
+        .planned-exercise:hover {
+            background: var(--primary-light);
+        }
+
+        .planned-exercise-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .planned-exercise-sets {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .remove-exercise-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            padding: 2px;
+            font-size: 14px;
+        }
+
+        .empty-session {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            padding: 20px;
+        }
+
+        .program-preview {
+            background: var(--background);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .program-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Drag and Drop States */
+        .dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .drop-zone {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .drop-zone::before {
+            content: "Déposez ici";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--primary);
+            font-weight: 600;
+            pointer-events: none;
+        }
+
         .favorite-btn:hover {
             background: var(--primary);
             transform: scale(1.1);
@@ -3765,10 +4164,10 @@
             <div class="card badges-collection">
                 <h3>🏆 Collection de Badges</h3>
                 <div class="badges-tabs">
-                    <button class="badge-tab active" onclick="actions.switchBadgeTab('all')">Tous</button>
-                    <button class="badge-tab" onclick="actions.switchBadgeTab('regularity')">Régularité</button>
-                    <button class="badge-tab" onclick="actions.switchBadgeTab('performance')">Performance</button>
-                    <button class="badge-tab" onclick="actions.switchBadgeTab('exploration')">Exploration</button>
+                                            <button class="badge-tab active" onclick="actions.switchBadgeTab(event, 'all')">Tous</button>
+                        <button class="badge-tab" onclick="actions.switchBadgeTab(event, 'regularity')">Régularité</button>
+                        <button class="badge-tab" onclick="actions.switchBadgeTab(event, 'performance')">Performance</button>
+                        <button class="badge-tab" onclick="actions.switchBadgeTab(event, 'exploration')">Exploration</button>
                 </div>
                 <div id="badges-grid" class="badges-grid">
                     <!-- Généré dynamiquement -->
@@ -4337,6 +4736,175 @@
             <div id="program-weeks-container"></div>
         </div>
 
+        <!-- Écran 14: Créateur de Programmes -->
+        <div id="screen-program-creator" class="screen">
+            <div class="header">
+                <button class="btn btn-small btn-secondary" onclick="actions.showScreen('programmes')">← Retour</button>
+                <h1>🏗️ Créateur de Programmes</h1>
+                <button class="btn btn-small btn-primary" onclick="actions.saveCustomProgram()" style="display: none;" id="save-program-btn">💾 Sauvegarder</button>
+            </div>
+
+            <!-- Informations du programme -->
+            <div class="card">
+                <h3>📋 Informations du programme</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="input-group">
+                        <label>Nom du programme *</label>
+                        <input type="text" id="program-name" class="input" placeholder="Mon programme personnalisé" maxlength="50">
+                    </div>
+                    <div class="input-group">
+                        <label>Description</label>
+                        <input type="text" id="program-description" class="input" placeholder="Description courte du programme" maxlength="100">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <div class="input-group">
+                        <label>Durée (semaines) *</label>
+                        <input type="number" id="program-duration" class="input" min="1" max="52" value="4" onchange="actions.updateProgramWeeks()">
+                    </div>
+                    <div class="input-group">
+                        <label>Jours par semaine *</label>
+                        <input type="number" id="program-frequency" class="input" min="1" max="7" value="3" onchange="actions.updateProgramWeeks()">
+                    </div>
+                    <div class="input-group">
+                        <label>Niveau</label>
+                        <select id="program-level" class="select">
+                            <option value="beginner">🔰 Débutant</option>
+                            <option value="intermediate">⚔️ Intermédiaire</option>
+                            <option value="advanced">🏺 Avancé</option>
+                            <option value="expert">👑 Expert</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Objectif principal</label>
+                    <select id="program-goal" class="select">
+                        <option value="strength">💪 Force</option>
+                        <option value="muscle">🎯 Prise de masse</option>
+                        <option value="endurance">⚡ Endurance</option>
+                        <option value="tone">✨ Tonification</option>
+                        <option value="weight-loss">🔥 Perte de poids</option>
+                        <option value="rehab">🩹 Rééducation</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Configuration des semaines -->
+            <div class="card">
+                <h3>📅 Structure du programme</h3>
+                <div class="program-structure">
+                    <div class="structure-summary" id="program-summary">
+                        <div class="summary-item">
+                            <span class="summary-label">Total séances :</span>
+                            <span class="summary-value" id="total-sessions">12</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Progression :</span>
+                            <span class="summary-value">Linéaire</span>
+                        </div>
+                    </div>
+                    
+                    <div class="progression-settings">
+                        <h4>⚙️ Type de progression</h4>
+                        <div class="progression-options">
+                            <div class="checkbox-group">
+                                <input type="radio" id="progression-linear" name="progression" value="linear" checked>
+                                <label for="progression-linear">📈 Progression linéaire (+2.5kg/semaine)</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="radio" id="progression-step" name="progression" value="step">
+                                <label for="progression-step">📊 Progression par paliers (+5kg/2sem)</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="radio" id="progression-custom" name="progression" value="custom">
+                                <label for="progression-custom">🎯 Progression personnalisée</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Planificateur drag & drop -->
+            <div class="card">
+                <h3>🧩 Planificateur d'exercices</h3>
+                <div class="program-planner">
+                    <!-- Bibliothèque d'exercices -->
+                    <div class="exercise-library">
+                        <h4>📚 Exercices disponibles</h4>
+                        <div class="exercise-search">
+                            <input type="text" id="exercise-search" class="input" placeholder="🔍 Rechercher un exercice..." oninput="actions.filterExercisesLibrary()">
+                            <select id="muscle-filter" class="select" onchange="actions.filterExercisesLibrary()">
+                                <option value="">Tous les groupes</option>
+                                <option value="echauffement">Échauffement</option>
+                                <option value="biceps">Biceps</option>
+                                <option value="triceps">Triceps</option>
+                                <option value="epaules">Épaules</option>
+                                <option value="dos">Dos</option>
+                                <option value="pectoraux">Pectoraux</option>
+                                <option value="jambes">Jambes</option>
+                            </select>
+                        </div>
+                        <div id="exercises-library-list" class="exercises-drag-list">
+                            <!-- Exercices générés dynamiquement -->
+                        </div>
+                    </div>
+
+                    <!-- Zone de planification -->
+                    <div class="program-timeline">
+                        <h4>📅 Planning du programme</h4>
+                        <div class="timeline-controls">
+                            <button class="btn btn-small btn-secondary" onclick="actions.addProgramWeek()">➕ Ajouter semaine</button>
+                            <button class="btn btn-small btn-secondary" onclick="actions.copyWeekTemplate()">📋 Copier modèle</button>
+                            <button class="btn btn-small btn-danger" onclick="actions.clearProgram()">🗑️ Tout effacer</button>
+                        </div>
+                        <div id="program-weeks-timeline" class="program-timeline-container">
+                            <!-- Semaines générées dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paramètres avancés -->
+            <div class="card">
+                <h3>⚙️ Paramètres avancés</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="input-group">
+                        <label>Repos entre séries (secondes)</label>
+                        <input type="number" id="program-rest-sets" class="input" value="90" min="30" max="300">
+                    </div>
+                    <div class="input-group">
+                        <label>Repos entre exercices (secondes)</label>
+                        <input type="number" id="program-rest-exercises" class="input" value="120" min="60" max="600">
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="program-auto-progression" class="checkbox" checked>
+                    <label for="program-auto-progression">📈 Progression automatique des charges</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="program-deload-week" class="checkbox">
+                    <label for="program-deload-week">🔄 Semaine de décharge (25% de charge en moins)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="program-warmup-sets" class="checkbox" checked>
+                    <label for="program-warmup-sets">🔥 Séries d'échauffement automatiques</label>
+                </div>
+            </div>
+
+            <!-- Aperçu et actions -->
+            <div class="card">
+                <h3>👁️ Aperçu du programme</h3>
+                <div id="program-preview" class="program-preview">
+                    <p>Configurez votre programme ci-dessus pour voir l'aperçu</p>
+                </div>
+                <div class="program-actions">
+                    <button class="btn btn-secondary" onclick="actions.previewProgram()">👁️ Aperçu détaillé</button>
+                    <button class="btn btn-primary" onclick="actions.testProgram()">🧪 Tester le programme</button>
+                    <button class="btn btn-success" onclick="actions.saveCustomProgram()">💾 Sauvegarder</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Écran Statistiques Fusionné (Analytics + Reliques) -->
         <div id="screen-analytics" class="screen">
             <div class="header">
@@ -4593,31 +5161,86 @@
                 <div>⚔️</div>
                 <div>Bataille</div>
             </div>
-            <div class="nav-item" onclick="actions.showScreen('programmes')">
+            <div class="nav-item" onclick="actions.showArsenalMenu()">
                 <div>🛡️</div>
-                <div>Quêtes</div>
-            </div>
-            <div class="nav-item" onclick="actions.showScreen('exercise-database')">
-                <div>🗡️</div>
                 <div>Arsenal</div>
+            </div>
+            <div class="nav-item" onclick="actions.showProgressionMenu()">
+                <div>📊</div>
+                <div>Progression</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('history')">
                 <div>📜</div>
                 <div>Chroniques</div>
             </div>
-            <div class="nav-item" onclick="actions.showScreen('analytics')">
-                <div>📊</div>
-                <div>Statistiques</div>
-            </div>
-            <div class="nav-item" onclick="actions.showScreen('gamification')">
-                <div>🏆</div>
-                <div>Gloire</div>
-            </div>
-            <div class="nav-item" onclick="actions.showScreen('body')">
-                <div>🏋️</div>
-                <div>Mesures</div>
-            </div>
         </nav>
+    </div>
+
+    <!-- Overlay pour menus contextuels -->
+    <div id="menu-overlay" class="menu-overlay" onclick="actions.closeContextualMenus()"></div>
+
+    <!-- Menu Arsenal -->
+    <div id="arsenal-menu" class="contextual-menu">
+        <div class="contextual-menu-item" onclick="actions.showScreen('exercise-database')">
+            <div class="icon">🗡️</div>
+            <div class="content">
+                <div class="title">Base d'exercices</div>
+                <div class="description">Bibliothèque complète d'exercices</div>
+            </div>
+        </div>
+        <div class="contextual-menu-item" onclick="actions.showScreen('exercises')">
+            <div class="icon">⚙️</div>
+            <div class="content">
+                <div class="title">Mes exercices</div>
+                <div class="description">Créer et gérer vos exercices</div>
+            </div>
+        </div>
+        <div class="contextual-menu-item" onclick="actions.showScreen('templates')">
+            <div class="icon">📋</div>
+            <div class="content">
+                <div class="title">Modèles</div>
+                <div class="description">Séances pré-configurées</div>
+            </div>
+        </div>
+        <div class="contextual-menu-item" onclick="actions.showScreen('programmes')">
+            <div class="icon">🛡️</div>
+            <div class="content">
+                <div class="title">Programmes</div>
+                <div class="description">Programmes d'entraînement</div>
+            </div>
+        </div>
+        <div class="contextual-menu-item" onclick="actions.showScreen('program-creator')">
+            <div class="icon">🏗️</div>
+            <div class="content">
+                <div class="title">Créateur de programmes</div>
+                <div class="description">Construire vos propres programmes</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Progression -->
+    <div id="progression-menu" class="contextual-menu">
+        <div class="contextual-menu-item" onclick="actions.showScreen('analytics')">
+            <div class="icon">📊</div>
+            <div class="content">
+                <div class="title">Statistiques</div>
+                <div class="description">Analyses détaillées de performance</div>
+            </div>
+        </div>
+        <div class="contextual-menu-item" onclick="actions.showScreen('gamification')">
+            <div class="icon">🏆</div>
+            <div class="content">
+                <div class="title">Gloire</div>
+                <div class="description">Badges, défis et accomplissements</div>
+            </div>
+        </div>
+        <div class="contextual-menu-item" onclick="actions.showScreen('body')">
+            <div class="icon">🏋️</div>
+            <div class="content">
+                <div class="title">Mesures</div>
+                <div class="description">Suivi corporel et photos</div>
+            </div>
+        </div>
     </div>
 
     <!-- Modals -->
@@ -8890,8 +9513,17 @@
                 
                 appState.measurements.push(newMeasurement);
                 
+                // Debug: vérifier que les photos ont bien été copiées
+                console.log('📸 Photos temporaires:', appState.currentProgressPhotos?.length || 0);
+                console.log('📸 Photos dans la mesure:', newMeasurement.photos?.length || 0);
+                
                 this.saveData();
-                this.showNotification('🏋️ Mesures du guerrier enregistrées !', 'success');
+                
+                if (newMeasurement.photos && newMeasurement.photos.length > 0) {
+                    this.showNotification(`🏋️ Mesures enregistrées avec ${newMeasurement.photos.length} photo(s) !`, 'success');
+                } else {
+                    this.showNotification('🏋️ Mesures du guerrier enregistrées !', 'success');
+                }
                 
                 // Effacer le formulaire et photos temporaires
                 document.getElementById('measurement-date').value = '';
@@ -8907,8 +9539,13 @@
                 this.resetProgressPhotosUpload();
                 
                 render();
-                // Mettre à jour spécifiquement la galerie d'évolution
-                this.renderEvolutionGallery();
+                
+                // Forcer la mise à jour de la galerie après un court délai
+                setTimeout(() => {
+                    if (appState.currentScreen === 'body') {
+                        this.renderEvolutionGallery();
+                    }
+                }, 300);
             },
 
             // Gestion des photos de progression
@@ -8949,6 +9586,13 @@
                         
                         appState.currentProgressPhotos.push(photoData);
                         this.updateProgressPhotosPreview();
+                        
+                        // Forcer la mise à jour de la galerie si on est sur l'écran body
+                        if (appState.currentScreen === 'body') {
+                            setTimeout(() => {
+                                this.renderEvolutionGallery();
+                            }, 100);
+                        }
                     };
                     reader.readAsDataURL(file);
                 });
@@ -9050,13 +9694,19 @@
 
             renderEvolutionGallery() {
                 const galleryContainer = document.getElementById('evolution-gallery');
-                if (!galleryContainer) return;
+                if (!galleryContainer) {
+                    console.log('🖼️ Galerie non trouvée dans le DOM');
+                    return;
+                }
                 
                 // Collecter toutes les photos de toutes les mesures
                 const allPhotos = [];
+                console.log('📊 Nombre total de mesures:', appState.measurements?.length || 0);
+                
                 if (appState.measurements) {
                     appState.measurements.forEach(measurement => {
                         if (measurement.photos && measurement.photos.length > 0) {
+                            console.log(`📸 Mesure ${measurement.date} a ${measurement.photos.length} photo(s)`);
                             measurement.photos.forEach(photo => {
                                 allPhotos.push({
                                     ...photo,
@@ -9067,6 +9717,8 @@
                         }
                     });
                 }
+                
+                console.log('🖼️ Total photos collectées pour la galerie:', allPhotos.length);
                 
                 // Trier par date de mesure (plus récent en premier)
                 allPhotos.sort((a, b) => new Date(b.measurementDate) - new Date(a.measurementDate));
@@ -9104,8 +9756,6 @@
                     this.saveData();
                     this.showNotification('📊 Mesure supprimée', 'info');
                     render();
-                    // Mettre à jour spécifiquement la galerie d'évolution
-                    this.renderEvolutionGallery();
                 }
             },
 
@@ -9250,6 +9900,381 @@
 
             startCustomProgram() {
                 this.showNotification('🚧 Création de programmes personnalisés en cours de développement !', 'info');
+            },
+
+            // === MENUS CONTEXTUELS ===
+            showArsenalMenu() {
+                this.closeContextualMenus();
+                const menu = document.getElementById('arsenal-menu');
+                const overlay = document.getElementById('menu-overlay');
+                menu.classList.add('active');
+                overlay.classList.add('active');
+            },
+
+            showProgressionMenu() {
+                this.closeContextualMenus();
+                const menu = document.getElementById('progression-menu');
+                const overlay = document.getElementById('menu-overlay');
+                menu.classList.add('active');
+                overlay.classList.add('active');
+            },
+
+            closeContextualMenus() {
+                document.querySelectorAll('.contextual-menu').forEach(menu => {
+                    menu.classList.remove('active');
+                });
+                document.getElementById('menu-overlay').classList.remove('active');
+            },
+
+            // === CRÉATEUR DE PROGRAMMES ===
+            initializeProgramCreator() {
+                // Initialiser les données du créateur si nécessaire
+                if (!appState.programCreator) {
+                    appState.programCreator = {
+                        currentProgram: null,
+                        weeks: [],
+                        settings: {
+                            name: '',
+                            description: '',
+                            duration: 4,
+                            frequency: 3,
+                            level: 'beginner',
+                            goal: 'strength',
+                            progression: 'linear',
+                            restBetweenSets: 90,
+                            restBetweenExercises: 120,
+                            autoProgression: true,
+                            deloadWeek: false,
+                            warmupSets: true
+                        }
+                    };
+                }
+                
+                this.loadExercisesLibrary();
+                this.updateProgramWeeks();
+            },
+
+            loadExercisesLibrary() {
+                const libraryContainer = document.getElementById('exercises-library-list');
+                if (!libraryContainer) return;
+
+                const exercises = appState.exercises || [];
+                const searchTerm = document.getElementById('exercise-search')?.value.toLowerCase() || '';
+                const muscleFilter = document.getElementById('muscle-filter')?.value || '';
+
+                const filteredExercises = exercises.filter(exercise => {
+                    const nameMatch = exercise.name.toLowerCase().includes(searchTerm);
+                    const muscleMatch = !muscleFilter || exercise.muscle_group === muscleFilter;
+                    return nameMatch && muscleMatch;
+                });
+
+                libraryContainer.innerHTML = filteredExercises.map(exercise => {
+                    const muscleIcon = this.getMuscleIcon(exercise.muscle_group);
+                    return `
+                        <div class="draggable-exercise" draggable="true" data-exercise-id="${exercise.id}">
+                            <div class="exercise-muscle-icon ${exercise.muscle_group}">
+                                ${muscleIcon}
+                            </div>
+                            <div class="exercise-info">
+                                <div class="exercise-name">${exercise.name}</div>
+                                <div class="exercise-details">
+                                    ${exercise.muscle_group} • ${exercise.is_unilateral ? 'Unilatéral' : 'Bilatéral'}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Ajouter les événements de drag & drop
+                this.setupDragAndDrop();
+            },
+
+            getMuscleIcon(muscleGroup) {
+                const icons = {
+                    'echauffement': '🔥',
+                    'biceps': '💪',
+                    'triceps': '🔧',
+                    'epaules': '🤲',
+                    'dos': '🗂️',
+                    'pectoraux': '🦆',
+                    'jambes': '🦵',
+                    'autres': '⚡'
+                };
+                return icons[muscleGroup] || '💪';
+            },
+
+            filterExercisesLibrary() {
+                this.loadExercisesLibrary();
+            },
+
+            updateProgramWeeks() {
+                const duration = parseInt(document.getElementById('program-duration')?.value || 4);
+                const frequency = parseInt(document.getElementById('program-frequency')?.value || 3);
+                
+                // Mettre à jour le résumé
+                const totalSessions = duration * frequency;
+                document.getElementById('total-sessions').textContent = totalSessions;
+
+                // Générer les semaines
+                this.generateProgramTimeline();
+            },
+
+            generateProgramTimeline() {
+                const container = document.getElementById('program-weeks-timeline');
+                if (!container) return;
+
+                const duration = parseInt(document.getElementById('program-duration')?.value || 4);
+                const frequency = parseInt(document.getElementById('program-frequency')?.value || 3);
+
+                container.innerHTML = '';
+
+                for (let week = 1; week <= duration; week++) {
+                    const weekElement = this.createWeekElement(week, frequency);
+                    container.appendChild(weekElement);
+                }
+            },
+
+            createWeekElement(weekNumber, frequency) {
+                const weekDiv = document.createElement('div');
+                weekDiv.className = 'program-week';
+                weekDiv.innerHTML = `
+                    <div class="week-title-bar" onclick="actions.toggleWeek(${weekNumber})">
+                        <span class="week-title-text">Semaine ${weekNumber}</span>
+                        <div class="week-actions">
+                            <button class="week-action-btn" onclick="event.stopPropagation(); actions.copyWeek(${weekNumber})">📋</button>
+                            <button class="week-action-btn" onclick="event.stopPropagation(); actions.deleteWeek(${weekNumber})">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="week-sessions" id="week-${weekNumber}-sessions">
+                        ${this.generateSessionSlots(weekNumber, frequency)}
+                    </div>
+                `;
+                return weekDiv;
+            },
+
+            generateSessionSlots(weekNumber, frequency) {
+                const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+                let slotsHtml = '';
+
+                for (let day = 1; day <= frequency; day++) {
+                    slotsHtml += `
+                        <div class="session-slot" data-week="${weekNumber}" data-day="${day}">
+                            <div class="session-header">
+                                <span class="session-day-label">${days[day - 1]}</span>
+                                <button class="session-menu-btn" onclick="actions.showSessionMenu(${weekNumber}, ${day})">⋮</button>
+                            </div>
+                            <div class="session-exercises" id="week-${weekNumber}-day-${day}-exercises">
+                                <div class="empty-session">
+                                    Glissez des exercices ici
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                return slotsHtml;
+            },
+
+            setupDragAndDrop() {
+                // Gestion du drag sur les exercices
+                document.querySelectorAll('.draggable-exercise').forEach(exercise => {
+                    exercise.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('text/plain', exercise.dataset.exerciseId);
+                        exercise.classList.add('dragging');
+                    });
+
+                    exercise.addEventListener('dragend', (e) => {
+                        exercise.classList.remove('dragging');
+                    });
+                });
+
+                // Gestion du drop sur les sessions
+                document.querySelectorAll('.session-slot').forEach(slot => {
+                    slot.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        slot.classList.add('drag-over');
+                    });
+
+                    slot.addEventListener('dragleave', (e) => {
+                        slot.classList.remove('drag-over');
+                    });
+
+                    slot.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        const exerciseId = e.dataTransfer.getData('text/plain');
+                        const week = slot.dataset.week;
+                        const day = slot.dataset.day;
+                        
+                        this.addExerciseToSession(exerciseId, week, day);
+                        slot.classList.remove('drag-over');
+                    });
+                });
+            },
+
+            addExerciseToSession(exerciseId, week, day) {
+                const exercise = appState.exercises.find(e => e.id == exerciseId);
+                if (!exercise) return;
+
+                const sessionContainer = document.getElementById(`week-${week}-day-${day}-exercises`);
+                if (!sessionContainer) return;
+
+                // Supprimer le message "vide" s'il existe
+                const emptyMessage = sessionContainer.querySelector('.empty-session');
+                if (emptyMessage) {
+                    emptyMessage.remove();
+                }
+
+                // Ajouter l'exercice
+                const exerciseElement = document.createElement('div');
+                exerciseElement.className = 'planned-exercise';
+                exerciseElement.innerHTML = `
+                    <div>
+                        <div class="planned-exercise-name">${exercise.name}</div>
+                        <div class="planned-exercise-sets">3 séries • ${exercise.default_rest_time}s repos</div>
+                    </div>
+                    <button class="remove-exercise-btn" onclick="actions.removeExerciseFromSession(this)">✕</button>
+                `;
+
+                sessionContainer.appendChild(exerciseElement);
+                this.showNotification(`✅ ${exercise.name} ajouté à la semaine ${week}`, 'success');
+            },
+
+            removeExerciseFromSession(button) {
+                const exerciseElement = button.closest('.planned-exercise');
+                const sessionContainer = exerciseElement.parentElement;
+                
+                exerciseElement.remove();
+
+                // Remettre le message "vide" si plus d'exercices
+                if (sessionContainer.children.length === 0) {
+                    sessionContainer.innerHTML = '<div class="empty-session">Glissez des exercices ici</div>';
+                }
+            },
+
+            addProgramWeek() {
+                const durationInput = document.getElementById('program-duration');
+                const currentDuration = parseInt(durationInput.value);
+                durationInput.value = currentDuration + 1;
+                this.updateProgramWeeks();
+                this.showNotification('➕ Semaine ajoutée au programme', 'success');
+            },
+
+            copyWeekTemplate() {
+                this.showNotification('📋 Fonctionnalité de copie en développement', 'info');
+            },
+
+            clearProgram() {
+                if (confirm('🗑️ Effacer tout le programme ?')) {
+                    this.generateProgramTimeline();
+                    this.showNotification('🗑️ Programme effacé', 'info');
+                }
+            },
+
+            previewProgram() {
+                const preview = document.getElementById('program-preview');
+                const name = document.getElementById('program-name').value || 'Programme sans nom';
+                const duration = document.getElementById('program-duration').value;
+                const frequency = document.getElementById('program-frequency').value;
+                
+                preview.innerHTML = `
+                    <h4>${name}</h4>
+                    <p><strong>Durée :</strong> ${duration} semaines</p>
+                    <p><strong>Fréquence :</strong> ${frequency} jours/semaine</p>
+                    <p><strong>Total séances :</strong> ${duration * frequency}</p>
+                    <div style="margin-top: 16px; font-size: 14px; color: var(--text-secondary);">
+                        Programme créé avec SmartTrack
+                    </div>
+                `;
+            },
+
+            testProgram() {
+                this.showNotification('🧪 Test du programme en développement', 'info');
+            },
+
+            saveCustomProgram() {
+                const name = document.getElementById('program-name').value.trim();
+                if (!name) {
+                    this.showNotification('⚠️ Nom du programme requis', 'warning');
+                    return;
+                }
+
+                // Collecter toutes les données du programme
+                const programData = {
+                    id: Date.now(),
+                    name: name,
+                    description: document.getElementById('program-description').value,
+                    duration: parseInt(document.getElementById('program-duration').value),
+                    frequency: parseInt(document.getElementById('program-frequency').value),
+                    level: document.getElementById('program-level').value,
+                    goal: document.getElementById('program-goal').value,
+                    progression: document.querySelector('input[name="progression"]:checked').value,
+                    settings: {
+                        restBetweenSets: parseInt(document.getElementById('program-rest-sets').value),
+                        restBetweenExercises: parseInt(document.getElementById('program-rest-exercises').value),
+                        autoProgression: document.getElementById('program-auto-progression').checked,
+                        deloadWeek: document.getElementById('program-deload-week').checked,
+                        warmupSets: document.getElementById('program-warmup-sets').checked
+                    },
+                    weeks: this.collectProgramWeeks(),
+                    createdAt: new Date().toISOString(),
+                    type: 'custom'
+                };
+
+                // Sauvegarder dans les programmes personnalisés
+                if (!appState.customPrograms) {
+                    appState.customPrograms = [];
+                }
+
+                appState.customPrograms.push(programData);
+                this.saveData();
+
+                this.showNotification(`🏗️ Programme "${name}" sauvegardé !`, 'success');
+                this.showScreen('programmes');
+            },
+
+            collectProgramWeeks() {
+                const weeks = [];
+                const duration = parseInt(document.getElementById('program-duration').value);
+                
+                for (let week = 1; week <= duration; week++) {
+                    const weekData = {
+                        number: week,
+                        sessions: []
+                    };
+                    
+                    const weekContainer = document.getElementById(`week-${week}-sessions`);
+                    if (weekContainer) {
+                        const sessionSlots = weekContainer.querySelectorAll('.session-slot');
+                        sessionSlots.forEach((slot, dayIndex) => {
+                            const exercises = [];
+                            const exerciseElements = slot.querySelectorAll('.planned-exercise');
+                            
+                            exerciseElements.forEach(el => {
+                                const exerciseName = el.querySelector('.planned-exercise-name').textContent;
+                                const exercise = appState.exercises.find(e => e.name === exerciseName);
+                                if (exercise) {
+                                    exercises.push({
+                                        exerciseId: exercise.id,
+                                        sets: 3, // valeur par défaut
+                                        reps: 10, // valeur par défaut
+                                        rest: exercise.default_rest_time
+                                    });
+                                }
+                            });
+                            
+                            if (exercises.length > 0) {
+                                weekData.sessions.push({
+                                    day: dayIndex + 1,
+                                    exercises: exercises
+                                });
+                            }
+                        });
+                    }
+                    
+                    weeks.push(weekData);
+                }
+                
+                return weeks;
             },
 
             // === FONCTIONS UTILITAIRES ===
@@ -15165,6 +16190,9 @@
                 case 'program-tracking':
                     actions.renderProgramTracking();
                     break;
+                case 'program-creator':
+                    renderProgramCreator();
+                    break;
             }
         }
 
@@ -15172,6 +16200,18 @@
         function renderProgrammes() {
             // Charger l'onglet actif
             actions.switchProgramTab(appState.programTab);
+        }
+
+        // Fonction de rendu pour le créateur de programmes
+        function renderProgramCreator() {
+            // Initialiser le créateur de programmes
+            actions.initializeProgramCreator();
+            
+            // Charger la bibliothèque d'exercices
+            actions.loadExercisesLibrary();
+            
+            // Générer la timeline
+            actions.generateProgramTimeline();
         }
 
         // Fonction de rendu pour l'écran analytics
@@ -19093,7 +20133,7 @@
         };
 
         // Basculer entre les onglets de badges
-        actions.switchBadgeTab = function(category) {
+        actions.switchBadgeTab = function(event, category) {
             document.querySelectorAll('.badge-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
