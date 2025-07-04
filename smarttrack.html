@@ -3019,20 +3019,144 @@
             'forge-novice': {
                 id: 'forge-novice',
                 nom: 'FORGE DU NOVICE',
+                sous_titre: 'Chapitre I de l\'Épopée',
                 categorie: 'debutant',
                 duree_semaines: 6,
-                seances_par_semaine: 6,
+                seances_par_semaine: 3,
                 difficulte: 1,
-                objectifs: ['Initiation', 'Maîtrise des mouvements', 'Construction des bases'],
-                equipement_requis: ['Élastique léger (5-10kg)', 'Élastique moyen (15-20kg)', 'Ancrage porte'],
-                description: 'Ton baptême du feu avec les élastiques. Maîtrise les mouvements fondamentaux et construis tes premières bases de guerrier. Progression douce mais implacable.',
-                progression_type: 'linear',
+                objectifs: [
+                    'Découvrir ses vraies limites musculaires',
+                    'Maîtrise de l\'échec musculaire contrôlé', 
+                    'Construction des bases techniques',
+                    'Éveil des muscles endormis',
+                    'Préparation pour "RÉVEIL DU TITAN"'
+                ],
+                equipement_requis: [
+                    'Kit élastiques : 5kg, 10kg, 15kg, 20kg, 30kg',
+                    'Point d\'ancrage solide (porte, barre, etc.)',
+                    'Espace de 2m x 2m minimum',
+                    'Poignées confortables'
+                ],
+                description: 'Ton baptême du feu avec les élastiques. Dans la Forge du Novice, chaque série est une bataille menée jusqu\'au bout. Pas de demi-mesures, pas de compromis. Tu pousses jusqu\'à ce que tes muscles crient grâce - c\'est là que naît le guerrier.',
+                philosophie: '🔥 PHILOSOPHIE DE L\'ÉCHEC MUSCULAIRE\n"L\'échec n\'est pas une fin, c\'est le signal que tes muscles ont tout donné. C\'est là que commence la vraie croissance."\n\nCe premier chapitre de ton épopée pose les fondations de fer sur lesquelles tu construiras ta légende.',
+                progression_type: 'adaptive',
                 disponible: true,
                 image: 'forge-novice.jpg',
+                niveau_utilisateur: {
+                    'debutant_complet': {
+                        titre: 'Débutant Complet',
+                        elastiques: ['Élastique léger (5-10 kg)', 'Élastique moyen (10-15 kg)'],
+                        description: 'Échauffement et finitions avec léger, exercices principaux avec moyen'
+                    },
+                    'experience_elastique': {
+                        titre: 'Expérience Élastique',
+                        elastiques: ['Élastique moyen (10-15 kg)', 'Élastique fort (15-25 kg)'],
+                        description: 'Échauffement avec moyen, exercices composés avec fort'
+                    },
+                    'veteran_reconversion': {
+                        titre: 'Vétéran en Reconversion',
+                        elastiques: ['Élastique fort (20-30 kg)', 'Élastique très fort (30-40 kg)'],
+                        description: 'Base de travail avec fort, mouvements principaux avec très fort'
+                    }
+                },
+                resistances_par_exercice: {
+                    'jambes': {
+                        'debutant': '15-20 kg',
+                        'experimente': '25-35 kg', 
+                        'veteran': '35-50 kg'
+                    },
+                    'dos_pectoraux': {
+                        'debutant': '10-15 kg',
+                        'experimente': '20-30 kg',
+                        'veteran': '30-40 kg'
+                    },
+                    'epaules_bras': {
+                        'debutant': '5-10 kg',
+                        'experimente': '15-25 kg',
+                        'veteran': '25-35 kg'
+                    }
+                },
+                structure_batailles: {
+                    'bataille_a': {
+                        nom: 'ASSAUT DU HAUT',
+                        sous_titre: 'Forgez le torse d\'un conquérant',
+                        duree: '35-45 minutes',
+                        phase_eveil: '8-10 minutes : Rotations épaules, cercles de bras, jumping jacks',
+                        phase_destruction: '25-35 minutes : 2 exos pectoraux, 2 exos dorsaux, 1 épaules, 1 biceps, 1 triceps'
+                    },
+                    'bataille_b': {
+                        nom: 'CONQUÊTE DU BAS', 
+                        sous_titre: 'Bâtissez les piliers de votre royaume',
+                        duree: '35-45 minutes',
+                        phase_eveil: '8-10 minutes : Squats poids du corps, fentes alternées, high knees',
+                        phase_destruction: '25-35 minutes : 2 exos quadri/fessiers, 1 ischio, 1 mollets, 2-3 haut du corps'
+                    },
+                    'bataille_c': {
+                        nom: 'UNIFICATION TOTALE',
+                        sous_titre: 'Harmonisez votre armure corporelle', 
+                        duree: '35-45 minutes',
+                        phase_eveil: '8-10 minutes : Mix dynamique complet',
+                        phase_destruction: '25-35 minutes : 1 full body, 1 dos, 1 pectoraux, 2 jambes, 2 épaules/bras'
+                    }
+                },
+                progression_phases: {
+                    'phase_1': {
+                        semaines: '1-2',
+                        nom: 'RÉVÉLATION',
+                        objectif: 'Découvrir tes vraies limites',
+                        series: '2-3 jusqu\'à l\'échec',
+                        repos: '60-90 secondes',
+                        focus: 'Trouver la bonne résistance pour chaque exercice'
+                    },
+                    'phase_2': {
+                        semaines: '3-4', 
+                        nom: 'ADAPTATION',
+                        objectif: 'Repousser tes limites découvertes',
+                        series: '3 jusqu\'à l\'échec',
+                        repos: '75-90 secondes',
+                        focus: 'Augmenter résistance quand échec > 15 reps'
+                    },
+                    'phase_3': {
+                        semaines: '5-6',
+                        nom: 'FORGE ARDENTE', 
+                        objectif: 'Tremper ton acier dans le feu',
+                        series: '3-4 jusqu\'à l\'échec',
+                        repos: '90-120 secondes',
+                        focus: 'Résistance maximale, technique parfaite'
+                    }
+                },
+                principes_forge: [
+                    'TECHNIQUE AVANT TOUT : Un mouvement parfait avec 10 kg vaut mieux que mille répétitions bâclées à 20 kg',
+                    'PROGRESSION MESURÉE : Augmentation de résistance seulement si échec > 15 reps',
+                    'RÉCUPÉRATION SACRÉE : 48h minimum entre les séances, hydratation constante, 7h de sommeil minimum'
+                ],
+                regle_or: 'Si tu termines ta série en pouvant faire 3 répétitions de plus, tu n\'as pas trouvé ton échec. Augmente la résistance !',
+                heritage_forge: {
+                    'physique': 'Base musculaire tonifiée, posture de guerrier',
+                    'mental': 'Discipline de l\'échec musculaire acquise', 
+                    'technique': '15+ mouvements maîtrisés à différentes résistances',
+                    'preparation': 'Prêt pour le Chapitre II "RÉVEIL DU TITAN"'
+                },
+                transformation_garantie: [
+                    'Muscles réveillés et sculptés',
+                    'Force fonctionnelle doublée',
+                    'Endurance de base établie', 
+                    'Maîtrise des résistances 5-30 kg',
+                    'Confiance de guerrier naissant'
+                ],
+                arsenal_principal: [
+                    'Squat (15-20 kg) - Trône du roi des mouvements',
+                    'Rowing buste penché (10-15 kg) - Épée dorsale', 
+                    'Développé épaules debout (10-15 kg) - Lance pectorale',
+                    'Curl biceps (5-10 kg) - Bouclier du bras',
+                    'Extension triceps verticale (5-10 kg) - Marteau du triceps'
+                ],
                 conseils: [
-                    'Concentrez-vous sur la technique avant l\'intensité',
-                    'Respect des temps de repos pour une récupération optimale',
-                    'Progression graduelle des charges pour éviter les blessures'
+                    'Contrôle total du mouvement avec amplitude complète',
+                    'Contraction volontaire à chaque répétition',
+                    'Technique parfaite = priorité absolue sur le poids',
+                    'Ajout d\'une série en semaine 3 si maîtrise acquise',
+                    '48h de récupération minimum entre chaque bataille'
                 ],
                 seances: [
                     // Semaine 1 - Initiation
@@ -12074,6 +12198,7 @@
                 <div class="program-header">
                     <div>
                         <div class="program-title">${program.nom}</div>
+                        ${program.sous_titre ? `<div class="program-subtitle" style="font-size: 12px; color: var(--text-secondary); font-style: italic; margin-bottom: 4px;">${program.sous_titre}</div>` : ''}
                         <div class="program-category ${program.categorie}">${program.categorie.toUpperCase()}</div>
                     </div>
                 </div>
@@ -12163,9 +12288,10 @@
             }
 
             content.innerHTML = `
-                <!-- En-tête du programme -->
-                <div class="card" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; text-align: center;">
-                    <h2 style="margin-bottom: 8px;">${program.nom}</h2>
+                <!-- En-tête épique du programme -->
+                <div class="card" style="background: linear-gradient(135deg, #ff6b35 0%, #d4380d 100%); color: white; text-align: center;">
+                    <h2 style="margin-bottom: 4px;">${program.nom}</h2>
+                    ${program.sous_titre ? `<div style="font-size: 14px; margin-bottom: 12px; opacity: 0.8; font-style: italic;">${program.sous_titre}</div>` : ''}
                     <div style="font-size: 16px; margin-bottom: 16px; opacity: 0.9;">${program.description}</div>
                     <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
                         <div style="text-align: center;">
@@ -12174,7 +12300,7 @@
                         </div>
                         <div style="text-align: center;">
                             <div style="font-size: 24px; font-weight: bold;">${program.seances_par_semaine}</div>
-                            <div style="font-size: 12px; opacity: 0.8;">Séances/sem</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Batailles/sem</div>
                         </div>
                         <div style="text-align: center;">
                             <div style="font-size: 20px;">${stars}</div>
@@ -12182,6 +12308,101 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Philosophie de l'échec musculaire -->
+                ${program.philosophie ? `
+                    <div class="card" style="background: linear-gradient(135deg, #722f37 0%, #2c1810 100%); color: white; padding: 20px;">
+                        <div style="white-space: pre-line; text-align: center; line-height: 1.6;">
+                            ${program.philosophie}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Structure des Batailles -->
+                ${program.structure_batailles ? `
+                    <div class="card">
+                        <h3 style="color: #ff6b35; margin-bottom: 20px;">🎪 Structure des Batailles</h3>
+                        <div style="display: grid; gap: 16px;">
+                            ${Object.values(program.structure_batailles).map(bataille => `
+                                <div style="border: 2px solid #ff6b35; border-radius: 12px; padding: 16px; background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(212, 56, 13, 0.1) 100%);">
+                                    <h4 style="color: #ff6b35; margin-bottom: 4px;">${bataille.nom}</h4>
+                                    <p style="font-style: italic; color: var(--text-secondary); margin-bottom: 12px;">${bataille.sous_titre}</p>
+                                    <div style="font-size: 14px; line-height: 1.5;">
+                                        <p><strong>⏱️ Durée :</strong> ${bataille.duree}</p>
+                                        <p><strong>🔥 Éveil :</strong> ${bataille.phase_eveil}</p>
+                                        <p><strong>⚔️ Destruction :</strong> ${bataille.phase_destruction}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Progression Épique -->
+                ${program.progression_phases ? `
+                    <div class="card">
+                        <h3 style="color: #ff6b35; margin-bottom: 20px;">📈 Progression Épique</h3>
+                        <div style="display: grid; gap: 16px;">
+                            ${Object.values(program.progression_phases).map(phase => `
+                                <div style="border-left: 4px solid #ff6b35; padding: 16px; background: var(--background); border-radius: 8px;">
+                                    <h4 style="color: #ff6b35; margin-bottom: 8px;">Semaines ${phase.semaines} : ${phase.nom}</h4>
+                                    <div style="font-size: 14px; line-height: 1.5;">
+                                        <p><strong>🎯 Objectif :</strong> ${phase.objectif}</p>
+                                        <p><strong>💪 Séries :</strong> ${phase.series}</p>
+                                        <p><strong>⏲️ Repos :</strong> ${phase.repos}</p>
+                                        <p><strong>🔍 Focus :</strong> ${phase.focus}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Règle d'Or -->
+                ${program.regle_or ? `
+                    <div class="card" style="background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%); color: #2c1810; text-align: center; padding: 20px;">
+                        <h3 style="margin-bottom: 16px;">🎯 Règle d'Or de l'Ajustement</h3>
+                        <p style="font-size: 16px; font-weight: 600; font-style: italic; line-height: 1.4;">
+                            "${program.regle_or}"
+                        </p>
+                    </div>
+                ` : ''}
+
+                <!-- Arsenal de la Forge -->
+                ${program.arsenal_principal ? `
+                    <div class="card">
+                        <h3 style="color: #ff6b35; margin-bottom: 20px;">⚡ Arsenal de la Forge</h3>
+                        <div style="display: grid; gap: 8px;">
+                            ${program.arsenal_principal.map(arme => `
+                                <div style="padding: 12px; background: var(--background); border-radius: 8px; border-left: 4px solid #ff6b35;">
+                                    ${arme}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Niveaux d'utilisateur -->
+                ${program.niveau_utilisateur ? `
+                    <div class="card">
+                        <h3 style="color: #ff6b35; margin-bottom: 20px;">⚖️ Système de Résistance par Niveau</h3>
+                        <div style="display: grid; gap: 16px;">
+                            ${Object.values(program.niveau_utilisateur).map(niveau => `
+                                <div style="border: 2px solid var(--secondary); border-radius: 12px; padding: 16px;">
+                                    <h4 style="color: var(--secondary); margin-bottom: 8px;">${niveau.titre}</h4>
+                                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">${niveau.description}</p>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                        ${niveau.elastiques.map(elastique => `
+                                            <span style="background: var(--secondary); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                                ${elastique}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
 
                 <!-- Informations détaillées -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
@@ -12211,28 +12432,56 @@
 
                 ${planningPreview}
 
-                <!-- Progression attendue -->
-                <div class="card">
-                    <h3>📈 Progression attendue</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
-                        <div style="text-align: center; padding: 16px; background: var(--background); border-radius: 8px;">
-                            <div style="font-size: 18px; color: var(--secondary);">+15-25%</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Force générale</div>
+                <!-- Héritage de la Forge -->
+                ${program.heritage_forge ? `
+                    <div class="card">
+                        <h3 style="color: #ff6b35; margin-bottom: 20px;">🏆 Héritage de la Forge</h3>
+                        <div style="display: grid; gap: 16px; margin-bottom: 20px;">
+                            ${Object.entries(program.heritage_forge).map(([key, value]) => `
+                                <div style="display: flex; align-items: center; padding: 12px; background: var(--background); border-radius: 8px; border-left: 4px solid #ffd700;">
+                                    <div style="font-weight: 600; text-transform: capitalize; color: #ffd700; margin-right: 12px; min-width: 80px;">
+                                        ${key === 'physique' ? '💪' : key === 'mental' ? '🧠' : key === 'technique' ? '⚡' : '🎯'} ${key.charAt(0).toUpperCase() + key.slice(1)}:
+                                    </div>
+                                    <div>${value}</div>
+                                </div>
+                            `).join('')}
                         </div>
-                        <div style="text-align: center; padding: 16px; background: var(--background); border-radius: 8px;">
-                            <div style="font-size: 18px; color: var(--secondary);">+10-20%</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Masse musculaire</div>
-                        </div>
-                        <div style="text-align: center; padding: 16px; background: var(--background); border-radius: 8px;">
-                            <div style="font-size: 18px; color: var(--secondary);">+30-50%</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Endurance</div>
-                        </div>
-                        <div style="text-align: center; padding: 16px; background: var(--background); border-radius: 8px;">
-                            <div style="font-size: 18px; color: var(--secondary);">+40-60%</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Technique</div>
+                        
+                        ${program.transformation_garantie ? `
+                            <h4 style="color: #ff6b35; margin-bottom: 16px;">🔥 Transformation Garantie</h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                                ${program.transformation_garantie.map(transformation => `
+                                    <div style="text-align: center; padding: 16px; background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(212, 56, 13, 0.1) 100%); border-radius: 8px; border: 1px solid #ff6b35;">
+                                        <div style="font-size: 14px; font-weight: 600; color: #ff6b35;">${transformation}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                ` : `
+                    <!-- Progression attendue (pour les autres programmes) -->
+                    <div class="card">
+                        <h3>📈 Progression attendue</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+                            <div style="text-align: center; padding: 16px; background: var(--background); border-radius: 8px;">
+                                <div style="font-size: 18px; color: var(--secondary);">+15-25%</div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">Force générale</div>
+                            </div>
+                            <div style="text-align: center; padding: 16px; background: var(--background); border-radius: 8px;">
+                                <div style="font-size: 18px; color: var(--secondary);">+10-20%</div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">Masse musculaire</div>
+                            </div>
+                            <div style="text-align: center; padding: 16px; background: var(--background); border-radius: 8px;">
+                                <div style="font-size: 18px; color: var(--secondary);">+30-50%</div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">Endurance</div>
+                            </div>
+                            <div style="text-align: center; padding: 16px; background: var(--background); border-radius: 8px;">
+                                <div style="font-size: 18px; color: var(--secondary);">+40-60%</div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">Technique</div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                `}
 
                 <!-- Bouton d'action -->
                 <div class="card" style="text-align: center;">
