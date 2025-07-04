@@ -3776,8 +3776,342 @@
                                 'Ton endurance augmente-t-elle ?'
                             ]
                         }
+                    },
+                    
+                    // ⚔️ SEMAINE 3 - ADAPTATION ET ÉVOLUTION (Début Phase 2)
+                    {
+                        id: 's3_bataille_a',
+                        semaine: 3,
+                        jour: 1,
+                        jour_semaine: 'Lundi',
+                        nom: 'Bataille A - Assaut du Haut Évolutif',
+                        type: 'strength',
+                        duree_minutes: 55,
+                        difficulte: 3,
+                        philosophie: 'L\'adaptation commence. Ton corps n\'est plus celui d\'il y a deux semaines. Nouveaux défis, nouvelles armes, nouvelle intensité.',
+                        phase_eveil: {
+                            duree: '8-10 minutes',
+                            exercices: [
+                                'Rotations épaules - 15 rotations avant/arrière',
+                                'Cercles de bras - 15 cercles petits/grands', 
+                                'Étirements dynamiques - 45 secondes chaque bras',
+                                'Jumping jacks - 1 minute',
+                                'Montées de genoux - 30 répétitions'
+                            ]
+                        },
+                        exercices: [
+                            {
+                                nom: 'Développé épaules debout',
+                                groupe: 'PECTORAUX - "Cuirasse forgée"',
+                                resistance: '12-18 kg (progression de +2-3 kg)',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Focus sur la sensation de brûlure, chaque rep compte',
+                                charge_base: 15,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Développé incliné (poulie basse)',
+                                groupe: 'PECTORAUX - "Cuirasse forgée"',
+                                resistance: '12-18 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'ÉVOLUTION : Angle 45°, sensation dans la partie haute des pecs',
+                                evolution: 'Passage à l\'incliné pour cibler différemment',
+                                charge_base: 15,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Rowing buste penché (prise large)',
+                                groupe: 'DOS - "Bouclier de légende"',
+                                resistance: '12-18 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Tire vers le sternum haut, squeeze 1 seconde',
+                                evolution: 'Prise large pour cibler les rhomboïdes',
+                                charge_base: 15,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Face Pull',
+                                groupe: 'DOS - "Bouclier de légende"',
+                                resistance: '8-12 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Coudes hauts, sépare les mains en fin de mouvement',
+                                evolution: 'Remplacement du tirage poulie basse',
+                                charge_base: 10,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Cuban press',
+                                groupe: 'ÉPAULES - "Couronne de fer"',
+                                resistance: '5-10 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Rotation externe puis press, contrôle total',
+                                evolution: 'Mouvement plus complexe que les élévations',
+                                charge_base: 7,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Curl biceps face à la porte',
+                                groupe: 'BICEPS - "Lames aiguisées"',
+                                resistance: '8-12 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Corps penché en arrière, curl vers le front',
+                                evolution: 'Angle différent pour nouvelle stimulation',
+                                charge_base: 10,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Extension triceps (poulie haute)',
+                                groupe: 'TRICEPS - "Marteaux de titan"',
+                                resistance: '8-12 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Coudes fixes, extension complète',
+                                evolution: 'Changement d\'angle pour variation',
+                                charge_base: 10,
+                                progression_type: 'adaptive'
+                            }
+                        ]
+                    },
+                    {
+                        id: 's3_bataille_b',
+                        semaine: 3,
+                        jour: 3,
+                        jour_semaine: 'Mercredi',
+                        nom: 'Bataille B - Conquête du Bas Avancée',
+                        type: 'strength',
+                        duree_minutes: 50,
+                        difficulte: 3,
+                        philosophie: 'L\'adaptation commence. Ton corps n\'est plus celui d\'il y a deux semaines. Nouveaux défis, nouvelles armes, nouvelle intensité.',
+                        phase_eveil: {
+                            duree: '8-10 minutes',
+                            exercices: [
+                                'Squats au poids du corps - 25 répétitions',
+                                'Fentes alternées - 15 de chaque jambe',
+                                'High knees - 1 minute',
+                                'Pas chassés - 30 répétitions',
+                                'Rotations de hanches - 10 chaque direction'
+                            ]
+                        },
+                        exercices: [
+                            {
+                                nom: 'Squat sumo',
+                                groupe: 'QUADRICEPS/FESSIERS - "Piliers immortels"',
+                                resistance: '18-25 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Pieds écartés, pointes vers l\'extérieur, descente profonde',
+                                evolution: 'Stance large pour cibler différemment',
+                                charge_base: 21,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Fentes bulgares',
+                                groupe: 'QUADRICEPS/FESSIERS - "Piliers immortels"',
+                                resistance: '15-20 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec (chaque jambe)',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Pied arrière surélevé, tout le poids sur la jambe avant',
+                                evolution: 'Version unilatérale plus difficile',
+                                charge_base: 17,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Leg curl',
+                                groupe: 'ISCHIO-JAMBIERS - "Câbles de puissance"',
+                                resistance: '15-20 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'À plat ventre, ramène les talons vers les fessiers',
+                                evolution: 'Mouvement plus isolé',
+                                charge_base: 17,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Extensions mollets unilatérales',
+                                groupe: 'MOLLETS - "Ressorts de diamant"',
+                                resistance: '10-15 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec (chaque jambe)',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Une jambe à la fois, amplitude maximale',
+                                evolution: 'Unilatéral pour équilibrage',
+                                charge_base: 12,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Développé joint (poulie moyenne)',
+                                groupe: 'HAUT DU CORPS (Récupération active)',
+                                resistance: '8-12 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60 secondes',
+                                conseil: 'Bras joints, presse vers l\'avant',
+                                evolution: 'Changement de hauteur d\'ancrage',
+                                charge_base: 10,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Rowing buste penché (prise serrée)',
+                                groupe: 'HAUT DU CORPS (Récupération active)',
+                                resistance: '8-12 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60 secondes',
+                                conseil: 'Coudes près du corps, tire vers le ventre',
+                                evolution: 'Prise serrée pour les dorsaux',
+                                charge_base: 10,
+                                progression_type: 'adaptive'
+                            }
+                        ]
+                    },
+                    {
+                        id: 's3_bataille_c',
+                        semaine: 3,
+                        jour: 5,
+                        jour_semaine: 'Vendredi',
+                        nom: 'Bataille C - Unification Perfectionnée',
+                        type: 'fullbody',
+                        duree_minutes: 60,
+                        difficulte: 3,
+                        philosophie: 'L\'adaptation commence. Ton corps n\'est plus celui d\'il y a deux semaines. Nouveaux défis, nouvelles armes, nouvelle intensité.',
+                        phase_eveil: {
+                            duree: '8-10 minutes',
+                            exercices: [
+                                'Planche - 45 secondes',
+                                'Mountain climbers - 30 répétitions',
+                                'Burpees - 8 répétitions',
+                                'Squats sautés - 15 répétitions',
+                                'Étirements dynamiques - 3 minutes'
+                            ]
+                        },
+                        exercices: [
+                            {
+                                nom: 'Squat swing',
+                                groupe: 'FULL BODY - "Symphonie du guerrier"',
+                                resistance: '20-25 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '75 secondes',
+                                conseil: 'Squat + balancement, rythme soutenu',
+                                evolution: 'Mouvement balistique plus complexe',
+                                charge_base: 22,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Tirage vertical (prise serrée)',
+                                groupe: 'DOS - "Muraille dorsale"',
+                                resistance: '12-18 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Mains rapprochées, tire vers le sternum',
+                                evolution: 'Prise serrée pour variation',
+                                charge_base: 15,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Développé décliné',
+                                groupe: 'PECTORAUX - "Bouclier frontal"',
+                                resistance: '12-18 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Ancrage haut, presse vers le bas et l\'avant',
+                                evolution: 'Angle décliné pour partie basse',
+                                charge_base: 15,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Hip thrust',
+                                groupe: 'JAMBES - "Fondations dynamiques"',
+                                resistance: '20-25 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Resistance augmentée, contraction maximale',
+                                charge_base: 22,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Soulevé de terre',
+                                groupe: 'JAMBES - "Fondations dynamiques"',
+                                resistance: '20-25 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Dos droit, hanches en arrière, remontée puissante',
+                                evolution: 'Mouvement complet jambes tendues',
+                                charge_base: 22,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Développé arnold',
+                                groupe: 'ÉPAULES/BRAS - "Arsenal perfectionné"',
+                                resistance: '8-12 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Rotation + press, amplitude complète',
+                                evolution: 'Mouvement complexe combiné',
+                                charge_base: 10,
+                                progression_type: 'adaptive'
+                            },
+                            {
+                                nom: 'Curl biceps avec poignée',
+                                groupe: 'ÉPAULES/BRAS - "Arsenal perfectionné"',
+                                resistance: '8-12 kg',
+                                series: 3,
+                                repetitions: 'jusqu\'à l\'échec',
+                                temps_repos: '60-75 secondes',
+                                conseil: 'Poignées neutres, concentration maximale',
+                                evolution: 'Prise différente pour stimulation',
+                                charge_base: 10,
+                                progression_type: 'adaptive'
+                            }
+                        ],
+                        revolution_semaine: {
+                            grandes_evolutions: [
+                                'Exercices avancés : Introduction de mouvements plus complexes',
+                                'Résistances augmentées : +2-5 kg selon les groupes musculaires',
+                                'Temps de repos optimisés : 60-75 secondes pour intensité maximale',
+                                'Angles variés : Stimulation musculaire sous de nouveaux angles'
+                            ],
+                            focus_mental: [
+                                'Connexion muscle-cerveau : Ressens chaque fibre qui travaille',
+                                'Qualité vs quantité : Mieux vaut 8 reps parfaites que 15 bâclées',
+                                'Progression intelligente : Ton corps s\'adapte, tes entraînements évoluent'
+                            ],
+                            signaux_progression: [
+                                'Force : Tu pousses plus lourd qu\'en semaine 1',
+                                'Endurance : Tu récupères plus vite entre les séries',
+                                'Technique : Tes mouvements sont plus fluides et précis',
+                                'Mental : Tu anticipes l\'échec musculaire et l\'acceptes'
+                            ],
+                            nouvelles_metriques: [
+                                'Adaptation aux nouveaux exercices (facile/difficile)',
+                                'Gestion de la fatigue avec repos réduits',
+                                'Sensation musculaire sur les nouvelles variantes',
+                                'Progression générale depuis le début'
+                            ]
+                        }
                     }
-                    // ... Semaines 3-6 suivront le même format avec progression des phases
+                    // ... Semaines 4-6 suivront le même format avec progression des phases
                 ]
             },
             
