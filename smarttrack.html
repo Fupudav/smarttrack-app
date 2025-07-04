@@ -9380,6 +9380,9 @@
                     difficulty: null
                 };
                 
+                // Ajouter automatiquement des exercices d'échauffement
+                this.addWarmupExercises();
+                
                 this.showScreen('preparation');
                 this.showNotification('⚔️ Nouvelle bataille initiée !', 'success');
             },
@@ -9393,6 +9396,71 @@
                 } else {
                     this.startNewSession();
                 }
+            },
+
+            addWarmupExercises() {
+                // Ajouter automatiquement des exercices d'échauffement recommandés
+                const warmupExercises = [
+                    {
+                        name: 'Jumping Jacks',
+                        muscle_group: 'echauffement',
+                        category: 'warmup',
+                        exercise_mode: 'time',
+                        default_duration: 30,
+                        default_rest_time: 30
+                    },
+                    {
+                        name: 'Rotations épaules',
+                        muscle_group: 'echauffement',
+                        category: 'warmup',
+                        exercise_mode: 'time',
+                        default_duration: 30,
+                        default_rest_time: 30
+                    },
+                    {
+                        name: 'Montées de genoux',
+                        muscle_group: 'echauffement',
+                        category: 'warmup',
+                        exercise_mode: 'time',
+                        default_duration: 30,
+                        default_rest_time: 30
+                    }
+                ];
+
+                warmupExercises.forEach(warmupEx => {
+                    // Chercher l'exercice dans la base de données
+                    let exercise = appState.exercises.find(e => 
+                        e.name === warmupEx.name && e.muscle_group === 'echauffement'
+                    );
+
+                    // Si l'exercice n'existe pas, le créer
+                    if (!exercise) {
+                        exercise = {
+                            id: Date.now() + Math.random(),
+                            name: warmupEx.name,
+                            muscle_group: warmupEx.muscle_group,
+                            category: warmupEx.category,
+                            exercise_type: 'bodyweight',
+                            exercise_mode: warmupEx.exercise_mode,
+                            default_duration: warmupEx.default_duration,
+                            default_rest_time: warmupEx.default_rest_time,
+                            anchor_point: 'none',
+                            is_unilateral: false
+                        };
+                        appState.exercises.push(exercise);
+                    }
+
+                    // Ajouter à la session courante
+                    appState.currentSession.exercises.push({
+                        exercise_id: exercise.id,
+                        planned_sets: 1,
+                        rest_time: exercise.default_rest_time || 30,
+                        duration: exercise.default_duration || 30,
+                        sets: []
+                    });
+                });
+
+                this.saveData();
             },
 
             showTemplates() {
@@ -9890,9 +9958,48 @@
                     appState.templates = [];
                     appState.settings = { theme: 'light' };
                     
+                    // Réinitialiser la gamification
+                    appState.gamification = {
+                        level: 1,
+                        xp: 0,
+                        title: 'Apprenti Guerrier',
+                        badges: [],
+                        currentWeeklyChallenge: null
+                    };
+                    
                     this.showNotification('🗑️ Toutes les données ont été effacées !', 'info');
                     render();
                 }
+            },
+
+            // Fonction d'optimisation des performances
+            optimizePerformance() {
+                // Nettoyer le cache si trop volumineux
+                if (smartCache.size > 100) {
+                    smartCache.clear();
+                }
+                
+                // Limiter les sessions stockées (garder les 100 dernières)
+                if (appState.sessions.length > 100) {
+                    appState.sessions = appState.sessions.slice(-100);
+                    this.saveData();
+                }
+                
+                // Optimiser les photos (compression basique)
+                if (appState.measurements) {
+                    appState.measurements.forEach(measurement => {
+                        if (measurement.photos && measurement.photos.length > 0) {
+                            measurement.photos.forEach(photo => {
+                                // Vérifier la taille des photos et alerter si nécessaire
+                                if (photo.size > 2 * 1024 * 1024) { // 2MB
+                                    console.warn(`Photo ${photo.name} est volumineuse (${Math.round(photo.size / 1024 / 1024)}MB)`);
+                                }
+                            });
+                        }
+                    });
+                }
+                
+                this.showNotification('⚡ Performances optimisées !', 'success');
             },
 
             startCustomProgram() {
@@ -12135,6 +12242,10 @@
                 if (exerciseTimer.isRunning) {
                     exerciseTimer.stop();
                 }
+                
+                // Vérifier les badges et défis après la séance
+                this.checkBadgeUnlocks();
+                this.checkWeeklyChallengeProgress();
                 
                 // Nettoyer les variables de session en cours
                 appState.liveSession = null;
