@@ -498,6 +498,501 @@
             color: var(--text-secondary);
         }
 
+        /* === STYLES PROGRAMMES === */
+        .program-tabs {
+            display: flex;
+            background: var(--surface);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            padding: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .program-subtabs {
+            display: flex;
+            margin-bottom: 16px;
+            gap: 8px;
+        }
+
+        .subtab-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--border);
+            background: var(--surface);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .subtab-btn.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(0, 122, 255, 0.1);
+        }
+
+        .subtab-content {
+            display: none;
+        }
+
+        .subtab-content.active {
+            display: block;
+        }
+
+        .story-intro {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 24px;
+        }
+
+        .progress-indicator {
+            margin-top: 20px;
+        }
+
+        .chapter-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            max-width: 300px;
+            margin: 0 auto 8px;
+        }
+
+        .chapter {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .chapter.completed {
+            background: rgba(52, 199, 89, 0.9);
+            box-shadow: 0 0 15px rgba(52, 199, 89, 0.4);
+        }
+
+        .chapter.locked {
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0.6;
+        }
+
+        .chapter-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .program-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .program-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .program-card.unavailable {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .program-card.unavailable:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: var(--border);
+        }
+
+        .program-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .program-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .program-category {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .program-category.debutant {
+            background: #34C75920;
+            color: #34C759;
+        }
+
+        .program-category.intermediaire {
+            background: #FF950020;
+            color: #FF9500;
+        }
+
+        .program-category.avance {
+            background: #FF3B3020;
+            color: #FF3B30;
+        }
+
+        .program-category.legende {
+            background: #AF52DE20;
+            color: #AF52DE;
+        }
+
+        .program-category.specifique {
+            background: #007AFF20;
+            color: #007AFF;
+        }
+
+        .program-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .program-stat {
+            text-align: center;
+            padding: 8px;
+            background: var(--background);
+            border-radius: 8px;
+        }
+
+        .program-stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .program-stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .program-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        .program-objectives {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .objective-tag {
+            font-size: 11px;
+            padding: 4px 8px;
+            background: var(--primary);
+            color: white;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .program-difficulty {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .difficulty-stars {
+            color: #FFD60A;
+            font-size: 16px;
+        }
+
+        .unavailable-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--warning);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .progress-bar-container {
+            margin: 16px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 0.6s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .week-accordion {
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .week-header {
+            padding: 16px;
+            background: var(--surface);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .week-header:hover {
+            background: var(--background);
+        }
+
+        .week-header.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .week-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .week-progress {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .week-header.active .week-progress {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .week-content {
+            display: none;
+            padding: 0;
+            background: var(--background);
+        }
+
+        .week-content.active {
+            display: block;
+        }
+
+        .session-item {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .session-item:last-child {
+            border-bottom: none;
+        }
+
+        .session-item:hover {
+            background: var(--surface);
+        }
+
+        .session-item.completed {
+            background: #34C75920;
+        }
+
+        .session-item.current {
+            background: #FF950020;
+            border-left: 4px solid #FF9500;
+        }
+
+        .session-day {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .session-name {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .session-duration {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .session-status {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .session-status.completed {
+            background: #34C759;
+            color: white;
+        }
+
+        .session-status.current {
+            background: #FF9500;
+            color: white;
+        }
+
+        .session-status.pending {
+            background: var(--border);
+            color: var(--text-secondary);
+        }
+
+        .quick-action-btn {
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 8px 0;
+        }
+
+        .quick-action-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .quick-action-secondary {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        .training-days {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .calendar-preview {
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--background);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .program-stats {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+            
+            .program-stat {
+                padding: 6px;
+            }
+            
+            .program-stat-value {
+                font-size: 14px;
+            }
+            
+            .program-stat-label {
+                font-size: 10px;
+            }
+            
+            .chapter-bar {
+                max-width: 250px;
+            }
+            
+            .chapter {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+            
+            .training-days {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         .image-placeholder {
             width: 100%;
             height: 200px;
@@ -1812,6 +2307,117 @@
             <div id="exercise-database-results"></div>
         </div>
 
+        <!-- Écran 11: Programmes Prédéfinis -->
+        <div id="screen-programmes" class="screen">
+            <div class="header">
+                <button class="btn btn-small btn-secondary" onclick="actions.showScreen('dashboard')">← Retour</button>
+                <h1>🏆 Programmes</h1>
+                <div></div>
+            </div>
+            
+            <!-- Onglets Programmes -->
+            <div class="program-tabs">
+                <button class="tab-btn active" onclick="actions.switchProgramTab('predefined')">
+                    📚 Programmes prédéfinis
+                </button>
+                <button class="tab-btn" onclick="actions.switchProgramTab('custom')">
+                    ✏️ Mes programmes
+                </button>
+            </div>
+
+            <!-- Contenu Programmes Prédéfinis -->
+            <div id="tab-predefined" class="tab-content active">
+                <!-- Sous-onglet Une longue histoire vers la gloire -->
+                <div class="program-subtabs">
+                    <button class="subtab-btn active" onclick="actions.switchProgramSubtab('histoire-gloire')">
+                        🏰 Une longue histoire vers la gloire
+                    </button>
+                    <button class="subtab-btn" onclick="actions.switchProgramSubtab('autres')">
+                        🎯 Autres programmes
+                    </button>
+                </div>
+
+                <div id="subtab-histoire-gloire" class="subtab-content active">
+                    <div class="story-intro card">
+                        <h3>⚔️ Une longue histoire vers la gloire</h3>
+                        <p>Embarquez dans une épopée légendaire où chaque programme vous transforme en guerrier des temps modernes. De novice à légende immortelle, forgez votre corps et votre mental avec la puissance des élastiques SmartWorkout.</p>
+                        <div class="progress-indicator">
+                            <div class="chapter-bar">
+                                <div class="chapter completed">🔰</div>
+                                <div class="chapter locked">⚔️</div>
+                                <div class="chapter locked">🏺</div>
+                                <div class="chapter locked">👑</div>
+                                <div class="chapter locked">🎯</div>
+                            </div>
+                            <div class="chapter-labels">
+                                <span>Débutant</span>
+                                <span>Intermédiaire</span>
+                                <span>Avancé</span>
+                                <span>Légende</span>
+                                <span>Spécifique</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="programs-list-histoire"></div>
+                </div>
+
+                <div id="subtab-autres" class="subtab-content">
+                    <div class="card">
+                        <h3>🎯 Programmes spécialisés</h3>
+                        <p>Programmes ciblés pour des objectifs spécifiques : force, endurance, perte de poids, rééducation...</p>
+                    </div>
+                    <div id="programs-list-autres"></div>
+                </div>
+            </div>
+
+            <!-- Contenu Mes Programmes -->
+            <div id="tab-custom" class="tab-content">
+                <div class="card">
+                    <h3>✏️ Créer un programme personnalisé</h3>
+                    <button class="btn btn-primary btn-full" onclick="actions.startCustomProgram()">
+                        ➕ Nouveau programme
+                    </button>
+                </div>
+                <div id="custom-programs-list"></div>
+            </div>
+        </div>
+
+        <!-- Écran 12: Présentation de Programme -->
+        <div id="screen-program-details" class="screen">
+            <div class="header">
+                <button class="btn btn-small btn-secondary" onclick="actions.showScreen('programmes')">← Retour</button>
+                <h1 id="program-details-title">Programme</h1>
+                <div></div>
+            </div>
+            
+            <div id="program-details-content"></div>
+        </div>
+
+        <!-- Écran 13: Programme Suivi -->
+        <div id="screen-program-tracking" class="screen">
+            <div class="header">
+                <button class="btn btn-small btn-secondary" onclick="actions.showScreen('dashboard')">← Retour</button>
+                <h1 id="program-tracking-title">Mon Programme</h1>
+                <button class="btn btn-small btn-secondary" onclick="actions.showProgramSettings()">⚙️</button>
+            </div>
+            
+            <!-- Progression globale -->
+            <div class="card">
+                <div id="program-progress-header"></div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="program-progress-fill"></div>
+                    </div>
+                    <div class="progress-text" id="program-progress-text">0% complété</div>
+                </div>
+                <div id="program-quick-actions"></div>
+            </div>
+
+            <!-- Semaines (accordéon) -->
+            <div id="program-weeks-container"></div>
+        </div>
+
         <!-- Navigation -->
         <nav class="nav-bar">
             <div class="nav-item active" onclick="actions.showScreen('dashboard')">
@@ -1821,6 +2427,10 @@
             <div class="nav-item" onclick="actions.goToSession()">
                 <div>⚡</div>
                 <div>Séance</div>
+            </div>
+            <div class="nav-item" onclick="actions.showScreen('programmes')">
+                <div>🏆</div>
+                <div>Programmes</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('exercise-database')">
                 <div>💪</div>
@@ -2036,6 +2646,100 @@
                 <button class="btn btn-secondary" onclick="actions.exportTags()">📤 Exporter tags</button>
                 <button class="btn btn-secondary" onclick="actions.importTags()" style="margin-left: 8px;">📥 Importer tags</button>
                 <button class="btn btn-danger" onclick="actions.resetAllTags()" style="float: right;">🗑️ Réinitialiser tout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de sélection de date pour programme -->
+    <div id="program-date-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📅 Démarrer le programme</h3>
+                <button class="close-btn" onclick="actions.closeModal('program-date-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p id="program-date-description">À partir de quelle date souhaitez-vous débuter ce programme ?</p>
+                <div class="input-group">
+                    <label>Date de début</label>
+                    <input type="date" id="program-start-date" class="input" onchange="actions.updateProgramEndDate()">
+                </div>
+                <div class="input-group">
+                    <label>Date de fin prévue</label>
+                    <input type="date" id="program-end-date" class="input" readonly>
+                </div>
+                <div class="calendar-preview" id="program-calendar-preview"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="actions.closeModal('program-date-modal')">Annuler</button>
+                <button class="btn btn-primary" onclick="actions.confirmStartProgram()" id="confirm-program-btn">
+                    🚀 Commencer le programme
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal paramètres de programme -->
+    <div id="program-settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚙️ Paramètres du programme</h3>
+                <button class="close-btn" onclick="actions.closeModal('program-settings-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Type de progression</label>
+                    <select id="program-progression-type" class="select">
+                        <option value="linear">Progression linéaire (+2.5kg/semaine)</option>
+                        <option value="step">Progression par paliers (+5kg toutes les 2 semaines)</option>
+                        <option value="adaptive">Progression adaptative (basée sur RPE)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Notifications</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="program-notifications" class="checkbox">
+                        <label for="program-notifications">Recevoir des rappels quotidiens</label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Jours d'entraînement</label>
+                    <div class="training-days">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="day-monday" class="checkbox">
+                            <label for="day-monday">Lundi</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="day-tuesday" class="checkbox">
+                            <label for="day-tuesday">Mardi</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="day-wednesday" class="checkbox">
+                            <label for="day-wednesday">Mercredi</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="day-thursday" class="checkbox">
+                            <label for="day-thursday">Jeudi</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="day-friday" class="checkbox">
+                            <label for="day-friday">Vendredi</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="day-saturday" class="checkbox">
+                            <label for="day-saturday">Samedi</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="day-sunday" class="checkbox">
+                            <label for="day-sunday">Dimanche</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="actions.closeModal('program-settings-modal')">Annuler</button>
+                <button class="btn btn-primary" onclick="actions.saveProgramSettings()">
+                    💾 Sauvegarder
+                </button>
             </div>
         </div>
     </div>
@@ -2307,7 +3011,302 @@
         };
 
         // Historique des recherches (stocké en localStorage)
-        let searchHistory = [];
+        let searchHistory = JSON.parse(localStorage.getItem('exerciseSearchHistory') || '[]');
+
+        // === BASE DE DONNÉES DES PROGRAMMES PRÉDÉFINIS ===
+        const PREDEFINED_PROGRAMS = {
+            // 🔰 DÉBUTANT (6-8 semaines)
+            'forge-novice': {
+                id: 'forge-novice',
+                nom: 'FORGE DU NOVICE',
+                categorie: 'debutant',
+                duree_semaines: 6,
+                seances_par_semaine: 6,
+                difficulte: 1,
+                objectifs: ['Initiation', 'Maîtrise des mouvements', 'Construction des bases'],
+                equipement_requis: ['Élastique léger (5-10kg)', 'Élastique moyen (15-20kg)', 'Ancrage porte'],
+                description: 'Ton baptême du feu avec les élastiques. Maîtrise les mouvements fondamentaux et construis tes premières bases de guerrier. Progression douce mais implacable.',
+                progression_type: 'linear',
+                disponible: true,
+                image: 'forge-novice.jpg',
+                conseils: [
+                    'Concentrez-vous sur la technique avant l\'intensité',
+                    'Respect des temps de repos pour une récupération optimale',
+                    'Progression graduelle des charges pour éviter les blessures'
+                ],
+                seances: [
+                    // Semaine 1 - Initiation
+                    {
+                        id: 's1_j1',
+                        semaine: 1,
+                        jour: 1,
+                        nom: 'Découverte des mouvements',
+                        duree_minutes: 30,
+                        exercices: [
+                            { nom: 'Échauffement - Cercles de bras', series: 1, repetitions: '30 sec', temps_repos: 30, charge_base: 0, progression_type: 'none' },
+                            { nom: 'Curl biceps', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
+                            { nom: 'Extension triceps (poulie haute)', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
+                            { nom: 'Élévations latérales', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
+                            { nom: 'Tirage horizontal unilatéral', series: 2, repetitions: '8-10 chaque bras', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
+                            { nom: 'Squat', series: 2, repetitions: '8-10', temps_repos: 90, charge_base: 20, progression_type: 'linear' }
+                        ]
+                    },
+                    {
+                        id: 's1_j2',
+                        semaine: 1,
+                        jour: 2,
+                        nom: 'Renforcement fondamental',
+                        duree_minutes: 35,
+                        exercices: [
+                            { nom: 'Échauffement - Jumping Jacks', series: 1, repetitions: '30 sec', temps_repos: 30, charge_base: 0, progression_type: 'none' },
+                            { nom: 'Développé debout (poulie moyenne)', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
+                            { nom: 'Rowing buste penché', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 15, progression_type: 'linear' },
+                            { nom: 'Fentes', series: 2, repetitions: '6-8 chaque jambe', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
+                            { nom: 'Curl marteau', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
+                            { nom: 'Planche', series: 2, repetitions: '15-20 sec', temps_repos: 45, charge_base: 0, progression_type: 'time' }
+                        ]
+                    },
+                    {
+                        id: 's1_j3',
+                        semaine: 1,
+                        jour: 3,
+                        nom: 'Coordination et équilibre',
+                        duree_minutes: 30,
+                        exercices: [
+                            { nom: 'Échauffement - Rotations épaules', series: 1, repetitions: '30 sec', temps_repos: 30, charge_base: 0, progression_type: 'none' },
+                            { nom: 'Face Pull', series: 2, repetitions: '10-12', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
+                            { nom: 'Élévations frontales', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
+                            { nom: 'Extension triceps verticale', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
+                            { nom: 'Hip thrust', series: 2, repetitions: '10-12', temps_repos: 60, charge_base: 25, progression_type: 'linear' },
+                            { nom: 'Étirements dynamiques', series: 1, repetitions: '2 min', temps_repos: 0, charge_base: 0, progression_type: 'none' }
+                        ]
+                    },
+                    {
+                        id: 's1_j4',
+                        semaine: 1,
+                        jour: 4,
+                        nom: 'Développement musculaire',
+                        duree_minutes: 35,
+                        exercices: [
+                            { nom: 'Échauffement - High knees', series: 1, repetitions: '30 sec', temps_repos: 30, charge_base: 0, progression_type: 'none' },
+                            { nom: 'Squat sumo', series: 2, repetitions: '8-10', temps_repos: 90, charge_base: 20, progression_type: 'linear' },
+                            { nom: 'Développé incliné', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
+                            { nom: 'Tirage vertical', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 15, progression_type: 'linear' },
+                            { nom: 'Curl biceps (poulie basse)', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
+                            { nom: 'Kickback triceps', series: 2, repetitions: '8-10 chaque bras', temps_repos: 60, charge_base: 5, progression_type: 'linear' }
+                        ]
+                    },
+                    {
+                        id: 's1_j5',
+                        semaine: 1,
+                        jour: 5,
+                        nom: 'Stabilité et force',
+                        duree_minutes: 30,
+                        exercices: [
+                            { nom: 'Échauffement - Pas chassés', series: 1, repetitions: '30 sec', temps_repos: 30, charge_base: 0, progression_type: 'none' },
+                            { nom: 'Soulevé de terre', series: 2, repetitions: '6-8', temps_repos: 90, charge_base: 25, progression_type: 'linear' },
+                            { nom: 'Oiseau', series: 2, repetitions: '10-12', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
+                            { nom: 'Extensions mollets', series: 2, repetitions: '12-15', temps_repos: 45, charge_base: 15, progression_type: 'linear' },
+                            { nom: 'Écarté unilatéral', series: 2, repetitions: '8-10 chaque bras', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
+                            { nom: 'Planche latérale', series: 2, repetitions: '10-15 sec chaque côté', temps_repos: 45, charge_base: 0, progression_type: 'time' }
+                        ]
+                    },
+                    {
+                        id: 's1_j6',
+                        semaine: 1,
+                        jour: 6,
+                        nom: 'Récupération active',
+                        duree_minutes: 25,
+                        exercices: [
+                            { nom: 'Échauffement - Montées de genoux', series: 1, repetitions: '30 sec', temps_repos: 30, charge_base: 0, progression_type: 'none' },
+                            { nom: 'Fentes bulgares', series: 2, repetitions: '6-8 chaque jambe', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
+                            { nom: 'Tirage poulie basse', series: 2, repetitions: '10-12', temps_repos: 60, charge_base: 10, progression_type: 'linear' },
+                            { nom: 'Développé épaules debout', series: 2, repetitions: '8-10', temps_repos: 60, charge_base: 5, progression_type: 'linear' },
+                            { nom: 'Abduction de hanches', series: 2, repetitions: '10-12 chaque jambe', temps_repos: 45, charge_base: 10, progression_type: 'linear' },
+                            { nom: 'Étirements dynamiques', series: 1, repetitions: '3 min', temps_repos: 0, charge_base: 0, progression_type: 'none' }
+                        ]
+                    }
+                    // ... Semaines 2-6 suivront le même format avec progression des charges
+                ]
+            },
+            
+            // Programmes "Bientôt disponible"
+            'reveil-titan': {
+                id: 'reveil-titan',
+                nom: 'RÉVEIL DU TITAN',
+                categorie: 'debutant',
+                duree_semaines: 7,
+                seances_par_semaine: 6,
+                difficulte: 2,
+                objectifs: ['Réveil musculaire', 'Force de base', 'Transformation'],
+                equipement_requis: ['Élastique léger', 'Élastique moyen', 'Élastique fort'],
+                description: 'Réveille la bête qui sommeille en toi. Programme complet pour découvrir ta force cachée et transformer ton corps de civil en machine de guerre.',
+                disponible: false,
+                image: 'reveil-titan.jpg'
+            },
+            'premiere-bataille': {
+                id: 'premiere-bataille',
+                nom: 'PREMIÈRE BATAILLE',
+                categorie: 'debutant',
+                duree_semaines: 8,
+                seances_par_semaine: 6,
+                difficulte: 2,
+                objectifs: ['Combat méthodique', 'Tous groupes musculaires', 'Discipline'],
+                equipement_requis: ['Kit complet élastiques', 'Ancrage porte', 'Sangle cheville'],
+                description: 'Ta première vraie campagne militaire. Affrontage méthodique de tous les groupes musculaires avec la sagesse de l\'élastique comme seule arme.',
+                disponible: false,
+                image: 'premiere-bataille.jpg'
+            },
+            'chemin-samourai': {
+                id: 'chemin-samourai',
+                nom: 'CHEMIN DU SAMOURAÏ',
+                categorie: 'debutant',
+                duree_semaines: 6,
+                seances_par_semaine: 5,
+                difficulte: 2,
+                objectifs: ['Discipline', 'Précision', 'Art martial'],
+                equipement_requis: ['Élastiques légers', 'Focus technique'],
+                description: 'La voie du guerrier discipliné. Chaque mouvement compte, chaque série forge ton caractère. L\'art martial de la musculation aux élastiques.',
+                disponible: false,
+                image: 'chemin-samourai.jpg'
+            },
+            'eveil-gladiateur': {
+                id: 'eveil-gladiateur',
+                nom: 'ÉVEIL DU GLADIATEUR',
+                categorie: 'debutant',
+                duree_semaines: 7,
+                seances_par_semaine: 6,
+                difficulte: 3,
+                objectifs: ['Équilibre', 'Mental d\'acier', 'Préparation bataille'],
+                equipement_requis: ['Kit élastiques complet', 'Ancrage porte'],
+                description: 'De l\'arène des débutants vers la gloire. Programme équilibré qui sculpte ton corps et trempe ton mental pour les batailles à venir.',
+                disponible: false,
+                image: 'eveil-gladiateur.jpg'
+            },
+
+            // ⚔️ INTERMÉDIAIRE (8-12 semaines)
+            'lame-affutee': {
+                id: 'lame-affutee',
+                nom: 'LAME AFFÛTÉE',
+                categorie: 'intermediaire',
+                duree_semaines: 10,
+                seances_par_semaine: 6,
+                difficulte: 3,
+                objectifs: ['Techniques avancées', 'Intensité accrue', 'Arme vivante'],
+                equipement_requis: ['Kit élastiques complet', 'Techniques avancées'],
+                description: 'Aiguise ton corps comme une lame de combat. Techniques plus poussées et intensité accrue pour devenir une arme vivante.',
+                disponible: false,
+                image: 'lame-affutee.jpg'
+            },
+            'conquerant-plaines': {
+                id: 'conquerant-plaines',
+                nom: 'CONQUÉRANT DES PLAINES',
+                categorie: 'intermediaire',
+                duree_semaines: 12,
+                seances_par_semaine: 6,
+                difficulte: 3,
+                objectifs: ['Stratégie militaire', 'Territoire musculaire', 'Tactique'],
+                equipement_requis: ['Kit élastiques avancé', 'Combinaisons complexes'],
+                description: 'Étends ton territoire musculaire avec la stratégie d\'un général. Combinaisons d\'exercices et progression tactique vers la victoire.',
+                disponible: false,
+                image: 'conquerant-plaines.jpg'
+            },
+            'fureur-berserker': {
+                id: 'fureur-berserker',
+                nom: 'FUREUR DU BERSERKER',
+                categorie: 'intermediaire',
+                duree_semaines: 8,
+                seances_par_semaine: 6,
+                difficulte: 4,
+                objectifs: ['Rage contrôlée', 'Limites repoussées', 'Mental d\'acier'],
+                equipement_requis: ['Élastiques forts', 'Intensité maximale'],
+                description: 'Déchaîne ta rage contrôlée ! Programme intense qui pousse tes limites et forge un mental d\'acier trempé dans le feu.',
+                disponible: false,
+                image: 'fureur-berserker.jpg'
+            },
+            'gardien-temple': {
+                id: 'gardien-temple',
+                nom: 'GARDIEN DU TEMPLE',
+                categorie: 'intermediaire',
+                duree_semaines: 11,
+                seances_par_semaine: 6,
+                difficulte: 3,
+                objectifs: ['Forteresse corporelle', 'Équilibre parfait', 'Sentinelle'],
+                equipement_requis: ['Kit complet', 'Exercices d\'équilibre'],
+                description: 'Protège et renforce ta forteresse corporelle. Équilibre parfait entre force, endurance et technique pour un corps de sentinelle.',
+                disponible: false,
+                image: 'gardien-temple.jpg'
+            },
+            'renaissance-phenix': {
+                id: 'renaissance-phenix',
+                nom: 'RENAISSANCE DU PHÉNIX',
+                categorie: 'intermediaire',
+                duree_semaines: 9,
+                seances_par_semaine: 6,
+                difficulte: 4,
+                objectifs: ['Transformation profonde', 'Guerrier légendaire', 'Renaissance'],
+                equipement_requis: ['Kit élastiques pro', 'Dépassement de soi'],
+                description: 'Renaître de ses cendres, plus fort que jamais. Transformation profonde qui révèle le guerrier légendaire en toi.',
+                disponible: false,
+                image: 'renaissance-phenix.jpg'
+            }
+
+            // Les autres programmes suivront le même format avec disponible: false
+        };
+
+        // === GESTIONNAIRE DE PROGRESSION ===
+        class ProgressionManager {
+            
+            // Progression linéaire : +2.5kg/semaine
+            progressionLineaire(chargeActuelle, semaine) {
+                return chargeActuelle + (semaine * 2.5);
+            }
+            
+            // Progression par paliers : +5kg toutes les 2 semaines
+            progressionPaliers(chargeActuelle, semaine) {
+                const palier = Math.floor(semaine / 2);
+                return chargeActuelle + (palier * 5);
+            }
+            
+            // Progression adaptative basée sur RPE
+            progressionAdaptative(chargeActuelle, rpeHistorique) {
+                const rpeMoyenne = this.calculateAverageRPE(rpeHistorique);
+                
+                if (rpeMoyenne < 6) {
+                    return chargeActuelle * 1.1; // +10%
+                } else if (rpeMoyenne > 8) {
+                    return chargeActuelle * 0.95; // -5%
+                } else {
+                    return chargeActuelle * 1.05; // +5%
+                }
+            }
+
+            calculateAverageRPE(rpeHistorique) {
+                if (!rpeHistorique || rpeHistorique.length === 0) return 7;
+                const sum = rpeHistorique.reduce((acc, rpe) => acc + rpe, 0);
+                return sum / rpeHistorique.length;
+            }
+            
+            // Sélection automatique de l'algorithme
+            appliquerProgression(programme, seance, utilisateur) {
+                const typeProgression = programme.progression_type || 'linear';
+                const niveau = utilisateur.niveau || 'beginner';
+                
+                switch(typeProgression) {
+                    case 'linear':
+                        return this.progressionLineaire(seance.charge, seance.semaine);
+                    case 'step':
+                        return this.progressionPaliers(seance.charge, seance.semaine);
+                    case 'adaptive':
+                        return this.progressionAdaptative(seance.charge, utilisateur.rpeHistorique);
+                    default:
+                        return this.progressionLineaire(seance.charge, seance.semaine);
+                }
+            }
+        }
+
+        // Instance globale du gestionnaire de progression
+        const progressionManager = new ProgressionManager();
 
         // Fonctions de recherche intelligente
         const smartSearch = {
@@ -3223,7 +4222,12 @@
             records: {},
             settings: {
                 theme: 'light'
-            }
+            },
+            // États pour les programmes
+            currentProgram: null,
+            selectedProgram: null,
+            programTab: 'predefined',
+            programSubtab: 'histoire-gloire'
         };
 
         // === GESTION DE L'HISTORIQUE DE NAVIGATION ===
@@ -3445,6 +4449,10 @@
                 appState.customTags = storage.load('customTags', []);
                 appState.exerciseTags = storage.load('exerciseTags', {});
                 console.log('🏷️ Tags chargés:', appState.customTags?.length || 0, 'tags personnalisés');
+                // Charger les données de programmes
+                appState.currentProgram = storage.load('currentProgram', null);
+                appState.programTab = storage.load('programTab', 'predefined');
+                appState.programSubtab = storage.load('programSubtab', 'histoire-gloire');
             },
             
             saveData() {
@@ -3462,6 +4470,10 @@
                 storage.save('exerciseFavorites', appState.exerciseFavorites || []);
                 storage.save('customTags', appState.customTags || []);
                 storage.save('exerciseTags', appState.exerciseTags || {});
+                // Sauvegarder les données de programmes
+                storage.save('currentProgram', appState.currentProgram);
+                storage.save('programTab', appState.programTab);
+                storage.save('programSubtab', appState.programSubtab);
             },
             
             // Navigation
@@ -4611,6 +5623,26 @@
                 
                 // Sauvegarder la séance
                 appState.sessions.push(appState.sessionToFinish);
+                
+                // Gestion du suivi de programme si la séance vient d'un programme
+                if (appState.sessionToFinish.fromProgram && appState.currentProgram) {
+                    const sessionData = {
+                        seance_id: appState.sessionToFinish.fromProgram.sessionId,
+                        date_realisation: new Date().toISOString(),
+                        duree_reelle: Math.floor((appState.sessionToFinish.endTime - appState.sessionToFinish.startTime) / 1000 / 60),
+                        exercices_realises: appState.sessionToFinish.exercises.map(ex => ({
+                            exercice_id: ex.exercise_id,
+                            series_completees: ex.sets ? ex.sets.length : 0,
+                            qualite_execution: difficulty === 'Facile' ? 8 : difficulty === 'Normale' ? 7 : 6
+                        })),
+                        rpe: difficulty === 'Facile' ? 6 : difficulty === 'Normale' ? 7 : 8,
+                        notes: `Séance ${appState.sessionToFinish.fromProgram.sessionName}`,
+                        statut: 'completed'
+                    };
+                    
+                    // Marquer la séance comme effectuée dans le programme
+                    this.marquerSeanceEffectuee(appState.sessionToFinish.fromProgram.sessionId, sessionData);
+                }
                 
                 // Nettoyer les variables temporaires
                 appState.sessionToFinish = null;
@@ -8859,7 +9891,23 @@
                 case 'manual-entry':
                     renderManualEntry();
                     break;
+                case 'programmes':
+                    renderProgrammes();
+                    document.querySelectorAll('.nav-item')[2].classList.add('active');
+                    break;
+                case 'program-details':
+                    // Pas de rendu spécial, géré par actions.showProgramDetails
+                    break;
+                case 'program-tracking':
+                    actions.renderProgramTracking();
+                    break;
             }
+        }
+
+        // Nouvelle fonction de rendu pour l'écran programmes
+        function renderProgrammes() {
+            // Charger l'onglet actif
+            actions.switchProgramTab(appState.programTab);
         }
 
         // === FONCTIONS DE RENDU PAR ÉCRAN ===
@@ -9007,6 +10055,63 @@
             }
   
             document.getElementById('current-streak').textContent = streak;
+
+            // Widget programme actif
+            const dashboardContainer = document.querySelector('#screen-dashboard');
+            let programWidget = dashboardContainer.querySelector('#program-widget');
+            
+            if (appState.currentProgram) {
+                const program = PREDEFINED_PROGRAMS[appState.currentProgram.programme_id];
+                const progression = actions.calculerProgression(appState.currentProgram);
+                
+                if (!programWidget) {
+                    programWidget = document.createElement('div');
+                    programWidget.id = 'program-widget';
+                    // Insérer après les statistiques mais avant les boutons
+                    const buttonsCard = dashboardContainer.querySelector('.card:last-child');
+                    dashboardContainer.insertBefore(programWidget, buttonsCard);
+                }
+                
+                programWidget.innerHTML = `
+                    <div class="card" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <h3 style="margin: 0;">🏆 Mon Programme</h3>
+                            <div style="font-size: 12px; opacity: 0.8;">
+                                Semaine ${progression.semaineActuelle}/${program.duree_semaines}
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">
+                            ${appState.currentProgram.programme_nom}
+                        </div>
+                        
+                        <div style="margin: 12px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <span style="font-size: 14px; opacity: 0.9;">Progression</span>
+                                <span style="font-size: 14px; font-weight: bold;">${progression.pourcentage}%</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden;">
+                                <div style="height: 100%; background: white; width: ${progression.pourcentage}%; transition: width 0.6s ease;"></div>
+                            </div>
+                            <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">
+                                ${progression.seancesRealisees}/${progression.seancesTotales} séances • ${progression.joursRestants} jours restants
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px;">
+                            <button class="btn" onclick="actions.showScreen('program-tracking')" style="background: rgba(255,255,255,0.2); color: white; border: none;">
+                                📊 Suivi détaillé
+                            </button>
+                            <button class="btn" onclick="actions.startNextSession()" style="background: white; color: var(--primary); border: none;">
+                                ⚡ Prochaine séance
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else if (programWidget) {
+                // Supprimer le widget s'il n'y a pas de programme actif
+                programWidget.remove();
+            }
         }
 
         function renderPreparation() {
@@ -10851,6 +11956,826 @@
             smartSearch.clearHistory();
             this.updateSearchHistory();
             this.showNotification('Historique de recherche effacé');
+        };
+
+        // === GESTION DES PROGRAMMES ===
+        
+        // Navigation entre onglets programmes
+        actions.switchProgramTab = function(tab) {
+            // Mise à jour des onglets
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[onclick="actions.switchProgramTab('${tab}')"]`).classList.add('active');
+            
+            // Affichage du contenu
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            
+            // Charger le contenu selon l'onglet
+            if (tab === 'predefined') {
+                this.loadPredefinedPrograms();
+            } else if (tab === 'custom') {
+                this.loadCustomPrograms();
+            }
+        };
+
+        // Navigation entre sous-onglets
+        actions.switchProgramSubtab = function(subtab) {
+            // Mise à jour des sous-onglets
+            document.querySelectorAll('.subtab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[onclick="actions.switchProgramSubtab('${subtab}')"]`).classList.add('active');
+            
+            // Affichage du contenu
+            document.querySelectorAll('.subtab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`subtab-${subtab}`).classList.add('active');
+            
+            // Charger le contenu selon le sous-onglet
+            if (subtab === 'histoire-gloire') {
+                this.loadHistoireGloirePrograms();
+            } else if (subtab === 'autres') {
+                this.loadAutresPrograms();
+            }
+        };
+
+        // Charger les programmes "Une longue histoire vers la gloire"
+        actions.loadHistoireGloirePrograms = function() {
+            const container = document.getElementById('programs-list-histoire');
+            container.innerHTML = '';
+
+            // Programmes par catégorie
+            const categories = {
+                'debutant': { emoji: '🔰', titre: 'DÉBUTANT', programs: [] },
+                'intermediaire': { emoji: '⚔️', titre: 'INTERMÉDIAIRE', programs: [] },
+                'avance': { emoji: '🏺', titre: 'AVANCÉ', programs: [] },
+                'legende': { emoji: '👑', titre: 'LÉGENDE', programs: [] },
+                'specifique': { emoji: '🎯', titre: 'SPÉCIFIQUE', programs: [] }
+            };
+
+            // Organiser les programmes par catégorie
+            Object.values(PREDEFINED_PROGRAMS).forEach(program => {
+                if (categories[program.categorie]) {
+                    categories[program.categorie].programs.push(program);
+                }
+            });
+
+            // Afficher chaque catégorie
+            Object.entries(categories).forEach(([key, category]) => {
+                if (category.programs.length === 0) return;
+
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'program-category-section';
+                categoryDiv.innerHTML = `
+                    <h3 style="margin: 24px 0 16px 0; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 24px;">${category.emoji}</span>
+                        ${category.titre}
+                        <span style="font-size: 14px; color: var(--text-secondary); margin-left: auto;">
+                            ${category.programs.length} programme${category.programs.length > 1 ? 's' : ''}
+                        </span>
+                    </h3>
+                `;
+
+                category.programs.forEach(program => {
+                    const programCard = this.createProgramCard(program);
+                    categoryDiv.appendChild(programCard);
+                });
+
+                container.appendChild(categoryDiv);
+            });
+        };
+
+        // Charger les autres programmes
+        actions.loadAutresPrograms = function() {
+            const container = document.getElementById('programs-list-autres');
+            container.innerHTML = `
+                <div class="card" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <div style="font-size: 48px; margin-bottom: 16px;">🚀</div>
+                    <h3>Bientôt disponible</h3>
+                    <p>De nouveaux programmes spécialisés arrivent prochainement !</p>
+                </div>
+            `;
+        };
+
+        // Créer une carte de programme
+        actions.createProgramCard = function(program) {
+            const div = document.createElement('div');
+            div.className = `program-card ${!program.disponible ? 'unavailable' : ''}`;
+            
+            if (program.disponible) {
+                div.onclick = () => this.showProgramDetails(program.id);
+            }
+
+            const stars = '★'.repeat(program.difficulte) + '☆'.repeat(5 - program.difficulte);
+            const objectivesTags = program.objectifs.map(obj => 
+                `<span class="objective-tag">${obj}</span>`
+            ).join('');
+
+            div.innerHTML = `
+                ${!program.disponible ? '<div class="unavailable-badge">Bientôt disponible</div>' : ''}
+                
+                <div class="program-header">
+                    <div>
+                        <div class="program-title">${program.nom}</div>
+                        <div class="program-category ${program.categorie}">${program.categorie.toUpperCase()}</div>
+                    </div>
+                </div>
+
+                <div class="program-difficulty">
+                    <span class="difficulty-stars">${stars}</span>
+                    <span style="font-size: 12px; color: var(--text-secondary); margin-left: 8px;">
+                        Niveau ${program.difficulte}/5
+                    </span>
+                </div>
+
+                <div class="program-stats">
+                    <div class="program-stat">
+                        <div class="program-stat-value">${program.duree_semaines}</div>
+                        <div class="program-stat-label">Semaines</div>
+                    </div>
+                    <div class="program-stat">
+                        <div class="program-stat-value">${program.seances_par_semaine}</div>
+                        <div class="program-stat-label">Séances/sem</div>
+                    </div>
+                    <div class="program-stat">
+                        <div class="program-stat-value">${program.duree_semaines * program.seances_par_semaine}</div>
+                        <div class="program-stat-label">Total séances</div>
+                    </div>
+                    <div class="program-stat">
+                        <div class="program-stat-value">${Math.round(program.duree_semaines * program.seances_par_semaine * 30 / 60)}</div>
+                        <div class="program-stat-label">Heures</div>
+                    </div>
+                </div>
+
+                <div class="program-description">${program.description}</div>
+
+                <div class="program-objectives">
+                    ${objectivesTags}
+                </div>
+
+                ${program.disponible ? 
+                    '<div style="font-size: 14px; color: var(--primary); font-weight: 600; margin-top: 12px;">👆 Cliquez pour voir les détails</div>' :
+                    '<div style="font-size: 14px; color: var(--text-secondary); margin-top: 12px;">🔒 Programme en cours de développement</div>'
+                }
+            `;
+
+            return div;
+        };
+
+        // Afficher les détails d'un programme
+        actions.showProgramDetails = function(programId) {
+            const program = PREDEFINED_PROGRAMS[programId];
+            if (!program) {
+                this.showNotification('Programme introuvable');
+                return;
+            }
+
+            const screen = document.getElementById('screen-program-details');
+            const title = document.getElementById('program-details-title');
+            const content = document.getElementById('program-details-content');
+
+            title.textContent = program.nom;
+
+            const stars = '★'.repeat(program.difficulte) + '☆'.repeat(5 - program.difficulte);
+            const equipmentList = program.equipement_requis.map(eq => `<li>${eq}</li>`).join('');
+            const objectivesList = program.objectifs.map(obj => `<li>${obj}</li>`).join('');
+            const conseilsList = program.conseils ? program.conseils.map(conseil => `<li>${conseil}</li>`).join('') : '';
+
+            // Aperçu du planning (première semaine seulement)
+            let planningPreview = '';
+            if (program.seances && program.seances.length > 0) {
+                const semaine1 = program.seances.filter(s => s.semaine === 1);
+                planningPreview = `
+                    <div class="card">
+                        <h3>📅 Aperçu du planning (Semaine 1)</h3>
+                        <div style="display: grid; gap: 8px;">
+                            ${semaine1.map(seance => `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--background); border-radius: 8px;">
+                                    <div>
+                                        <strong>Jour ${seance.jour}</strong>
+                                        <div style="font-size: 14px; color: var(--text-secondary);">${seance.nom}</div>
+                                    </div>
+                                    <div style="font-size: 13px; color: var(--text-secondary);">
+                                        ${seance.duree_minutes} min • ${seance.exercices.length} exercices
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = `
+                <!-- En-tête du programme -->
+                <div class="card" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; text-align: center;">
+                    <h2 style="margin-bottom: 8px;">${program.nom}</h2>
+                    <div style="font-size: 16px; margin-bottom: 16px; opacity: 0.9;">${program.description}</div>
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold;">${program.duree_semaines}</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Semaines</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold;">${program.seances_par_semaine}</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Séances/sem</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 20px;">${stars}</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Difficulté</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informations détaillées -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+                    <div class="card">
+                        <h3>🎯 Objectifs principaux</h3>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            ${objectivesList}
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3>🛠️ Équipement nécessaire</h3>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            ${equipmentList}
+                        </ul>
+                    </div>
+                </div>
+
+                ${conseilsList ? `
+                    <div class="card">
+                        <h3>💡 Conseils pour réussir</h3>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            ${conseilsList}
+                        </ul>
+                    </div>
+                ` : ''}
+
+                ${planningPreview}
+
+                <!-- Progression attendue -->
+                <div class="card">
+                    <h3>📈 Progression attendue</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+                        <div style="text-align: center; padding: 16px; background: var(--background); border-radius: 8px;">
+                            <div style="font-size: 18px; color: var(--secondary);">+15-25%</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Force générale</div>
+                        </div>
+                        <div style="text-align: center; padding: 16px; background: var(--background); border-radius: 8px;">
+                            <div style="font-size: 18px; color: var(--secondary);">+10-20%</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Masse musculaire</div>
+                        </div>
+                        <div style="text-align: center; padding: 16px; background: var(--background); border-radius: 8px;">
+                            <div style="font-size: 18px; color: var(--secondary);">+30-50%</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Endurance</div>
+                        </div>
+                        <div style="text-align: center; padding: 16px; background: var(--background); border-radius: 8px;">
+                            <div style="font-size: 18px; color: var(--secondary);">+40-60%</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Technique</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bouton d'action -->
+                <div class="card" style="text-align: center;">
+                    ${program.disponible ? `
+                        <button class="btn btn-primary btn-full" onclick="actions.startProgram('${program.id}')" style="font-size: 18px; padding: 16px;">
+                            🚀 Suivre ce programme
+                        </button>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+                            Vous pourrez choisir votre date de début à l'étape suivante
+                        </div>
+                    ` : `
+                        <div style="padding: 20px; color: var(--text-secondary);">
+                            <div style="font-size: 48px; margin-bottom: 16px;">🔒</div>
+                            <h3>Programme en développement</h3>
+                            <p>Ce programme sera bientôt disponible. Revenez prochainement !</p>
+                        </div>
+                    `}
+                </div>
+            `;
+
+            this.showScreen('program-details');
+        };
+
+        // Démarrer un programme
+        actions.startProgram = function(programId) {
+            const program = PREDEFINED_PROGRAMS[programId];
+            if (!program || !program.disponible) {
+                this.showNotification('Programme non disponible');
+                return;
+            }
+
+            // Vérifier s'il y a déjà un programme actif
+            if (appState.currentProgram) {
+                if (!confirm('Vous avez déjà un programme en cours. Voulez-vous le remplacer ?')) {
+                    return;
+                }
+            }
+
+            // Stocker le programme sélectionné temporairement
+            appState.selectedProgram = program;
+
+            // Ouvrir le modal de sélection de date
+            this.showProgramDateModal(program);
+        };
+
+        // Afficher le modal de sélection de date
+        actions.showProgramDateModal = function(program) {
+            const modal = document.getElementById('program-date-modal');
+            const description = document.getElementById('program-date-description');
+            const startDateInput = document.getElementById('program-start-date');
+            const endDateInput = document.getElementById('program-end-date');
+
+            // Définir la date de début par défaut (aujourd'hui)
+            const today = new Date().toISOString().split('T')[0];
+            startDateInput.value = today;
+            startDateInput.min = today;
+
+            description.textContent = `À partir de quelle date souhaitez-vous débuter "${program.nom}" ?`;
+
+            // Calculer et afficher la date de fin
+            this.updateProgramEndDate();
+
+            modal.classList.add('active');
+        };
+
+        // Mettre à jour la date de fin prévue
+        actions.updateProgramEndDate = function() {
+            const startDateInput = document.getElementById('program-start-date');
+            const endDateInput = document.getElementById('program-end-date');
+            const preview = document.getElementById('program-calendar-preview');
+
+            if (!startDateInput.value || !appState.selectedProgram) return;
+
+            const startDate = new Date(startDateInput.value);
+            const durationWeeks = appState.selectedProgram.duree_semaines;
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + (durationWeeks * 7));
+
+            endDateInput.value = endDate.toISOString().split('T')[0];
+
+            // Aperçu
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            
+            preview.innerHTML = `
+                <strong>Durée totale :</strong> ${durationWeeks} semaines<br>
+                <strong>Du :</strong> ${startDate.toLocaleDateString('fr-FR', options)}<br>
+                <strong>Au :</strong> ${endDate.toLocaleDateString('fr-FR', options)}<br>
+                <strong>Séances totales :</strong> ${appState.selectedProgram.duree_semaines * appState.selectedProgram.seances_par_semaine}
+            `;
+        };
+
+        // Confirmer le démarrage du programme
+        actions.confirmStartProgram = function() {
+            const startDateInput = document.getElementById('program-start-date');
+            
+            if (!startDateInput.value || !appState.selectedProgram) {
+                this.showNotification('Date de début requise');
+                return;
+            }
+
+            const program = appState.selectedProgram;
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + (program.duree_semaines * 7));
+
+            // Créer le suivi de programme
+            const suiviProgramme = {
+                id: Date.now(),
+                programme_id: program.id,
+                programme_nom: program.nom,
+                date_debut: startDate.toISOString().split('T')[0],
+                date_fin_prevue: endDate.toISOString().split('T')[0],
+                statut: 'actif',
+                progression: {
+                    seances_completees: 0,
+                    seances_totales: program.duree_semaines * program.seances_par_semaine,
+                    pourcentage: 0,
+                    semaine_actuelle: 1
+                },
+                seances_realisees: [],
+                parametres: {
+                    type_progression: program.progression_type || 'linear',
+                    notifications_actives: true,
+                    jours_entrainement: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+                }
+            };
+
+            // Sauvegarder le programme actif
+            appState.currentProgram = suiviProgramme;
+            this.saveData();
+
+            // Nettoyer et fermer
+            appState.selectedProgram = null;
+            this.closeModal('program-date-modal');
+
+            // Aller à l'écran de suivi
+            this.showScreen('program-tracking');
+            this.showNotification(`🎉 Programme "${program.nom}" démarré avec succès !`);
+        };
+
+        // Afficher l'écran de suivi de programme
+        actions.renderProgramTracking = function() {
+            if (!appState.currentProgram) {
+                const screen = document.getElementById('screen-program-tracking');
+                screen.innerHTML = `
+                    <div class="header">
+                        <button class="btn btn-small btn-secondary" onclick="actions.showScreen('dashboard')">← Retour</button>
+                        <h1>Aucun programme</h1>
+                        <div></div>
+                    </div>
+                    <div class="card" style="text-align: center; padding: 40px;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📚</div>
+                        <h3>Aucun programme actif</h3>
+                        <p>Commencez par sélectionner un programme dans l'onglet Programmes.</p>
+                        <button class="btn btn-primary" onclick="actions.showScreen('programmes')">
+                            🏆 Voir les programmes
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const program = PREDEFINED_PROGRAMS[appState.currentProgram.programme_id];
+            const title = document.getElementById('program-tracking-title');
+            const header = document.getElementById('program-progress-header');
+            const progressFill = document.getElementById('program-progress-fill');
+            const progressText = document.getElementById('program-progress-text');
+            const quickActions = document.getElementById('program-quick-actions');
+            const weeksContainer = document.getElementById('program-weeks-container');
+
+            title.textContent = appState.currentProgram.programme_nom;
+
+            // Calculer la progression
+            const progression = this.calculerProgression(appState.currentProgram);
+
+            // En-tête de progression
+            header.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div>
+                        <strong>Semaine ${progression.semaineActuelle} / ${program.duree_semaines}</strong>
+                        <div style="font-size: 14px; color: var(--text-secondary);">
+                            ${progression.seancesRealisees} / ${progression.seancesTotales} séances
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 14px; color: var(--text-secondary);">Reste</div>
+                        <div style="font-weight: 600;">${progression.joursRestants} jours</div>
+                    </div>
+                </div>
+            `;
+
+            // Barre de progression
+            progressFill.style.width = progression.pourcentage + '%';
+            progressText.textContent = progression.pourcentage + '% complété';
+
+            // Actions rapides
+            const prochaineSeance = this.getNextSession();
+            quickActions.innerHTML = `
+                <div style="display: grid; gap: 8px; margin-top: 16px;">
+                    ${prochaineSeance ? `
+                        <button class="btn btn-primary btn-full" onclick="actions.startNextSession()">
+                            ⚡ Prochaine séance : ${prochaineSeance.nom}
+                        </button>
+                    ` : `
+                        <div style="text-align: center; padding: 16px; color: var(--text-secondary);">
+                            🎉 Toutes les séances complétées !
+                        </div>
+                    `}
+                    <button class="btn btn-secondary btn-full" onclick="actions.showProgramStats()">
+                        📊 Voir mes statistiques
+                    </button>
+                </div>
+            `;
+
+            // Générer les semaines (accordéon)
+            this.renderProgramWeeks(weeksContainer, program);
+        };
+
+        // Calculer la progression du programme
+        actions.calculerProgression = function(suiviProgramme) {
+            const seancesTotales = suiviProgramme.progression.seances_totales;
+            const seancesRealisees = suiviProgramme.seances_realisees.length;
+            const pourcentage = Math.round((seancesRealisees / seancesTotales) * 100);
+            
+            const dateDebut = new Date(suiviProgramme.date_debut);
+            const dateFin = new Date(suiviProgramme.date_fin_prevue);
+            const aujourd_hui = new Date();
+            
+            const joursRestants = Math.max(0, Math.ceil((dateFin - aujourd_hui) / (1000 * 60 * 60 * 24)));
+            const semaineActuelle = Math.min(
+                Math.floor((aujourd_hui - dateDebut) / (1000 * 60 * 60 * 24 * 7)) + 1,
+                PREDEFINED_PROGRAMS[suiviProgramme.programme_id].duree_semaines
+            );
+
+            return {
+                pourcentage,
+                seancesRealisees,
+                seancesTotales,
+                semaineActuelle: Math.max(1, semaineActuelle),
+                joursRestants
+            };
+        };
+
+        // Obtenir la prochaine séance
+        actions.getNextSession = function() {
+            if (!appState.currentProgram) return null;
+            
+            const program = PREDEFINED_PROGRAMS[appState.currentProgram.programme_id];
+            if (!program.seances) return null;
+
+            // Trouver la prochaine séance non réalisée
+            const seancesRealisees = appState.currentProgram.seances_realisees.map(s => s.seance_id);
+            const prochaineSeance = program.seances.find(seance => 
+                !seancesRealisees.includes(seance.id)
+            );
+
+            return prochaineSeance || null;
+        };
+
+        // Démarrer la prochaine séance
+        actions.startNextSession = function() {
+            const prochaineSeance = this.getNextSession();
+            if (!prochaineSeance) {
+                this.showNotification('Aucune séance disponible');
+                return;
+            }
+
+            this.chargerSeance(prochaineSeance.id);
+        };
+
+        // Charger une séance spécifique
+        actions.chargerSeance = function(seanceId) {
+            const program = PREDEFINED_PROGRAMS[appState.currentProgram.programme_id];
+            const seance = program.seances.find(s => s.id === seanceId);
+            
+            if (!seance) {
+                this.showNotification('Séance introuvable');
+                return;
+            }
+
+            // Créer une nouvelle session basée sur la séance du programme
+            const newSession = {
+                date: new Date().toISOString().split('T')[0],
+                notes: `Séance ${seance.nom} - ${program.nom}`,
+                exercises: seance.exercices.map(ex => ({
+                    exercise_id: this.findOrCreateExercise(ex.nom),
+                    planned_sets: ex.series,
+                    rest_time: ex.temps_repos,
+                    duration: ex.duration || 30,
+                    sets: [],
+                    program_exercise: ex // Conserver les infos du programme
+                })),
+                globalSettings: {
+                    restBetweenExercises: 120,
+                    restBetweenSets: 90
+                },
+                fromProgram: {
+                    programId: appState.currentProgram.programme_id,
+                    sessionId: seanceId,
+                    sessionName: seance.nom
+                }
+            };
+
+            appState.currentSession = newSession;
+            this.showScreen('preparation');
+            this.showNotification(`Séance "${seance.nom}" chargée !`);
+        };
+
+        // Trouver ou créer un exercice
+        actions.findOrCreateExercise = function(exerciseName) {
+            // Chercher d'abord dans les exercices existants
+            const existing = appState.exercises.find(ex => 
+                ex.name.toLowerCase() === exerciseName.toLowerCase()
+            );
+            
+            if (existing) return existing.id;
+
+            // Chercher dans les exercices prédéfinis
+            for (const [category, exercises] of Object.entries(PREDEFINED_EXERCISES)) {
+                const found = exercises.find(ex => 
+                    ex.name.toLowerCase() === exerciseName.toLowerCase()
+                );
+                
+                if (found) {
+                    // Créer l'exercice dans l'app
+                    const newExercise = {
+                        id: Date.now() + Math.random(),
+                        name: found.name,
+                        is_unilateral: found.unilateral || false,
+                        default_rest_time: 90,
+                        category: category === 'echauffement' ? 'warmup' : 'strength',
+                        exercise_mode: found.timeBase ? 'time' : 'reps',
+                        default_duration: 30,
+                        exercise_type: category === 'echauffement' ? 'bodyweight' : 'elastics',
+                        anchor_point: found.anchor || 'none',
+                        muscle_group: category
+                    };
+                    
+                    appState.exercises.push(newExercise);
+                    this.saveData();
+                    return newExercise.id;
+                }
+            }
+
+            // Si pas trouvé, créer un exercice générique
+            const newExercise = {
+                id: Date.now() + Math.random(),
+                name: exerciseName,
+                is_unilateral: false,
+                default_rest_time: 90,
+                category: 'strength',
+                exercise_mode: 'reps',
+                default_duration: 30,
+                exercise_type: 'elastics',
+                anchor_point: 'none',
+                muscle_group: 'autres'
+            };
+            
+            appState.exercises.push(newExercise);
+            this.saveData();
+            return newExercise.id;
+        };
+
+        // Rendre les semaines du programme (accordéon)
+        actions.renderProgramWeeks = function(container, program) {
+            container.innerHTML = '';
+
+            if (!program.seances) {
+                container.innerHTML = '<p>Aucune séance définie pour ce programme</p>';
+                return;
+            }
+
+            // Grouper les séances par semaine
+            const semainesGroupees = {};
+            program.seances.forEach(seance => {
+                if (!semainesGroupees[seance.semaine]) {
+                    semainesGroupees[seance.semaine] = [];
+                }
+                semainesGroupees[seance.semaine].push(seance);
+            });
+
+            // Créer l'accordéon pour chaque semaine
+            Object.entries(semainesGroupees).forEach(([semaine, seances]) => {
+                const seancesRealisees = appState.currentProgram.seances_realisees.map(s => s.seance_id);
+                const seancesCompletees = seances.filter(s => seancesRealisees.includes(s.id)).length;
+                const progression = Math.round((seancesCompletees / seances.length) * 100);
+
+                const weekDiv = document.createElement('div');
+                weekDiv.className = 'week-accordion';
+                
+                weekDiv.innerHTML = `
+                    <div class="week-header" onclick="actions.toggleWeek(${semaine})">
+                        <div>
+                            <div class="week-title">Semaine ${semaine}</div>
+                            <div class="week-progress">${seancesCompletees}/${seances.length} séances (${progression}%)</div>
+                        </div>
+                        <div style="font-size: 18px;">▼</div>
+                    </div>
+                    <div class="week-content" id="week-${semaine}">
+                        ${seances.map(seance => {
+                            const isCompleted = seancesRealisees.includes(seance.id);
+                            const statusClass = isCompleted ? 'completed' : 'pending';
+                            const statusIcon = isCompleted ? '✅' : (seance.jour <= 3 ? '🟡' : '⭕');
+                            
+                            return `
+                                <div class="session-item ${statusClass}" onclick="actions.chargerSeance('${seance.id}')">
+                                    <div>
+                                        <div class="session-day">Jour ${seance.jour}</div>
+                                        <div class="session-name">${seance.nom}</div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div class="session-duration">${seance.duree_minutes} min</div>
+                                        <div class="session-status ${statusClass}">${statusIcon}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+
+                container.appendChild(weekDiv);
+            });
+        };
+
+        // Basculer l'affichage d'une semaine
+        actions.toggleWeek = function(weekNumber) {
+            const content = document.getElementById(`week-${weekNumber}`);
+            const header = content.previousElementSibling;
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                header.classList.remove('active');
+                header.querySelector('div:last-child').textContent = '▼';
+            } else {
+                content.classList.add('active');
+                header.classList.add('active');
+                header.querySelector('div:last-child').textContent = '▲';
+            }
+        };
+
+        // Afficher les paramètres du programme
+        actions.showProgramSettings = function() {
+            if (!appState.currentProgram) return;
+
+            const modal = document.getElementById('program-settings-modal');
+            
+            // Charger les paramètres actuels
+            document.getElementById('program-progression-type').value = 
+                appState.currentProgram.parametres.type_progression || 'linear';
+            document.getElementById('program-notifications').checked = 
+                appState.currentProgram.parametres.notifications_actives;
+
+            // Jours d'entraînement
+            const jours = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            jours.forEach(jour => {
+                const checkbox = document.getElementById(`day-${jour}`);
+                if (checkbox) {
+                    checkbox.checked = appState.currentProgram.parametres.jours_entrainement.includes(jour);
+                }
+            });
+
+            modal.classList.add('active');
+        };
+
+        // Sauvegarder les paramètres du programme
+        actions.saveProgramSettings = function() {
+            if (!appState.currentProgram) return;
+
+            // Sauvegarder les paramètres
+            appState.currentProgram.parametres.type_progression = 
+                document.getElementById('program-progression-type').value;
+            appState.currentProgram.parametres.notifications_actives = 
+                document.getElementById('program-notifications').checked;
+
+            // Jours d'entraînement
+            const jours = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            appState.currentProgram.parametres.jours_entrainement = jours.filter(jour => {
+                const checkbox = document.getElementById(`day-${jour}`);
+                return checkbox && checkbox.checked;
+            });
+
+            this.saveData();
+            this.closeModal('program-settings-modal');
+            this.showNotification('Paramètres sauvegardés');
+        };
+
+        // Marquer une séance comme effectuée
+        actions.marquerSeanceEffectuee = function(seanceId, donnees) {
+            if (!appState.currentProgram) return;
+
+            const seance = {
+                id: Date.now(),
+                seance_id: seanceId,
+                date_realisation: new Date().toISOString(),
+                duree_reelle: donnees.duree || 30,
+                exercices_realises: donnees.exercices || [],
+                rpe: donnees.rpe || 7,
+                notes: donnees.notes || '',
+                statut: 'completed'
+            };
+
+            appState.currentProgram.seances_realisees.push(seance);
+            
+            // Mettre à jour la progression
+            const progression = this.calculerProgression(appState.currentProgram);
+            appState.currentProgram.progression = progression;
+
+            this.saveData();
+            this.showNotification('Séance marquée comme effectuée !');
+        };
+
+        // Charger les données des programmes
+        actions.loadPredefinedPrograms = function() {
+            // Les programmes sont déjà chargés depuis PREDEFINED_PROGRAMS
+            this.loadHistoireGloirePrograms();
+        };
+
+        actions.loadCustomPrograms = function() {
+            const container = document.getElementById('custom-programs-list');
+            container.innerHTML = `
+                <div class="card" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <div style="font-size: 48px; margin-bottom: 16px;">⚙️</div>
+                    <h3>Programmes personnalisés</h3>
+                    <p>Fonctionnalité en cours de développement</p>
+                </div>
+            `;
+        };
+
+        // Afficher les stats du programme
+        actions.showProgramStats = function() {
+            // Rediriger vers l'écran stats avec le filtre programme
+            this.showScreen('stats');
+            this.showNotification('Statistiques du programme (en développement)');
+        };
+
+        // Fermer les modals
+        actions.closeModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('active');
         };
 
         // === INITIALISATION ===
