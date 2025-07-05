@@ -868,6 +868,66 @@
             display: block;
         }
 
+        /* === BOUTON SCROLL-TO-TOP === */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 80px; /* Au-dessus de la barre de navigation */
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000; /* Inférieur aux modales mais supérieur au contenu */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* S'assurer que la navigation reste visible */
+        .nav-bar {
+            z-index: 1001;
+        }
+
+        /* === STYLES ÉTAT VIDE === */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
         /* === STYLES ANALYTICS AVANCÉES (v1.4) === */
         
         /* Onglets Analytics */
@@ -880,21 +940,26 @@
             box-shadow: 0 2px 8px var(--shadow);
             border: 1px solid var(--border);
             overflow-x: auto;
+            gap: 4px;
+            flex-wrap: nowrap;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 12px 16px;
+            padding: 8px 12px;
             background: transparent;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--text-secondary);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
-            min-width: 120px;
+            min-width: 100px;
+            max-width: 150px;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
 
         .tab-btn:hover {
@@ -910,10 +975,15 @@
 
         .tab-content {
             display: none;
+            opacity: 0;
+            transform: translateX(0);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .tab-content.active {
             display: block;
+            opacity: 1;
+            transform: translateX(0);
         }
 
         /* Grille de métriques */
@@ -1017,20 +1087,132 @@
             min-width: 150px;
         }
 
-        /* Container de graphiques */
+        /* Container de graphiques amélioré */
         .chart-container {
             position: relative;
-            height: 300px;
+            height: 400px;
             width: 100%;
             background: var(--background);
-            border-radius: 8px;
-            padding: 16px;
-            margin: 16px 0;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .chart-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
 
         .chart-container canvas {
             width: 100% !important;
             height: 100% !important;
+            border-radius: 8px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Styles pour les contrôles de graphiques */
+        .chart-controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .chart-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chart-control-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-control-select {
+            padding: 8px 12px;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            background: var(--background);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .chart-control-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        /* Indicateurs de progression */
+        .progress-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--background);
+            border-radius: 20px;
+            border: 1px solid var(--border-light);
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        .progress-indicator.positive {
+            color: var(--success);
+            border-color: var(--success);
+            background: rgba(52, 199, 89, 0.1);
+        }
+
+        .progress-indicator.negative {
+            color: var(--error);
+            border-color: var(--error);
+            background: rgba(255, 59, 48, 0.1);
+        }
+
+        .progress-indicator-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* Styles pour les graphiques de progression */
+        .progress-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 4px;
+        }
+
+        .progress-chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .progress-chart-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
         }
 
         /* Heatmap */
@@ -2925,6 +3107,54 @@
             pointer-events: none;
         }
 
+        /* === STYLES SÉLECTION DES JOURS === */
+        .days-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .day-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--background);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .day-item:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .day-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+        }
+
+        .day-item input[type="checkbox"]:checked + label {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .day-item label {
+            margin: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        @media (max-width: 768px) {
+            .days-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         .favorite-btn:hover {
             background: var(--primary);
             transform: scale(1.1);
@@ -4790,6 +5020,41 @@
                         <option value="weight-loss">🔥 Perte de poids</option>
                         <option value="rehab">🩹 Rééducation</option>
                     </select>
+                </div>
+            </div>
+
+            <!-- Sélection des jours -->
+            <div class="card">
+                <h3>📅 Jours d'entraînement</h3>
+                <div class="days-selector">
+                    <div class="day-item" data-day="monday">
+                        <input type="checkbox" id="day-monday" class="checkbox">
+                        <label for="day-monday">Lundi</label>
+                    </div>
+                    <div class="day-item" data-day="tuesday">
+                        <input type="checkbox" id="day-tuesday" class="checkbox">
+                        <label for="day-tuesday">Mardi</label>
+                    </div>
+                    <div class="day-item" data-day="wednesday">
+                        <input type="checkbox" id="day-wednesday" class="checkbox">
+                        <label for="day-wednesday">Mercredi</label>
+                    </div>
+                    <div class="day-item" data-day="thursday">
+                        <input type="checkbox" id="day-thursday" class="checkbox">
+                        <label for="day-thursday">Jeudi</label>
+                    </div>
+                    <div class="day-item" data-day="friday">
+                        <input type="checkbox" id="day-friday" class="checkbox">
+                        <label for="day-friday">Vendredi</label>
+                    </div>
+                    <div class="day-item" data-day="saturday">
+                        <input type="checkbox" id="day-saturday" class="checkbox">
+                        <label for="day-saturday">Samedi</label>
+                    </div>
+                    <div class="day-item" data-day="sunday">
+                        <input type="checkbox" id="day-sunday" class="checkbox">
+                        <label for="day-sunday">Dimanche</label>
+                    </div>
                 </div>
             </div>
 
@@ -9262,11 +9527,50 @@
             }
         };
 
+        // === SYSTÈME DE NOTIFICATIONS AMÉLIORÉ ===
+        const notificationSystem = {
+            shownNotifications: new Set(),
+            
+            // Charger les notifications déjà affichées
+            init() {
+                const saved = localStorage.getItem('smarttrack_shown_notifications');
+                if (saved) {
+                    this.shownNotifications = new Set(JSON.parse(saved));
+                }
+            },
+            
+            // Marquer une notification comme affichée
+            markAsShown(type, id) {
+                const key = `${type}_${id}`;
+                this.shownNotifications.add(key);
+                localStorage.setItem('smarttrack_shown_notifications', JSON.stringify([...this.shownNotifications]));
+            },
+            
+            // Vérifier si une notification a déjà été affichée
+            hasBeenShown(type, id) {
+                const key = `${type}_${id}`;
+                return this.shownNotifications.has(key);
+            },
+            
+            // Nettoyer les anciennes notifications (garder seulement les 100 dernières)
+            cleanup() {
+                if (this.shownNotifications.size > 100) {
+                    const notifications = [...this.shownNotifications];
+                    const recentNotifications = notifications.slice(-100);
+                    this.shownNotifications = new Set(recentNotifications);
+                    localStorage.setItem('smarttrack_shown_notifications', JSON.stringify(recentNotifications));
+                }
+            }
+        };
+
         // === ACTIONS (MODIFICATION DE L'ÉTAT) ===
         const actions = {
             // Initialisation
             init() {
                 console.log('🚀 Initialisation de SmartTrack...');
+                
+                // Initialiser le système de notifications
+                notificationSystem.init();
                 
                 this.loadData();
                 this.initializeMediaSystem();
@@ -9289,8 +9593,41 @@
                 const savedScreen = storage.load('currentScreen', 'dashboard');
                 appState.currentScreen = savedScreen;
                 
+                // Initialiser le bouton scroll-to-top
+                this.initScrollToTop();
+                
                 console.log('✅ SmartTrack initialisé avec succès');
                 render();
+            },
+            
+            // Initialiser le bouton scroll-to-top
+            initScrollToTop() {
+                // Créer le bouton s'il n'existe pas déjà
+                if (document.getElementById('scroll-to-top-btn')) return;
+                
+                const scrollBtn = document.createElement('button');
+                scrollBtn.id = 'scroll-to-top-btn';
+                scrollBtn.className = 'scroll-to-top';
+                scrollBtn.innerHTML = '↑';
+                scrollBtn.title = 'Remonter en haut';
+                scrollBtn.onclick = () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                document.body.appendChild(scrollBtn);
+                
+                // Gérer la visibilité basée sur le scroll
+                let scrollTimeout;
+                window.addEventListener('scroll', () => {
+                    // Debounce pour optimiser les performances
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        if (window.scrollY > 300) {
+                            scrollBtn.classList.add('visible');
+                        } else {
+                            scrollBtn.classList.remove('visible');
+                        }
+                    }, 10);
+                });
             },
             
             loadData() {
@@ -9483,12 +9820,12 @@
 
             addMeasurement() {
                 const date = document.getElementById('measurement-date').value;
-                const weight = document.getElementById('measurement-weight').value;
-                const height = document.getElementById('measurement-height').value;
-                const waist = document.getElementById('measurement-waist').value;
-                const chest = document.getElementById('measurement-chest').value;
-                const arm = document.getElementById('measurement-arm').value;
-                const thigh = document.getElementById('measurement-thigh').value;
+                const weight = parseFloat(document.getElementById('measurement-weight').value);
+                const height = parseFloat(document.getElementById('measurement-height').value);
+                const waist = parseFloat(document.getElementById('measurement-waist').value);
+                const chest = parseFloat(document.getElementById('measurement-chest').value);
+                const arm = parseFloat(document.getElementById('measurement-arm').value);
+                const thigh = parseFloat(document.getElementById('measurement-thigh').value);
                 
                 if (!date || !weight) {
                     this.showNotification('⚠️ Date et poids sont requis', 'warning');
@@ -9497,16 +9834,41 @@
                 
                 appState.measurements = appState.measurements || [];
                 
+                // Calculer l'IMC si taille et poids sont renseignés
+                let imc = 0;
+                let imcCategory = '';
+                if (height > 0 && weight > 0) {
+                    const heightInMeters = height / 100;
+                    imc = weight / (heightInMeters * heightInMeters);
+                    
+                    // Déterminer la catégorie IMC
+                    if (imc < 18.5) {
+                        imcCategory = 'Insuffisance pondérale';
+                    } else if (imc < 25) {
+                        imcCategory = 'Poids normal';
+                    } else if (imc < 30) {
+                        imcCategory = 'Surpoids';
+                    } else if (imc < 35) {
+                        imcCategory = 'Obésité modérée';
+                    } else if (imc < 40) {
+                        imcCategory = 'Obésité sévère';
+                    } else {
+                        imcCategory = 'Obésité morbide';
+                    }
+                }
+                
                 // Créer la nouvelle mesure avec les photos
                 const newMeasurement = {
                     id: Date.now(),
                     date, 
-                    weight: parseFloat(weight), 
-                    height: parseFloat(height) || null,
-                    waist: parseFloat(waist) || null, 
-                    chest: parseFloat(chest) || null,
-                    arm: parseFloat(arm) || null, 
-                    thigh: parseFloat(thigh) || null,
+                    weight: weight || 0, 
+                    height: height || 0,
+                    waist: waist || 0, 
+                    chest: chest || 0,
+                    arm: arm || 0, 
+                    thigh: thigh || 0,
+                    imc: Math.round(imc * 10) / 10, // Arrondir à 1 décimale
+                    imcCategory: imcCategory,
                     photos: appState.currentProgressPhotos || []
                 };
                 
@@ -9518,20 +9880,20 @@
                 
                 this.saveData();
                 
+                // Notification avec détails
+                let notificationMessage = '🏋️ Mesures enregistrées';
                 if (newMeasurement.photos && newMeasurement.photos.length > 0) {
-                    this.showNotification(`🏋️ Mesures enregistrées avec ${newMeasurement.photos.length} photo(s) !`, 'success');
-                } else {
-                    this.showNotification('🏋️ Mesures du guerrier enregistrées !', 'success');
+                    notificationMessage += ` avec ${newMeasurement.photos.length} photo(s)`;
                 }
+                if (imc > 0) {
+                    notificationMessage += ` • IMC: ${newMeasurement.imc} (${imcCategory})`;
+                }
+                notificationMessage += ' !';
+                
+                this.showNotification(notificationMessage, 'success');
                 
                 // Effacer le formulaire et photos temporaires
-                document.getElementById('measurement-date').value = '';
-                document.getElementById('measurement-weight').value = '';
-                document.getElementById('measurement-height').value = '';
-                document.getElementById('measurement-waist').value = '';
-                document.getElementById('measurement-chest').value = '';
-                document.getElementById('measurement-arm').value = '';
-                document.getElementById('measurement-thigh').value = '';
+                this.clearMeasurementForm();
                 
                 // Réinitialiser les photos temporaires
                 appState.currentProgressPhotos = [];
@@ -9539,12 +9901,25 @@
                 
                 render();
                 
-                // Forcer la mise à jour de la galerie après un court délai
+                // Forcer la mise à jour de la galerie et du rendu complet
                 setTimeout(() => {
                     if (appState.currentScreen === 'body') {
                         this.renderEvolutionGallery();
+                        // Forcer le re-rendu complet de l'écran body
+                        render();
                     }
                 }, 300);
+            },
+            
+            // Vider le formulaire de mesures
+            clearMeasurementForm() {
+                document.getElementById('measurement-date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('measurement-weight').value = '';
+                document.getElementById('measurement-height').value = '';
+                document.getElementById('measurement-waist').value = '';
+                document.getElementById('measurement-chest').value = '';
+                document.getElementById('measurement-arm').value = '';
+                document.getElementById('measurement-thigh').value = '';
             },
 
             // Gestion des photos de progression
@@ -9724,29 +10099,37 @@
                 
                 if (allPhotos.length === 0) {
                     galleryContainer.innerHTML = `
-                        <div style="text-align: center; color: var(--text-secondary); grid-column: 1 / -1; padding: 40px;">
-                            📸 Vos photos de progression apparaîtront ici<br>
-                            <small>Ajoutez des photos à vos mesures pour suivre votre transformation</small>
+                        <div class="empty-state">
+                            <div class="empty-icon">📸</div>
+                            <h3>Aucune photo de progression</h3>
+                            <p>Vos photos de progression apparaîtront ici.<br>Ajoutez des photos à vos mesures pour suivre votre transformation.</p>
+                            <button class="btn btn-primary" onclick="document.getElementById('progress-photos-input').click()">
+                                📷 Ajouter une photo
+                            </button>
                         </div>
                     `;
                     return;
                 }
                 
-                // Créer la galerie
-                galleryContainer.innerHTML = allPhotos.map((photo, index) => {
-                    const date = new Date(photo.measurementDate);
-                    const isRecent = index < 3;
-                    
-                    return `
-                        <div class="evolution-gallery-item" onclick="actions.viewProgressPhoto({data: '${photo.data}', name: '${photo.name}'})">
-                            ${isRecent ? '<div class="evolution-gallery-badge">Récent</div>' : ''}
-                            <img src="${photo.data}" alt="Photo du ${date.toLocaleDateString('fr-FR')}">
-                            <div class="evolution-gallery-date">
-                                ${date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+                // Créer la galerie avec un meilleur design
+                galleryContainer.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;">
+                        ${allPhotos.map((photo, index) => {
+                            const date = new Date(photo.measurementDate);
+                            const isRecent = index < 3;
+                            
+                            return `
+                                <div class="evolution-gallery-item" onclick="actions.viewProgressPhoto({data: '${photo.data}', name: '${photo.name}'})" style="position: relative; border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.3s ease;">
+                                    ${isRecent ? '<div style="position: absolute; top: 8px; right: 8px; background: var(--primary); color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">Récent</div>' : ''}
+                                    <img src="${photo.data}" alt="Photo du ${date.toLocaleDateString('fr-FR')}" style="width: 100%; height: 150px; object-fit: cover;">
+                                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: white; padding: 8px; font-size: 12px; text-align: center;">
+                                        ${date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
             },
 
             deleteMeasurement(measurementId) {
@@ -12443,63 +12826,247 @@
             generateMeasurementsChart() {
                 console.log('Measurements data:', appState.measurements); // LIGNE DE DEBUG
                 if (appState.measurements.length === 0) {
-                    return '<p style="text-align: center; color: var(--text-secondary);">Aucune donnée disponible</p>';
+                    return '<canvas id="measurements-chart" style="width: 100%; height: 300px;"></canvas><p style="text-align: center; color: var(--text-secondary); margin-top: 20px;">Aucune donnée disponible</p>';
                 }
     
                 // Trier par date
                 const sortedMeasurements = [...appState.measurements].sort((a, b) => a.date.localeCompare(b.date));
     
-                let chartHtml = '<div style="font-size: 12px; max-height: 250px; overflow-y: auto;">';
-    
-                // Graphique du poids
-                const weightData = sortedMeasurements.filter(m => m.weight && m.weight > 0);
-                if (weightData.length > 0) {
-                    chartHtml += '<h4>Évolution du poids</h4>';
-                    const maxWeight = Math.max(...weightData.map(d => d.weight));
-                    const minWeight = Math.min(...weightData.map(d => d.weight));
-        
-                    weightData.forEach(data => {
-                        const date = new Date(data.date).toLocaleDateString('fr-FR', {month: 'short', day: 'numeric'});
-                        const barWidth = Math.max(10, ((data.weight - minWeight) / (maxWeight - minWeight)) * 80 + 20);
-            
-                        chartHtml += `
-                        <div style="display: flex; align-items: center; margin: 4px 0;">
-                            <div style="width: 60px; font-size: 10px;">${date}</div>
-                            <div style="width: ${barWidth}%; height: 15px; background: var(--primary); margin: 0 8px; border-radius: 2px;"></div>
-                            <div style="font-size: 10px;">${data.weight}kg</div>
-                        </div>
-                        `;
+                // Préparer les données pour Chart.js
+                const labels = sortedMeasurements.map(m => new Date(m.date).toLocaleDateString('fr-FR', {month: 'short', day: 'numeric'}));
+                const datasets = [];
+                
+                // Données du poids
+                const weightData = sortedMeasurements.map(m => m.weight || null);
+                if (weightData.some(w => w !== null)) {
+                    datasets.push({
+                        label: 'Poids (kg)',
+                        data: weightData,
+                        borderColor: '#007AFF',
+                        backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#007AFF',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
                     });
                 }
-    
-                // Graphique de la taille
-                const waistData = sortedMeasurements.filter(m => m.waist && m.waist > 0);
-                if (waistData.length > 0) {
-                    chartHtml += '<h4 style="margin-top: 16px;">Évolution tour de taille</h4>';
-                    const maxWaist = Math.max(...waistData.map(d => d.waist));
-                    const minWaist = Math.min(...waistData.map(d => d.waist));
-                    
-                    waistData.forEach(data => {
-                        const date = new Date(data.date).toLocaleDateString('fr-FR', {month: 'short', day: 'numeric'});
-                        const barWidth = Math.max(10, ((data.waist - minWaist) / (maxWaist - minWaist)) * 80 + 20);
+                
+                // Données du tour de taille
+                const waistData = sortedMeasurements.map(m => m.waist || null);
+                if (waistData.some(w => w !== null)) {
+                    datasets.push({
+                        label: 'Tour de taille (cm)',
+                        data: waistData,
+                        borderColor: '#FF6B35',
+                        backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#FF6B35',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        yAxisID: 'y1'
+                    });
+                }
+                
+                // Données du tour de poitrine
+                const chestData = sortedMeasurements.map(m => m.chest || null);
+                if (chestData.some(c => c !== null)) {
+                    datasets.push({
+                        label: 'Tour de poitrine (cm)',
+                        data: chestData,
+                        borderColor: '#34C759',
+                        backgroundColor: 'rgba(52, 199, 89, 0.1)',
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#34C759',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        yAxisID: 'y1'
+                    });
+                }
+                
+                // Données du tour de bras
+                const armData = sortedMeasurements.map(m => m.arm || null);
+                if (armData.some(a => a !== null)) {
+                    datasets.push({
+                        label: 'Tour de bras (cm)',
+                        data: armData,
+                        borderColor: '#AF52DE',
+                        backgroundColor: 'rgba(175, 82, 222, 0.1)',
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#AF52DE',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        yAxisID: 'y1'
+                    });
+                }
+                
+                // Données du tour de cuisse
+                const thighData = sortedMeasurements.map(m => m.thigh || null);
+                if (thighData.some(t => t !== null)) {
+                    datasets.push({
+                        label: 'Tour de cuisse (cm)',
+                        data: thighData,
+                        borderColor: '#FF9500',
+                        backgroundColor: 'rgba(255, 149, 0, 0.1)',
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#FF9500',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        yAxisID: 'y1'
+                    });
+                }
+                
+                // Retourner le canvas et initialiser le graphique après le rendu
+                setTimeout(() => {
+                    const canvas = document.getElementById('measurements-chart');
+                    if (canvas) {
+                        if (window.measurementsChart) {
+                            window.measurementsChart.destroy();
+                        }
                         
-                        chartHtml += `
-                            <div style="display: flex; align-items: center; margin: 4px 0;">
-                                <div style="width: 60px; font-size: 10px;">${date}</div>
-                                <div style="width: ${barWidth}%; height: 15px; background: var(--secondary); margin: 0 8px; border-radius: 2px;"></div>
-                                <div style="font-size: 10px;">${data.waist}cm</div>
-                            </div>
-                        `;
-                    });
-                }
+                        window.measurementsChart = new Chart(canvas, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: datasets
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                interaction: {
+                                    mode: 'index',
+                                    intersect: false,
+                                },
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: 'Évolution des mensurations corporelles',
+                                        color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                        font: { size: 18, weight: 'bold' }
+                                    },
+                                    legend: {
+                                        position: 'top',
+                                        labels: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                            padding: 20,
+                                            usePointStyle: true,
+                                            pointStyle: 'circle'
+                                        }
+                                    },
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false,
+                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                        titleColor: '#ffffff',
+                                        bodyColor: '#ffffff',
+                                        borderColor: '#007AFF',
+                                        borderWidth: 1,
+                                        cornerRadius: 8,
+                                        displayColors: true,
+                                        callbacks: {
+                                            label: function(context) {
+                                                if (context.parsed.y !== null) {
+                                                    return context.dataset.label + ': ' + context.parsed.y;
+                                                }
+                                                return null;
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        display: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Date',
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                            font: { size: 14, weight: 'bold' }
+                                        },
+                                        ticks: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                            maxRotation: 45
+                                        },
+                                        grid: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--border-light'),
+                                            drawOnChartArea: true,
+                                            drawTicks: true,
+                                        }
+                                    },
+                                    y: {
+                                        type: 'linear',
+                                        display: true,
+                                        position: 'left',
+                                        title: {
+                                            display: true,
+                                            text: 'Poids (kg)',
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                            font: { size: 14, weight: 'bold' }
+                                        },
+                                        ticks: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                            callback: function(value) {
+                                                return value + ' kg';
+                                            }
+                                        },
+                                        grid: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--border-light'),
+                                            drawOnChartArea: true,
+                                        }
+                                    },
+                                    y1: {
+                                        type: 'linear',
+                                        display: true,
+                                        position: 'right',
+                                        title: {
+                                            display: true,
+                                            text: 'Mensurations (cm)',
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                            font: { size: 14, weight: 'bold' }
+                                        },
+                                        ticks: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                            callback: function(value) {
+                                                return value + ' cm';
+                                            }
+                                        },
+                                        grid: {
+                                            drawOnChartArea: false,
+                                        }
+                                    }
+                                },
+                                elements: {
+                                    line: {
+                                        borderWidth: 3
+                                    },
+                                    point: {
+                                        hoverBackgroundColor: '#ffffff',
+                                        hoverBorderWidth: 3
+                                    }
+                                },
+                                animation: {
+                                    duration: 2000,
+                                    easing: 'easeInOutQuart'
+                                }
+                            }
+                        });
+                    }
+                }, 100);
                 
-                // Si aucune donnée n'est disponible
-                if (weightData.length === 0 && waistData.length === 0) {
-                    chartHtml += '<p style="text-align: center; color: var(--text-secondary);">Ajoutez des mensurations pour voir les graphiques</p>';
-                }
-                
-                chartHtml += '</div>';
-                return chartHtml;
+                return '<canvas id="measurements-chart" style="width: 100%; height: 400px;"></canvas>';
             },
     
 
@@ -12514,6 +13081,7 @@
                         // Calculer le meilleur set de la séance
                         let maxWeight = 0;
                         let maxReps = 0;
+                        let totalVolume = 0;
                         
                         sessionExercise.sets.forEach(set => {
                             if (set.type === 'work') {
@@ -12527,9 +13095,11 @@
                                     const rightReps = set.right_reps || 0;
                                     if (leftReps > maxReps) maxReps = leftReps;
                                     if (rightReps > maxReps) maxReps = rightReps;
+                                    totalVolume += setWeight * (leftReps + rightReps);
                                 } else {
                                     const setReps = set.reps || 0;
                                     if (setReps > maxReps) maxReps = setReps;
+                                    totalVolume += setWeight * setReps;
                                 }
                             }
                         });
@@ -12539,104 +13109,221 @@
                                 date: session.date,
                                 weight: maxWeight,
                                 reps: maxReps,
-                                volume: maxWeight * maxReps
+                                volume: totalVolume
                             });
                         }
                     }
                 });
                 
                 if (performanceData.length === 0) {
-                    return '<p style="text-align: center; color: var(--text-secondary);">Aucune donnée disponible</p>';
+                    return '<canvas id="simple-chart-' + exerciseId + '" style="width: 100%; height: 300px;"></canvas><p style="text-align: center; color: var(--text-secondary); margin-top: 20px;">Aucune donnée disponible</p>';
                 }
                 
                 // Trier par date
                 performanceData.sort((a, b) => a.date.localeCompare(b.date));
                 
-                // Créer un graphique simple
-                let chartHtml = `<div style="font-size: 12px; max-height: 250px; overflow-y: auto;">`;
-                chartHtml += `<h4>Progression du poids max</h4>`;
+                // Préparer les données pour Chart.js
+                const labels = performanceData.map(d => new Date(d.date).toLocaleDateString('fr-FR', {month: 'short', day: 'numeric'}));
+                const weightData = performanceData.map(d => d.weight);
+                const repsData = performanceData.map(d => d.reps);
+                const volumeData = performanceData.map(d => d.volume);
                 
-                const maxWeight = Math.max(...performanceData.map(d => d.weight));
+                // Retourner le canvas et initialiser le graphique après le rendu
+                setTimeout(() => {
+                    const canvas = document.getElementById('simple-chart-' + exerciseId);
+                    if (canvas) {
+                        if (window['simpleChart_' + exerciseId]) {
+                            window['simpleChart_' + exerciseId].destroy();
+                        }
+                        
+                        window['simpleChart_' + exerciseId] = new Chart(canvas, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        label: 'Charge max (kg)',
+                                        data: weightData,
+                                        borderColor: '#007AFF',
+                                        backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                                        fill: true,
+                                        tension: 0.4,
+                                        pointRadius: 6,
+                                        pointHoverRadius: 10,
+                                        pointBackgroundColor: '#007AFF',
+                                        pointBorderColor: '#ffffff',
+                                        pointBorderWidth: 2,
+                                        borderWidth: 3,
+                                        yAxisID: 'y'
+                                    },
+                                    {
+                                        label: 'Répétitions max',
+                                        data: repsData,
+                                        borderColor: '#FF6B35',
+                                        backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                                        fill: false,
+                                        tension: 0.4,
+                                        pointRadius: 6,
+                                        pointHoverRadius: 10,
+                                        pointBackgroundColor: '#FF6B35',
+                                        pointBorderColor: '#ffffff',
+                                        pointBorderWidth: 2,
+                                        borderWidth: 3,
+                                        yAxisID: 'y1'
+                                    },
+                                    {
+                                        label: 'Volume total (kg)',
+                                        data: volumeData,
+                                        borderColor: '#34C759',
+                                        backgroundColor: 'rgba(52, 199, 89, 0.1)',
+                                        fill: false,
+                                        tension: 0.4,
+                                        pointRadius: 6,
+                                        pointHoverRadius: 10,
+                                        pointBackgroundColor: '#34C759',
+                                        pointBorderColor: '#ffffff',
+                                        pointBorderWidth: 2,
+                                        borderWidth: 3,
+                                        yAxisID: 'y2'
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                interaction: {
+                                    mode: 'index',
+                                    intersect: false,
+                                },
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: 'Progression de ' + exerciseName,
+                                        color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                        font: { size: 18, weight: 'bold' }
+                                    },
+                                    legend: {
+                                        position: 'top',
+                                        labels: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                            padding: 20,
+                                            usePointStyle: true,
+                                            pointStyle: 'circle'
+                                        }
+                                    },
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false,
+                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                        titleColor: '#ffffff',
+                                        bodyColor: '#ffffff',
+                                        borderColor: '#007AFF',
+                                        borderWidth: 1,
+                                        cornerRadius: 8,
+                                        displayColors: true,
+                                        callbacks: {
+                                            label: function(context) {
+                                                const suffix = context.datasetIndex === 0 ? ' kg' : 
+                                                              context.datasetIndex === 1 ? ' reps' : ' kg';
+                                                return context.dataset.label + ': ' + context.parsed.y + suffix;
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        display: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Date',
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                            font: { size: 14, weight: 'bold' }
+                                        },
+                                        ticks: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                            maxRotation: 45
+                                        },
+                                        grid: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--border-light'),
+                                            drawOnChartArea: true,
+                                            drawTicks: true,
+                                        }
+                                    },
+                                    y: {
+                                        type: 'linear',
+                                        display: true,
+                                        position: 'left',
+                                        title: {
+                                            display: true,
+                                            text: 'Charge (kg)',
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                            font: { size: 14, weight: 'bold' }
+                                        },
+                                        ticks: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                            callback: function(value) {
+                                                return value + ' kg';
+                                            }
+                                        },
+                                        grid: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--border-light'),
+                                            drawOnChartArea: true,
+                                        }
+                                    },
+                                    y1: {
+                                        type: 'linear',
+                                        display: true,
+                                        position: 'right',
+                                        title: {
+                                            display: true,
+                                            text: 'Répétitions',
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                            font: { size: 14, weight: 'bold' }
+                                        },
+                                        ticks: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                            callback: function(value) {
+                                                return value + ' reps';
+                                            }
+                                        },
+                                        grid: {
+                                            drawOnChartArea: false,
+                                        }
+                                    },
+                                    y2: {
+                                        type: 'linear',
+                                        display: false,
+                                        position: 'right',
+                                        ticks: {
+                                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                        },
+                                        grid: {
+                                            drawOnChartArea: false,
+                                        }
+                                    }
+                                },
+                                elements: {
+                                    line: {
+                                        borderWidth: 3
+                                    },
+                                    point: {
+                                        hoverBackgroundColor: '#ffffff',
+                                        hoverBorderWidth: 3
+                                    }
+                                },
+                                animation: {
+                                    duration: 2000,
+                                    easing: 'easeInOutQuart'
+                                }
+                            }
+                        });
+                    }
+                }, 100);
                 
-                performanceData.forEach((data, index) => {
-                    const date = new Date(data.date).toLocaleDateString('fr-FR', {month: 'short', day: 'numeric'});
-                    const barWidth = Math.max(1, (data.weight / maxWeight) * 100);
-                    
-                    chartHtml += `
-                        <div style="display: flex; align-items: center; margin: 4px 0;">
-                            <div style="width: 60px; font-size: 10px;">${date}</div>
-                            <div style="width: ${barWidth}%; height: 20px; background: var(--primary); margin: 0 8px; border-radius: 2px;"></div>
-                            <div style="font-size: 10px;">${data.weight}kg</div>
-                        </div>
-                    `;
-                });
-                
-                chartHtml += `</div>`;
-                return chartHtml;
+                return '<canvas id="simple-chart-' + exerciseId + '" style="width: 100%; height: 400px;"></canvas>';
             },
             
-            // Gestion des mesures corporelles
-            addMeasurement() {
-                const date = document.getElementById('measurement-date').value;
-                const height = parseFloat(document.getElementById('measurement-height').value);
-                const weight = parseFloat(document.getElementById('measurement-weight').value);
-                const waist = parseFloat(document.getElementById('measurement-waist').value);
-                const chest = parseFloat(document.getElementById('measurement-chest').value);
-                const arm = parseFloat(document.getElementById('measurement-arm').value);
-                const thigh = parseFloat(document.getElementById('measurement-thigh').value);
-
-                if (!date) {
-                    this.showNotification('Date requise');
-                    return;
-                }
-
-                // Calculer l'IMC si taille et poids sont renseignés
-                let imc = 0;
-                let imcCategory = '';
-                if (height > 0 && weight > 0) {
-                    const heightInMeters = height / 100;
-                    imc = weight / (heightInMeters * heightInMeters);
-                    
-                    // Déterminer la catégorie IMC
-                    if (imc < 18.5) {
-                        imcCategory = 'Insuffisance pondérale';
-                    } else if (imc < 25) {
-                        imcCategory = 'Poids normal';
-                    } else if (imc < 30) {
-                        imcCategory = 'Surpoids';
-                    } else if (imc < 35) {
-                        imcCategory = 'Obésité modérée';
-                    } else if (imc < 40) {
-                        imcCategory = 'Obésité sévère';
-                    } else {
-                        imcCategory = 'Obésité morbide';
-                    }
-                }
-
-                const newMeasurement = {
-                    id: Date.now(),
-                    date,
-                    height: height || 0,
-                    weight: weight || 0,
-                    waist: waist || 0,
-                    chest: chest || 0,
-                    arm: arm || 0,
-                    thigh: thigh || 0,
-                    imc: Math.round(imc * 10) / 10, // Arrondir à 1 décimale
-                    imcCategory: imcCategory
-                };
-
-                appState.measurements.push(newMeasurement);
-                this.clearMeasurementForm();
-                this.saveData();
-                render();
-                
-                if (imc > 0) {
-                    this.showNotification(`Mensuration ajoutée ! IMC: ${newMeasurement.imc} (${imcCategory})`);
-                } else {
-                    this.showNotification('Mensuration ajoutée !');
-                }
-            },
+            // Note: La fonction addMeasurement principale avec gestion des photos est définie plus haut
             
             deleteMeasurement(id) {
                 if (confirm('Supprimer cette mesure ?')) {
@@ -17034,6 +17721,28 @@
         function renderStats() {
             const statsContent = document.getElementById('stats-content');
             
+            if (!statsContent) {
+                console.error('📊 Stats content container not found');
+                return;
+            }
+            
+            // Vérifier s'il y a des données
+            if (!appState.sessions || appState.sessions.length === 0) {
+                statsContent.innerHTML = `
+                    <div class="card">
+                        <div class="empty-state">
+                            <div class="empty-icon">📊</div>
+                            <h3>Aucune donnée disponible</h3>
+                            <p>Commencez par faire quelques séances d'entraînement pour voir vos statistiques.</p>
+                            <button class="btn btn-primary" onclick="actions.showScreen('preparation')">
+                                🚀 Commencer une séance
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
             // STATISTIQUES GÉNÉRALES
             const generalStats = actions.calculateGeneralStats();
             let generalStatsHtml = `
@@ -19589,6 +20298,9 @@
         
         // Basculer entre les onglets analytics
         actions.switchAnalyticsTab = function(tab) {
+            // Fermer tous les menus contextuels
+            this.closeContextualMenus();
+            
             appState.analyticsTab = tab;
             
             // Mettre à jour les boutons d'onglets
@@ -19597,8 +20309,8 @@
             });
             document.querySelector(`.analytics-tabs .tab-btn[onclick*="${tab}"]`).classList.add('active');
             
-            // Masquer tous les contenus
-            document.querySelectorAll('.tab-content').forEach(content => {
+            // Masquer tous les contenus des analytics seulement
+            document.querySelectorAll('#screen-analytics .tab-content').forEach(content => {
                 content.classList.remove('active');
             });
             
@@ -19835,6 +20547,14 @@
 
         // Notification de level up
         actions.showLevelUpNotification = function(newLevel, reason) {
+            // Vérifier si cette notification de niveau a déjà été affichée
+            if (notificationSystem.hasBeenShown('level', newLevel)) {
+                return;
+            }
+            
+            // Marquer comme affichée
+            notificationSystem.markAsShown('level', newLevel);
+            
             const title = getTitleForLevel(newLevel);
             
             // Créer une notification spéciale
@@ -20084,6 +20804,14 @@
         // Notification de déblocage de badge
         actions.showBadgeUnlockNotification = function(badges) {
             badges.forEach((badge, index) => {
+                // Vérifier si ce badge a déjà été notifié
+                if (notificationSystem.hasBeenShown('badge', badge.id)) {
+                    return;
+                }
+                
+                // Marquer comme affiché
+                notificationSystem.markAsShown('badge', badge.id);
+                
                 setTimeout(() => {
                     const notification = document.createElement('div');
                     notification.className = 'badge-unlock-notification';
@@ -20340,6 +21068,13 @@
                     }
                 });
             }
+            
+            // Charger immédiatement les statistiques générales
+            setTimeout(() => {
+                if (typeof renderStats === 'function') {
+                    renderStats();
+                }
+            }, 100);
         };
 
         actions.loadAnalyticsDashboard = function() {
@@ -20549,28 +21284,68 @@
             
             const data = this.getVolumeChartData(parseInt(period), type);
             
+            // Calculer la tendance pour le premier dataset
+            if (data.datasets.length > 0) {
+                const trendData = this.calculateTrend(data.datasets[0].data);
+                setTimeout(() => {
+                    this.addTrendIndicator('volume-chart', trendData);
+                }, 500);
+            }
+            
             volumeChart = new Chart(ctx, {
                 type: 'line',
                 data: data,
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Volume d\'entraînement',
+                            text: 'Volume d\'entraînement - Progression',
                             color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
-                            font: { size: 16, weight: 'bold' }
+                            font: { size: 20, weight: 'bold' },
+                            padding: 20
                         },
                         legend: {
+                            position: 'top',
                             labels: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: { size: 14 }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#007AFF',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + ' kg';
+                                }
                             }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Volume (kg)',
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                font: { size: 14, weight: 'bold' }
+                            },
                             ticks: {
                                 color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
                                 callback: function(value) {
@@ -20578,26 +21353,44 @@
                                 }
                             },
                             grid: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--border-light')
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--border-light'),
+                                drawOnChartArea: true,
+                                drawTicks: true,
                             }
                         },
                         x: {
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                font: { size: 14, weight: 'bold' }
+                            },
                             ticks: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                maxRotation: 45
                             },
                             grid: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--border-light')
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--border-light'),
+                                drawOnChartArea: true,
+                                drawTicks: true,
                             }
                         }
                     },
                     elements: {
                         line: {
-                            tension: 0.4
+                            tension: 0.4,
+                            borderWidth: 3
                         },
                         point: {
-                            radius: 4,
-                            hoverRadius: 6
+                            radius: 6,
+                            hoverRadius: 10,
+                            borderWidth: 2,
+                            hoverBorderWidth: 3
                         }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
                     }
                 }
             });
@@ -20630,8 +21423,24 @@
                     label: 'Volume total (kg)',
                     data: data,
                     borderColor: '#007AFF',
-                    backgroundColor: 'rgba(0, 122, 255, 0.1)',
-                    fill: true
+                    backgroundColor: function(context) {
+                        const chart = context.chart;
+                        const {ctx, chartArea} = chart;
+                        if (!chartArea) return 'rgba(0, 122, 255, 0.1)';
+                        
+                        const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                        gradient.addColorStop(0, 'rgba(0, 122, 255, 0.1)');
+                        gradient.addColorStop(1, 'rgba(0, 122, 255, 0.4)');
+                        return gradient;
+                    },
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 10,
+                    pointBackgroundColor: '#007AFF',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    borderWidth: 3
                 });
             } else if (type === 'by-muscle') {
                 const muscleGroups = ['biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes'];
@@ -20683,8 +21492,27 @@
                         label: group.charAt(0).toUpperCase() + group.slice(1),
                         data: data,
                         borderColor: colors[index],
-                        backgroundColor: colors[index] + '20',
-                        fill: false
+                        backgroundColor: function(context) {
+                            if (context.dataset.data.some(d => d > 0)) {
+                                const chart = context.chart;
+                                const {ctx, chartArea} = chart;
+                                if (!chartArea) return colors[index] + '20';
+                                
+                                const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                                gradient.addColorStop(0, colors[index] + '10');
+                                gradient.addColorStop(1, colors[index] + '30');
+                                return gradient;
+                            }
+                            return colors[index] + '20';
+                        },
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: colors[index],
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        borderWidth: 3
                     });
                 });
             }
@@ -21061,32 +21889,134 @@
             
             const data = this.getProgressChartData(exerciseId);
             
+            // Calculer la tendance pour le premier dataset
+            if (data.datasets.length > 0) {
+                const trendData = this.calculateTrend(data.datasets[0].data);
+                setTimeout(() => {
+                    this.addTrendIndicator('progress-chart', trendData);
+                }, 500);
+            }
+            
             progressChart = new Chart(ctx, {
                 type: 'line',
                 data: data,
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Progression de l\'exercice',
+                            text: 'Progression de l\'exercice sélectionné',
                             color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
-                            font: { size: 16, weight: 'bold' }
+                            font: { size: 20, weight: 'bold' },
+                            padding: 20
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: { size: 14 }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#007AFF',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const suffix = context.datasetIndex === 0 ? ' kg' : ' kg';
+                                    return context.dataset.label + ': ' + context.parsed.y + suffix;
+                                }
+                            }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Volume (kg)',
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                font: { size: 14, weight: 'bold' }
+                            },
                             ticks: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                callback: function(value) {
+                                    return value + ' kg';
+                                }
+                            },
+                            grid: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--border-light'),
+                                drawOnChartArea: true,
+                                drawTicks: true,
                             }
                         },
                         x: {
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                font: { size: 14, weight: 'bold' }
+                            },
                             ticks: {
-                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                maxRotation: 45
+                            },
+                            grid: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--border-light'),
+                                drawOnChartArea: true,
+                                drawTicks: true,
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Charge max (kg)',
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            ticks: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                                callback: function(value) {
+                                    return value + ' kg';
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false,
                             }
                         }
+                    },
+                    elements: {
+                        line: {
+                            tension: 0.4,
+                            borderWidth: 3
+                        },
+                        point: {
+                            radius: 6,
+                            hoverRadius: 10,
+                            borderWidth: 2,
+                            hoverBorderWidth: 3
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
                     }
                 }
             });
@@ -21128,14 +22058,48 @@
                         label: 'Volume (kg)',
                         data: volumeData,
                         borderColor: '#007AFF',
-                        backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                        backgroundColor: function(context) {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return 'rgba(0, 122, 255, 0.1)';
+                            
+                            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                            gradient.addColorStop(0, 'rgba(0, 122, 255, 0.1)');
+                            gradient.addColorStop(1, 'rgba(0, 122, 255, 0.4)');
+                            return gradient;
+                        },
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointHoverRadius: 10,
+                        pointBackgroundColor: '#007AFF',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        borderWidth: 3,
                         yAxisID: 'y'
                     },
                     {
                         label: 'Charge max (kg)',
                         data: maxWeightData,
                         borderColor: '#FF6B35',
-                        backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                        backgroundColor: function(context) {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return 'rgba(255, 107, 53, 0.1)';
+                            
+                            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                            gradient.addColorStop(0, 'rgba(255, 107, 53, 0.1)');
+                            gradient.addColorStop(1, 'rgba(255, 107, 53, 0.4)');
+                            return gradient;
+                        },
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointHoverRadius: 10,
+                        pointBackgroundColor: '#FF6B35',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        borderWidth: 3,
                         yAxisID: 'y1'
                     }
                 ]
@@ -21485,6 +22449,182 @@
             });
             
             return data;
+        };
+
+        // === FONCTIONS UTILITAIRES POUR LES GRAPHIQUES ===
+        
+        // Fonction pour calculer la tendance d'un dataset
+        actions.calculateTrend = function(data) {
+            if (data.length < 2) return { trend: 'stable', percentage: 0 };
+            
+            const firstValue = data[0];
+            const lastValue = data[data.length - 1];
+            
+            if (firstValue === 0) return { trend: 'stable', percentage: 0 };
+            
+            const percentage = ((lastValue - firstValue) / firstValue) * 100;
+            let trend = 'stable';
+            
+            if (percentage > 5) trend = 'positive';
+            else if (percentage < -5) trend = 'negative';
+            
+            return { trend, percentage: Math.abs(percentage) };
+        };
+
+        // Fonction pour ajouter des indicateurs de tendance aux graphiques
+        actions.addTrendIndicator = function(containerId, trendData) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            // Supprimer l'indicateur existant
+            const existingIndicator = container.querySelector('.progress-indicator');
+            if (existingIndicator) {
+                existingIndicator.remove();
+            }
+            
+            // Créer le nouvel indicateur
+            const indicator = document.createElement('div');
+            indicator.className = `progress-indicator ${trendData.trend}`;
+            
+            const dot = document.createElement('div');
+            dot.className = 'progress-indicator-dot';
+            
+            const text = document.createElement('span');
+            let trendText = '';
+            let icon = '';
+            
+            switch (trendData.trend) {
+                case 'positive':
+                    trendText = `↗ +${trendData.percentage.toFixed(1)}%`;
+                    icon = '📈';
+                    break;
+                case 'negative':
+                    trendText = `↘ -${trendData.percentage.toFixed(1)}%`;
+                    icon = '📉';
+                    break;
+                default:
+                    trendText = '→ Stable';
+                    icon = '📊';
+            }
+            
+            text.textContent = `${icon} ${trendText}`;
+            
+            indicator.appendChild(dot);
+            indicator.appendChild(text);
+            container.appendChild(indicator);
+        };
+
+        // Fonction pour créer des tooltips personnalisés améliorés
+        actions.createEnhancedTooltip = function(context) {
+            const datasetIndex = context.datasetIndex;
+            const dataIndex = context.dataIndex;
+            const dataset = context.dataset;
+            const chart = context.chart;
+            
+            let tooltipContent = `
+                <div style="background: rgba(0, 0, 0, 0.9); color: white; padding: 12px; border-radius: 8px; font-size: 14px; max-width: 200px;">
+                    <div style="font-weight: 600; margin-bottom: 8px;">${chart.data.labels[dataIndex]}</div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 12px; height: 12px; background: ${dataset.borderColor}; border-radius: 50%;"></div>
+                        <span>${dataset.label}: ${context.parsed.y}</span>
+                    </div>
+            `;
+            
+            // Ajouter des informations contextuelles
+            if (dataIndex > 0) {
+                const previousValue = dataset.data[dataIndex - 1];
+                const change = context.parsed.y - previousValue;
+                const changePercent = previousValue !== 0 ? ((change / previousValue) * 100).toFixed(1) : 0;
+                
+                tooltipContent += `
+                    <div style="margin-top: 8px; font-size: 12px; color: #ccc;">
+                        Évolution: ${change > 0 ? '+' : ''}${change.toFixed(1)} (${changePercent}%)
+                    </div>
+                `;
+            }
+            
+            tooltipContent += '</div>';
+            return tooltipContent;
+        };
+
+        // Fonction pour ajouter des annotations aux graphiques
+        actions.addChartAnnotations = function(chartInstance, annotations) {
+            if (!chartInstance || !annotations || annotations.length === 0) return;
+            
+            // Ajouter des lignes d'annotation pour les records
+            annotations.forEach(annotation => {
+                if (annotation.type === 'record') {
+                    // Ajouter une ligne verticale pour marquer le record
+                    const plugin = {
+                        id: 'recordAnnotation',
+                        afterDraw: function(chart) {
+                            const ctx = chart.ctx;
+                            const xAxis = chart.scales.x;
+                            const yAxis = chart.scales.y;
+                            
+                            const x = xAxis.getPixelForValue(annotation.dataIndex);
+                            
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.moveTo(x, yAxis.top);
+                            ctx.lineTo(x, yAxis.bottom);
+                            ctx.strokeStyle = annotation.color || '#FFD700';
+                            ctx.lineWidth = 2;
+                            ctx.setLineDash([5, 5]);
+                            ctx.stroke();
+                            
+                            // Ajouter une étiquette
+                            ctx.fillStyle = annotation.color || '#FFD700';
+                            ctx.font = '12px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('🏆 Record', x, yAxis.top - 10);
+                            
+                            ctx.restore();
+                        }
+                    };
+                    
+                    chartInstance.config.plugins.push(plugin);
+                }
+            });
+            
+            chartInstance.update();
+        };
+
+        // Fonction pour créer des graphiques avec des couleurs dynamiques basées sur les performances
+        actions.createPerformanceColorGradient = function(ctx, chartArea, data) {
+            if (!chartArea) return 'rgba(0, 122, 255, 0.2)';
+            
+            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+            
+            // Analyser les données pour créer un gradient adaptatif
+            const maxValue = Math.max(...data);
+            const minValue = Math.min(...data);
+            const range = maxValue - minValue;
+            
+            if (range === 0) {
+                gradient.addColorStop(0, 'rgba(0, 122, 255, 0.2)');
+                gradient.addColorStop(1, 'rgba(0, 122, 255, 0.6)');
+            } else {
+                // Gradient basé sur la performance
+                const avgValue = data.reduce((a, b) => a + b, 0) / data.length;
+                const performanceRatio = (avgValue - minValue) / range;
+                
+                if (performanceRatio > 0.7) {
+                    // Haute performance - vert
+                    gradient.addColorStop(0, 'rgba(52, 199, 89, 0.2)');
+                    gradient.addColorStop(1, 'rgba(52, 199, 89, 0.6)');
+                } else if (performanceRatio > 0.4) {
+                    // Performance moyenne - bleu
+                    gradient.addColorStop(0, 'rgba(0, 122, 255, 0.2)');
+                    gradient.addColorStop(1, 'rgba(0, 122, 255, 0.6)');
+                } else {
+                    // Performance faible - orange
+                    gradient.addColorStop(0, 'rgba(255, 149, 0, 0.2)');
+                    gradient.addColorStop(1, 'rgba(255, 149, 0, 0.6)');
+                }
+            }
+            
+            return gradient;
         };
 
         // === FINALISATION ===
