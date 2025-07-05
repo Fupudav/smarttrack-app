@@ -798,7 +798,7 @@
             position: fixed;
             bottom: 70px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(20px);
             background: var(--surface);
             border-radius: 16px;
             box-shadow: 0 8px 30px var(--shadow-elevated);
@@ -807,11 +807,21 @@
             padding: 8px;
             display: none;
             min-width: 280px;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .contextual-menu.active {
             display: block;
-            animation: fadeInUp 0.3s ease-out;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Ajout d'une classe pour le positionnement précoce */
+        .contextual-menu.positioning {
+            display: block;
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
         }
 
         .contextual-menu-item {
@@ -871,6 +881,30 @@
         /* S'assurer que la navigation reste visible */
         .nav-bar {
             z-index: 1001;
+        }
+
+        /* Améliorations spécifiques pour mobile */
+        @media (max-width: 768px) {
+            .contextual-menu {
+                bottom: 60px;
+                min-width: 90vw;
+                max-width: 90vw;
+                left: 50%;
+                transform: translateX(-50%) translateY(0);
+            }
+            
+            .contextual-menu.active {
+                transform: translateX(-50%) translateY(0);
+            }
+            
+            .contextual-menu.positioning {
+                transform: translateX(-50%) translateY(10px);
+            }
+            
+            /* Fermeture automatique au tap sur un élément */
+            .contextual-menu-item {
+                position: relative;
+            }
         }
 
         /* === STYLES ÉTAT VIDE === */
@@ -9673,6 +9707,7 @@
                 this.loadData();
                 this.initializeMediaSystem();
                 this.initializeTagsSystem();
+                this.initializeTouchHandlers();
                 this.applyTheme();
                 this.setCurrentDate();
                 
@@ -10487,16 +10522,28 @@
                 this.closeContextualMenus();
                 const menu = document.getElementById('arsenal-menu');
                 const overlay = document.getElementById('menu-overlay');
-                menu.classList.add('active');
-                overlay.classList.add('active');
+                
+                // Pré-positionnement pour éviter le décalage
+                menu.classList.add('positioning');
+                setTimeout(() => {
+                    menu.classList.remove('positioning');
+                    menu.classList.add('active');
+                    overlay.classList.add('active');
+                }, 10);
             },
 
             showProgressionMenu() {
                 this.closeContextualMenus();
                 const menu = document.getElementById('progression-menu');
                 const overlay = document.getElementById('menu-overlay');
-                menu.classList.add('active');
-                overlay.classList.add('active');
+                
+                // Pré-positionnement pour éviter le décalage
+                menu.classList.add('positioning');
+                setTimeout(() => {
+                    menu.classList.remove('positioning');
+                    menu.classList.add('active');
+                    overlay.classList.add('active');
+                }, 10);
             },
 
             closeContextualMenus() {
@@ -16752,6 +16799,39 @@
                 }
             },
 
+            // Gestionnaire d'événements tactiles pour mobile
+            initializeTouchHandlers() {
+                console.log('👆 Initialisation des gestionnaires tactiles...');
+                
+                // Fermeture des menus au touch outside
+                document.addEventListener('touchstart', (e) => {
+                    const menus = document.querySelectorAll('.contextual-menu.active');
+                    const overlay = document.getElementById('menu-overlay');
+                    
+                    if (overlay && overlay.classList.contains('active')) {
+                        const isMenuClick = e.target.closest('.contextual-menu');
+                        const isMenuButton = e.target.closest('[onclick*="Menu"]');
+                        
+                        if (!isMenuClick && !isMenuButton) {
+                            this.closeContextualMenus();
+                        }
+                    }
+                });
+                
+                // Fermeture automatique après sélection d'un élément de menu
+                document.addEventListener('touchend', (e) => {
+                    const menuItem = e.target.closest('.contextual-menu-item');
+                    if (menuItem) {
+                        // Délai court pour permettre l'animation avant fermeture
+                        setTimeout(() => {
+                            this.closeContextualMenus();
+                        }, 100);
+                    }
+                });
+                
+                console.log('✅ Gestionnaires tactiles initialisés');
+            },
+
             toggleAdvancedFilters() {
                 const panel = document.getElementById('advanced-filters');
                 const btn = document.getElementById('advanced-filters-btn');
@@ -19197,6 +19277,9 @@
         
         // Navigation entre onglets programmes
         actions.switchProgramTab = function(tab) {
+            // Fermer les menus contextuels immédiatement
+            this.closeContextualMenus();
+            
             // Mise à jour des onglets
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[onclick="actions.switchProgramTab('${tab}')"]`).classList.add('active');
@@ -19215,6 +19298,9 @@
 
         // Navigation entre sous-onglets
         actions.switchProgramSubtab = function(subtab) {
+            // Fermer les menus contextuels immédiatement
+            this.closeContextualMenus();
+            
             // Mise à jour des sous-onglets
             document.querySelectorAll('.subtab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[onclick="actions.switchProgramSubtab('${subtab}')"]`).classList.add('active');
