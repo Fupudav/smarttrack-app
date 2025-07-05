@@ -2397,7 +2397,7 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
-            max-width: 300px;
+            max-width: 400px;
             margin: 0 auto 8px;
         }
 
@@ -2427,8 +2427,19 @@
             display: flex;
             justify-content: space-between;
             font-size: 11px;
-            max-width: 300px;
+            max-width: 400px;
             margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .chapter-labels span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            text-align: center;
+            min-width: 0;
         }
 
         .program-card {
@@ -2795,7 +2806,12 @@
             }
             
             .chapter-bar {
-                max-width: 250px;
+                max-width: 350px;
+            }
+            
+            .chapter-labels {
+                max-width: 350px;
+                font-size: 10px;
             }
             
             .chapter {
