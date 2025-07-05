@@ -5340,7 +5340,12 @@
 
                 <!-- Heatmap de fréquence -->
                 <div class="card">
-                    <h3>🔥 Heatmap de Fréquence</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3>🔥 Heatmap de Fréquence</h3>
+                        <button class="btn btn-secondary btn-small" onclick="actions.debugAnalyticsData()" title="Diagnostiquer les données analytics">
+                            🔍 Debug
+                        </button>
+                    </div>
                     <div class="heatmap-container">
                         <div id="frequency-heatmap"></div>
                     </div>
@@ -5359,7 +5364,12 @@
 
                 <!-- Progression par groupe musculaire -->
                 <div class="card">
-                    <h3>💪 Progression par Groupe Musculaire</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3>💪 Progression par Groupe Musculaire</h3>
+                        <button class="btn btn-secondary btn-small" onclick="actions.debugAnalyticsData()" title="Diagnostiquer les données analytics">
+                            🔍 Debug
+                        </button>
+                    </div>
                     <div class="muscle-progress-grid" id="muscle-progress-grid">
                         <!-- Généré dynamiquement -->
                     </div>
@@ -17094,6 +17104,13 @@
 
         // Fonction de rendu pour l'écran analytics
         function renderAnalytics() {
+            console.log('🔍 Rendu de l\'écran analytics');
+            console.log('📊 Données actuelles:', {
+                sessions: appState.sessions?.length || 0,
+                exercises: appState.exercises?.length || 0,
+                analyticsTab: appState.analyticsTab || 'dashboard'
+            });
+            
             // Charger l'onglet actif des analytics
             actions.switchAnalyticsTab(appState.analyticsTab || 'dashboard');
         }
@@ -21252,6 +21269,12 @@
 
         actions.loadAnalyticsDashboard = function() {
             console.log('📊 Chargement du dashboard analytics...');
+            console.log('📊 Données disponibles:', {
+                sessions: appState.sessions?.length || 0,
+                exercises: appState.exercises?.length || 0,
+                sessions_sample: appState.sessions?.slice(0, 2) || []
+            });
+            
             this.updateMetricsCards();
             this.updateVolumeChart();
             this.updateFrequencyHeatmap();
@@ -21463,6 +21486,54 @@
 Consultez la console pour plus de détails.`;
             
             alert(message);
+        };
+
+        // Fonction de debug spécifique pour les analytics
+        actions.debugAnalyticsData = function() {
+            console.log('=== DEBUG ANALYTICS DATA ===');
+            console.log('Sessions:', appState.sessions?.length || 0);
+            console.log('Exercices:', appState.exercises?.length || 0);
+            
+            let debugInfo = `🔍 Diagnostic des Analytics\n\n`;
+            debugInfo += `📊 Données de base:\n`;
+            debugInfo += `- Sessions: ${appState.sessions?.length || 0}\n`;
+            debugInfo += `- Exercices: ${appState.exercises?.length || 0}\n\n`;
+            
+            if (appState.sessions && appState.sessions.length > 0) {
+                // Analyser les sessions récentes
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                const recentSessions = appState.sessions.filter(s => new Date(s.date) >= thirtyDaysAgo);
+                
+                debugInfo += `📅 Sessions récentes (30 derniers jours):\n`;
+                debugInfo += `- Nombre: ${recentSessions.length}\n`;
+                debugInfo += `- Date limite: ${thirtyDaysAgo.toISOString().split('T')[0]}\n\n`;
+                
+                // Analyser les groupes musculaires
+                const muscleGroups = ['biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes'];
+                debugInfo += `💪 Analyse par groupe musculaire:\n`;
+                
+                muscleGroups.forEach(group => {
+                    const stats = this.getMuscleGroupStats(group, recentSessions);
+                    debugInfo += `- ${group}: ${stats.volume}kg sur ${stats.sessions} séances\n`;
+                });
+                
+                debugInfo += `\n📋 Exemples de sessions:\n`;
+                appState.sessions.slice(-3).forEach((session, index) => {
+                    debugInfo += `${index + 1}. ${session.date} - ${session.exercises?.length || 0} exercices\n`;
+                    if (session.exercises && session.exercises.length > 0) {
+                        session.exercises.slice(0, 2).forEach((ex, exIndex) => {
+                            const exercise = appState.exercises.find(e => e.id === ex.exercise_id);
+                            debugInfo += `   • ${exercise?.name || 'Exercice inconnu'} (${exercise?.muscle_group || 'N/A'}) - ${ex.sets?.length || 0} séries\n`;
+                        });
+                    }
+                });
+            } else {
+                debugInfo += `⚠️ Aucune session trouvée!\n`;
+                debugInfo += `Vérifiez que vous avez bien enregistré des séances d'entraînement.\n`;
+            }
+            
+            alert(debugInfo);
         };
 
         actions.calculateAverageSessionTime = function(sessions) {
@@ -21793,15 +21864,26 @@ Consultez la console pour plus de détails.`;
         // Mettre à jour la heatmap de fréquence
         actions.updateFrequencyHeatmap = function() {
             const container = document.getElementById('frequency-heatmap');
-            if (!container) return;
+            if (!container) {
+                console.log('⚠️ Conteneur frequency-heatmap non trouvé');
+                return;
+            }
+            
+            console.log('🔥 Mise à jour de la heatmap de fréquence...');
+            console.log('🔥 Sessions disponibles:', appState.sessions.length);
             
             const today = new Date();
             const startDate = new Date(today);
             startDate.setDate(today.getDate() - 364); // 52 semaines * 7 jours
             
+            console.log('🔥 Période heatmap:', startDate.toISOString().split('T')[0], 'à', today.toISOString().split('T')[0]);
+            
             // Créer la grille
             const grid = document.createElement('div');
             grid.className = 'heatmap-grid';
+            
+            let daysWithSessions = 0;
+            let totalDays = 0;
             
             // Générer les jours
             for (let week = 0; week < 53; week++) {
@@ -21810,8 +21892,13 @@ Consultez la console pour plus de détails.`;
                     currentDate.setDate(startDate.getDate() + (week * 7) + day);
                     
                     if (currentDate <= today) {
+                        totalDays++;
                         const dateStr = currentDate.toISOString().split('T')[0];
                         const session = appState.sessions.find(s => s.date === dateStr);
+                        
+                        if (session) {
+                            daysWithSessions++;
+                        }
                         
                         const level = session ? this.getActivityLevel(session) : 0;
                         
@@ -21824,6 +21911,8 @@ Consultez la console pour plus de détails.`;
                     }
                 }
             }
+            
+            console.log('🔥 Heatmap générée:', daysWithSessions, 'jours avec séances sur', totalDays, 'jours');
             
             container.innerHTML = '';
             container.appendChild(grid);
@@ -21864,8 +21953,18 @@ Consultez la console pour plus de détails.`;
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
             
-            const recentSessions = appState.sessions.filter(s => new Date(s.date) >= thirtyDaysAgo);
-            console.log('💪 Sessions récentes pour progression musculaire:', recentSessions.length);
+            console.log('💪 Date limite pour sessions récentes:', thirtyDaysAgo.toISOString().split('T')[0]);
+            console.log('💪 Total des sessions:', appState.sessions.length);
+            
+            // Utiliser TOUTES les sessions si pas de sessions récentes
+            let recentSessions = appState.sessions.filter(s => new Date(s.date) >= thirtyDaysAgo);
+            console.log('💪 Sessions récentes (30 jours):', recentSessions.length);
+            
+            // Si pas de sessions récentes, utiliser toutes les sessions
+            if (recentSessions.length === 0 && appState.sessions.length > 0) {
+                recentSessions = appState.sessions;
+                console.log('💪 Utilisation de toutes les sessions:', recentSessions.length);
+            }
             
             container.innerHTML = '';
             
@@ -21882,6 +21981,7 @@ Consultez la console pour plus de détails.`;
             
             muscleGroups.forEach(group => {
                 const stats = this.getMuscleGroupStats(group, recentSessions);
+                console.log(`💪 Stats pour ${group}:`, stats);
                 
                 const item = document.createElement('div');
                 item.className = 'muscle-progress-item';
@@ -21909,15 +22009,33 @@ Consultez la console pour plus de détails.`;
             let volume = 0;
             let sessionCount = 0;
             
-            sessions.forEach(session => {
+            console.log(`🔍 Analyse du groupe musculaire ${muscleGroup} sur ${sessions.length} sessions`);
+            
+            sessions.forEach((session, sessionIndex) => {
                 let hasExerciseForGroup = false;
                 
-                session.exercises.forEach(ex => {
+                if (!session.exercises || session.exercises.length === 0) {
+                    console.log(`⚠️ Session ${sessionIndex} (${session.date}) sans exercices`);
+                    return;
+                }
+                
+                session.exercises.forEach((ex, exIndex) => {
                     const exercise = appState.exercises.find(e => e.id === ex.exercise_id);
-                    if (exercise && exercise.muscle_group === muscleGroup) {
+                    if (!exercise) {
+                        console.log(`⚠️ Exercice ${ex.exercise_id} non trouvé dans la base`);
+                        return;
+                    }
+                    
+                    if (exercise.muscle_group === muscleGroup) {
                         hasExerciseForGroup = true;
+                        console.log(`✅ Exercice ${exercise.name} trouvé pour ${muscleGroup}`);
                         
-                        ex.sets.forEach(set => {
+                        if (!ex.sets || ex.sets.length === 0) {
+                            console.log(`⚠️ Exercice ${exercise.name} sans séries`);
+                            return;
+                        }
+                        
+                        ex.sets.forEach((set, setIndex) => {
                             if (set.type === 'work' && set.exercise_mode !== 'time') {
                                 let setVolume = 0;
                                 if (exercise.is_unilateral) {
@@ -21931,6 +22049,7 @@ Consultez la console pour plus de détails.`;
                                     setVolume = (set.total_resistance || 0) * (set.reps || 0);
                                 }
                                 volume += setVolume;
+                                console.log(`📊 ${exercise.name} - Série ${setIndex + 1}: ${setVolume}kg`);
                             }
                         });
                     }
@@ -21941,6 +22060,7 @@ Consultez la console pour plus de détails.`;
                 }
             });
             
+            console.log(`📊 Résultat pour ${muscleGroup}: ${volume}kg sur ${sessionCount} sessions`);
             return { volume, sessions: sessionCount };
         };
 
