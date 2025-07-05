@@ -2,7 +2,7 @@
 const CACHE_NAME = 'smarttrack-v' + new Date().getTime();
 const urlsToCache = [
   './smarttrack.html',
-  './manifest.json'
+  './manifest.json',
   './smarttrack-icon.png'
 ];
 
