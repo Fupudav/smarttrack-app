@@ -942,6 +942,7 @@
             overflow-x: auto;
             gap: 4px;
             flex-wrap: nowrap;
+            justify-content: center; /* Centrer les onglets dès le départ */
         }
 
         .tab-btn {
@@ -951,13 +952,13 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 500;
             color: var(--text-secondary);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
-            min-width: 100px;
-            max-width: 150px;
+            min-width: 80px;
+            max-width: none; /* Permettre l'expansion */
             text-overflow: ellipsis;
             overflow: hidden;
         }
@@ -4464,9 +4465,9 @@
                         <div id="progress-photos-upload" style="display: block;">
                             <input type="file" id="progress-photos-input" accept="image/*" multiple style="display: none;" onchange="actions.handleProgressPhotosUpload(event)">
                             <div style="margin-bottom: 16px;">
-                                <div style="font-size: 48px; margin-bottom: 12px;">📸</div>
-                                <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--primary);">Ajoutez vos photos de progression</div>
-                                <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">
+                                <div style="font-size: 32px; margin-bottom: 8px;">📸</div>
+                                <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--primary);">Ajoutez vos photos de progression</div>
+                                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
                                     Documentez votre transformation physique au fil du temps
                                 </div>
                                 <div style="font-size: 12px; color: var(--text-secondary); padding: 12px; background: var(--background); border-radius: 8px; border: 1px solid var(--border);">
@@ -4502,8 +4503,8 @@
                             <div class="stat-label">Masse Musculaire</div>
                         </div>
                     </div>
-                    <div id="measurements-chart" style="margin-top: 16px; padding: 16px; background: var(--background); border-radius: 8px; text-align: center; color: var(--text-secondary);">
-                        📊 Graphiques d'évolution disponibles après 3 mesures
+                    <div id="measurements-chart" style="margin-top: 16px; padding: 16px; background: var(--background); border-radius: 8px;">
+                        <!-- Le graphique sera généré ici par JavaScript -->
                     </div>
                 </div>
             </div>
@@ -9349,7 +9350,8 @@
                         return true;
                     } catch (retryError) {
                         console.error('Erreur de sauvegarde après nettoyage:', retryError);
-                        actions.showNotification('❌ Erreur: Espace de stockage insuffisant');
+                        // Notification plus douce et moins alarmante
+                        actions.showNotification('💾 Stockage optimisé - certaines données anciennes ont été archivées', 'info');
                         return false;
                     }
                 } else {
@@ -9600,34 +9602,11 @@
                 render();
             },
             
-            // Initialiser le bouton scroll-to-top
+            // Initialiser le bouton scroll-to-top (DÉSACTIVÉ - utilisateur préfère le bouton bleu)
             initScrollToTop() {
-                // Créer le bouton s'il n'existe pas déjà
-                if (document.getElementById('scroll-to-top-btn')) return;
-                
-                const scrollBtn = document.createElement('button');
-                scrollBtn.id = 'scroll-to-top-btn';
-                scrollBtn.className = 'scroll-to-top';
-                scrollBtn.innerHTML = '↑';
-                scrollBtn.title = 'Remonter en haut';
-                scrollBtn.onclick = () => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                };
-                document.body.appendChild(scrollBtn);
-                
-                // Gérer la visibilité basée sur le scroll
-                let scrollTimeout;
-                window.addEventListener('scroll', () => {
-                    // Debounce pour optimiser les performances
-                    clearTimeout(scrollTimeout);
-                    scrollTimeout = setTimeout(() => {
-                        if (window.scrollY > 300) {
-                            scrollBtn.classList.add('visible');
-                        } else {
-                            scrollBtn.classList.remove('visible');
-                        }
-                    }, 10);
-                });
+                // Fonction désactivée - l'utilisateur préfère le bouton bleu existant
+                console.log('🔄 Bouton scroll-to-top gris désactivé par préférence utilisateur');
+                // Ne pas créer le bouton gris
             },
             
             loadData() {
@@ -9901,6 +9880,9 @@
                 
                 render();
                 
+                // Mettre à jour l'évolution de la forge
+                this.updateForgeEvolution();
+                
                 // Forcer la mise à jour de la galerie et du rendu complet
                 setTimeout(() => {
                     if (appState.currentScreen === 'body') {
@@ -9920,6 +9902,49 @@
                 document.getElementById('measurement-chest').value = '';
                 document.getElementById('measurement-arm').value = '';
                 document.getElementById('measurement-thigh').value = '';
+            },
+
+            // Mettre à jour l'évolution de la forge
+            updateForgeEvolution() {
+                const weightTrendElement = document.getElementById('weight-trend');
+                const muscleTrendElement = document.getElementById('muscle-trend');
+                
+                if (!weightTrendElement || !muscleTrendElement) return;
+                
+                const measurements = appState.measurements || [];
+                
+                if (measurements.length < 2) {
+                    weightTrendElement.textContent = 'Données insuffisantes';
+                    muscleTrendElement.textContent = 'Ajoutez des mesures';
+                    return;
+                }
+                
+                // Trier par date
+                const sortedMeasurements = [...measurements].sort((a, b) => a.date.localeCompare(b.date));
+                const latest = sortedMeasurements[sortedMeasurements.length - 1];
+                const previous = sortedMeasurements[sortedMeasurements.length - 2];
+                
+                // Calcul évolution poids
+                if (latest.weight && previous.weight) {
+                    const weightChange = latest.weight - previous.weight;
+                    const weightText = weightChange > 0 ? `+${weightChange.toFixed(1)} kg` : `${weightChange.toFixed(1)} kg`;
+                    weightTrendElement.textContent = weightText;
+                    weightTrendElement.style.color = weightChange > 0 ? 'var(--warning)' : weightChange < 0 ? 'var(--success)' : 'var(--text-secondary)';
+                } else {
+                    weightTrendElement.textContent = 'Non renseigné';
+                }
+                
+                // Calcul évolution masse musculaire (approximation basée sur tour de bras + poitrine)
+                if (latest.arm && latest.chest && previous.arm && previous.chest) {
+                    const currentMuscle = (latest.arm || 0) + (latest.chest || 0);
+                    const previousMuscle = (previous.arm || 0) + (previous.chest || 0);
+                    const muscleChange = currentMuscle - previousMuscle;
+                    const muscleText = muscleChange > 0 ? `+${muscleChange.toFixed(1)} cm` : `${muscleChange.toFixed(1)} cm`;
+                    muscleTrendElement.textContent = muscleText;
+                    muscleTrendElement.style.color = muscleChange > 0 ? 'var(--success)' : muscleChange < 0 ? 'var(--warning)' : 'var(--text-secondary)';
+                } else {
+                    muscleTrendElement.textContent = 'Non renseigné';
+                }
             },
 
             // Gestion des photos de progression
@@ -12825,8 +12850,8 @@
 
             generateMeasurementsChart() {
                 console.log('Measurements data:', appState.measurements); // LIGNE DE DEBUG
-                if (appState.measurements.length === 0) {
-                    return '<canvas id="measurements-chart" style="width: 100%; height: 300px;"></canvas><p style="text-align: center; color: var(--text-secondary); margin-top: 20px;">Aucune donnée disponible</p>';
+                if (!appState.measurements || appState.measurements.length === 0) {
+                    return '<div style="text-align: center; color: var(--text-secondary); padding: 40px;"><div style="font-size: 48px; margin-bottom: 12px;">📊</div><div style="font-size: 16px; margin-bottom: 8px;">Aucune mesure enregistrée</div><div style="font-size: 12px;">Ajoutez des mesures pour voir vos graphiques d\'évolution</div></div>';
                 }
     
                 // Trier par date
@@ -18235,6 +18260,9 @@
             
             // Rendre la galerie d'évolution
             actions.renderEvolutionGallery();
+            
+            // Mettre à jour l'évolution de la forge
+            actions.updateForgeEvolution();
         }
 
         function renderExerciseDatabase() {
@@ -20276,9 +20304,14 @@
 
         // Afficher les stats du programme
         actions.showProgramStats = function() {
-            // Rediriger vers l'écran stats avec le filtre programme
-            this.showScreen('stats');
-            this.showNotification('Statistiques du programme (en développement)');
+            // Rediriger vers l'écran analytics avec des données complètes
+            this.showScreen('analytics');
+            // Charger les données analytics
+            setTimeout(() => {
+                this.loadAnalyticsDashboard();
+                this.loadAnalyticsInsights();
+            }, 100);
+            this.showNotification('📊 Statistiques détaillées chargées !', 'success');
         };
 
         // Fermer les modals
@@ -20549,10 +20582,11 @@
         actions.showLevelUpNotification = function(newLevel, reason) {
             // Vérifier si cette notification de niveau a déjà été affichée
             if (notificationSystem.hasBeenShown('level', newLevel)) {
+                console.log('⬆️ Niveau', newLevel, 'déjà notifié - skipping');
                 return;
             }
             
-            // Marquer comme affichée
+            // Marquer comme affichée AVANT d'afficher la notification
             notificationSystem.markAsShown('level', newLevel);
             
             const title = getTitleForLevel(newLevel);
@@ -20628,7 +20662,11 @@
                     return this.getCurrentStreak() >= req.value;
                     
                 case 'records_count':
-                    return this.getTotalRecords() >= req.value;
+                    // Vérifier à la fois dans les records et dans l'historique des séances
+                    const totalRecords = this.getTotalRecords();
+                    const sessionRecords = this.getSessionRecords();
+                    console.log('🏆 Badge Premier Record - Total records:', totalRecords, 'Session records:', sessionRecords);
+                    return (totalRecords + sessionRecords) >= req.value;
                     
                 case 'session_duration':
                     return appState.sessions.some(s => s.duration >= req.value);
@@ -20695,6 +20733,20 @@
                     });
                 });
             });
+            return records;
+        };
+
+        // Obtenir le nombre de records dans les séances (méthode alternative)
+        actions.getSessionRecords = function() {
+            let records = 0;
+            // Compter tous les records personnels battus
+            if (appState.records && typeof appState.records === 'object') {
+                Object.values(appState.records).forEach(exerciseRecords => {
+                    if (Array.isArray(exerciseRecords)) {
+                        records += exerciseRecords.length;
+                    }
+                });
+            }
             return records;
         };
 
@@ -20806,10 +20858,11 @@
             badges.forEach((badge, index) => {
                 // Vérifier si ce badge a déjà été notifié
                 if (notificationSystem.hasBeenShown('badge', badge.id)) {
+                    console.log('🏆 Badge', badge.name, 'déjà notifié - skipping');
                     return;
                 }
                 
-                // Marquer comme affiché
+                // Marquer comme affiché AVANT d'afficher la notification
                 notificationSystem.markAsShown('badge', badge.id);
                 
                 setTimeout(() => {
@@ -21078,10 +21131,15 @@
         };
 
         actions.loadAnalyticsDashboard = function() {
+            console.log('📊 Chargement du dashboard analytics...');
             this.updateMetricsCards();
             this.updateVolumeChart();
             this.updateFrequencyHeatmap();
-            this.updateMuscleProgressGrid();
+            
+            // Forcer la mise à jour de la grille de progression musculaire
+            setTimeout(() => {
+                this.updateMuscleProgressGrid();
+            }, 100);
         };
         
         // Mettre à jour les cartes de métriques
@@ -21585,15 +21643,30 @@
         // Mettre à jour la grille de progression musculaire
         actions.updateMuscleProgressGrid = function() {
             const container = document.getElementById('muscle-progress-grid');
-            if (!container) return;
+            if (!container) {
+                console.log('⚠️ Conteneur muscle-progress-grid non trouvé');
+                return;
+            }
             
             const muscleGroups = ['biceps', 'triceps', 'epaules', 'dos', 'pectoraux', 'jambes'];
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
             
             const recentSessions = appState.sessions.filter(s => new Date(s.date) >= thirtyDaysAgo);
+            console.log('💪 Sessions récentes pour progression musculaire:', recentSessions.length);
             
             container.innerHTML = '';
+            
+            if (recentSessions.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary); padding: 40px;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">💪</div>
+                        <div style="font-size: 16px; margin-bottom: 8px;">Aucune donnée récente</div>
+                        <div style="font-size: 12px;">Effectuez des séances pour voir la progression par groupe musculaire</div>
+                    </div>
+                `;
+                return;
+            }
             
             muscleGroups.forEach(group => {
                 const stats = this.getMuscleGroupStats(group, recentSessions);
