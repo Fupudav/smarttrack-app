@@ -2397,7 +2397,7 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
-            max-width: 300px;
+            max-width: 400px;
             margin: 0 auto 8px;
         }
 
@@ -2427,8 +2427,27 @@
             display: flex;
             justify-content: space-between;
             font-size: 11px;
-            max-width: 300px;
+            max-width: 400px;
             margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .chapter-labels span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            text-align: center;
+            min-width: 0;
+        }
+        
+        .chapter-labels .full-text {
+            display: inline;
+        }
+        
+        .chapter-labels .short-text {
+            display: none;
         }
 
         .program-card {
@@ -2795,13 +2814,51 @@
             }
             
             .chapter-bar {
-                max-width: 250px;
+                max-width: 100%;
+                padding: 0 10px;
+            }
+            
+            .chapter-labels {
+                max-width: 100%;
+                font-size: 9px;
+                padding: 0 10px;
+            }
+            
+            .chapter-labels span {
+                font-size: 9px;
+                line-height: 1.2;
+            }
+            
+            .chapter-labels .full-text {
+                display: none;
+            }
+            
+            .chapter-labels .short-text {
+                display: inline;
+            }
+        }
+        
+        /* Très petits écrans */
+        @media (max-width: 480px) {
+            .chapter-labels {
+                font-size: 8px;
+                max-width: 100%;
+                padding: 0 5px;
+            }
+            
+            .chapter-labels span {
+                font-size: 8px;
+                line-height: 1.1;
+            }
+            
+            .chapter-bar {
+                padding: 0 5px;
             }
             
             .chapter {
-                width: 30px;
-                height: 30px;
-                font-size: 16px;
+                width: 25px;
+                height: 25px;
+                font-size: 14px;
             }
             
             .training-days {
@@ -4957,13 +5014,17 @@
                                 <div class="chapter locked">🎯</div>
                             </div>
                             <div class="chapter-labels">
-                                <span>Débutant</span>
-                                <span>Intermédiaire</span>
-                                <span>Avancé</span>
-                                <span>Légende</span>
-                                <span>Spécifique</span>
+                                <span class="full-text">Débutant</span>
+                                <span class="short-text">Début.</span>
+                                <span class="full-text">Intermédiaire</span>
+                                <span class="short-text">Inter.</span>
+                                <span class="full-text">Avancé</span>
+                                <span class="short-text">Avanc.</span>
+                                <span class="full-text">Légende</span>
+                                <span class="short-text">Légend.</span>
+                                <span class="full-text">Spécifique</span>
+                                <span class="short-text">Spécif.</span>
                             </div>
-                        </div>
                     </div>
                     
                     <div id="programs-list-histoire"></div>
