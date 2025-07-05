@@ -906,6 +906,28 @@
             z-index: 1001;
         }
 
+        /* === STYLES ÉTAT VIDE === */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
         /* === STYLES ANALYTICS AVANCÉES (v1.4) === */
         
         /* Onglets Analytics */
@@ -9686,12 +9708,12 @@
 
             addMeasurement() {
                 const date = document.getElementById('measurement-date').value;
-                const weight = document.getElementById('measurement-weight').value;
-                const height = document.getElementById('measurement-height').value;
-                const waist = document.getElementById('measurement-waist').value;
-                const chest = document.getElementById('measurement-chest').value;
-                const arm = document.getElementById('measurement-arm').value;
-                const thigh = document.getElementById('measurement-thigh').value;
+                const weight = parseFloat(document.getElementById('measurement-weight').value);
+                const height = parseFloat(document.getElementById('measurement-height').value);
+                const waist = parseFloat(document.getElementById('measurement-waist').value);
+                const chest = parseFloat(document.getElementById('measurement-chest').value);
+                const arm = parseFloat(document.getElementById('measurement-arm').value);
+                const thigh = parseFloat(document.getElementById('measurement-thigh').value);
                 
                 if (!date || !weight) {
                     this.showNotification('⚠️ Date et poids sont requis', 'warning');
@@ -9700,16 +9722,41 @@
                 
                 appState.measurements = appState.measurements || [];
                 
+                // Calculer l'IMC si taille et poids sont renseignés
+                let imc = 0;
+                let imcCategory = '';
+                if (height > 0 && weight > 0) {
+                    const heightInMeters = height / 100;
+                    imc = weight / (heightInMeters * heightInMeters);
+                    
+                    // Déterminer la catégorie IMC
+                    if (imc < 18.5) {
+                        imcCategory = 'Insuffisance pondérale';
+                    } else if (imc < 25) {
+                        imcCategory = 'Poids normal';
+                    } else if (imc < 30) {
+                        imcCategory = 'Surpoids';
+                    } else if (imc < 35) {
+                        imcCategory = 'Obésité modérée';
+                    } else if (imc < 40) {
+                        imcCategory = 'Obésité sévère';
+                    } else {
+                        imcCategory = 'Obésité morbide';
+                    }
+                }
+                
                 // Créer la nouvelle mesure avec les photos
                 const newMeasurement = {
                     id: Date.now(),
                     date, 
-                    weight: parseFloat(weight), 
-                    height: parseFloat(height) || null,
-                    waist: parseFloat(waist) || null, 
-                    chest: parseFloat(chest) || null,
-                    arm: parseFloat(arm) || null, 
-                    thigh: parseFloat(thigh) || null,
+                    weight: weight || 0, 
+                    height: height || 0,
+                    waist: waist || 0, 
+                    chest: chest || 0,
+                    arm: arm || 0, 
+                    thigh: thigh || 0,
+                    imc: Math.round(imc * 10) / 10, // Arrondir à 1 décimale
+                    imcCategory: imcCategory,
                     photos: appState.currentProgressPhotos || []
                 };
                 
@@ -9721,20 +9768,20 @@
                 
                 this.saveData();
                 
+                // Notification avec détails
+                let notificationMessage = '🏋️ Mesures enregistrées';
                 if (newMeasurement.photos && newMeasurement.photos.length > 0) {
-                    this.showNotification(`🏋️ Mesures enregistrées avec ${newMeasurement.photos.length} photo(s) !`, 'success');
-                } else {
-                    this.showNotification('🏋️ Mesures du guerrier enregistrées !', 'success');
+                    notificationMessage += ` avec ${newMeasurement.photos.length} photo(s)`;
                 }
+                if (imc > 0) {
+                    notificationMessage += ` • IMC: ${newMeasurement.imc} (${imcCategory})`;
+                }
+                notificationMessage += ' !';
+                
+                this.showNotification(notificationMessage, 'success');
                 
                 // Effacer le formulaire et photos temporaires
-                document.getElementById('measurement-date').value = '';
-                document.getElementById('measurement-weight').value = '';
-                document.getElementById('measurement-height').value = '';
-                document.getElementById('measurement-waist').value = '';
-                document.getElementById('measurement-chest').value = '';
-                document.getElementById('measurement-arm').value = '';
-                document.getElementById('measurement-thigh').value = '';
+                this.clearMeasurementForm();
                 
                 // Réinitialiser les photos temporaires
                 appState.currentProgressPhotos = [];
@@ -9742,12 +9789,25 @@
                 
                 render();
                 
-                // Forcer la mise à jour de la galerie après un court délai
+                // Forcer la mise à jour de la galerie et du rendu complet
                 setTimeout(() => {
                     if (appState.currentScreen === 'body') {
                         this.renderEvolutionGallery();
+                        // Forcer le re-rendu complet de l'écran body
+                        render();
                     }
                 }, 300);
+            },
+            
+            // Vider le formulaire de mesures
+            clearMeasurementForm() {
+                document.getElementById('measurement-date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('measurement-weight').value = '';
+                document.getElementById('measurement-height').value = '';
+                document.getElementById('measurement-waist').value = '';
+                document.getElementById('measurement-chest').value = '';
+                document.getElementById('measurement-arm').value = '';
+                document.getElementById('measurement-thigh').value = '';
             },
 
             // Gestion des photos de progression
@@ -9927,29 +9987,37 @@
                 
                 if (allPhotos.length === 0) {
                     galleryContainer.innerHTML = `
-                        <div style="text-align: center; color: var(--text-secondary); grid-column: 1 / -1; padding: 40px;">
-                            📸 Vos photos de progression apparaîtront ici<br>
-                            <small>Ajoutez des photos à vos mesures pour suivre votre transformation</small>
+                        <div class="empty-state">
+                            <div class="empty-icon">📸</div>
+                            <h3>Aucune photo de progression</h3>
+                            <p>Vos photos de progression apparaîtront ici.<br>Ajoutez des photos à vos mesures pour suivre votre transformation.</p>
+                            <button class="btn btn-primary" onclick="document.getElementById('progress-photos-input').click()">
+                                📷 Ajouter une photo
+                            </button>
                         </div>
                     `;
                     return;
                 }
                 
-                // Créer la galerie
-                galleryContainer.innerHTML = allPhotos.map((photo, index) => {
-                    const date = new Date(photo.measurementDate);
-                    const isRecent = index < 3;
-                    
-                    return `
-                        <div class="evolution-gallery-item" onclick="actions.viewProgressPhoto({data: '${photo.data}', name: '${photo.name}'})">
-                            ${isRecent ? '<div class="evolution-gallery-badge">Récent</div>' : ''}
-                            <img src="${photo.data}" alt="Photo du ${date.toLocaleDateString('fr-FR')}">
-                            <div class="evolution-gallery-date">
-                                ${date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+                // Créer la galerie avec un meilleur design
+                galleryContainer.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;">
+                        ${allPhotos.map((photo, index) => {
+                            const date = new Date(photo.measurementDate);
+                            const isRecent = index < 3;
+                            
+                            return `
+                                <div class="evolution-gallery-item" onclick="actions.viewProgressPhoto({data: '${photo.data}', name: '${photo.name}'})" style="position: relative; border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.3s ease;">
+                                    ${isRecent ? '<div style="position: absolute; top: 8px; right: 8px; background: var(--primary); color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">Récent</div>' : ''}
+                                    <img src="${photo.data}" alt="Photo du ${date.toLocaleDateString('fr-FR')}" style="width: 100%; height: 150px; object-fit: cover;">
+                                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: white; padding: 8px; font-size: 12px; text-align: center;">
+                                        ${date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
             },
 
             deleteMeasurement(measurementId) {
@@ -12778,68 +12846,7 @@
                 return chartHtml;
             },
             
-            // Gestion des mesures corporelles
-            addMeasurement() {
-                const date = document.getElementById('measurement-date').value;
-                const height = parseFloat(document.getElementById('measurement-height').value);
-                const weight = parseFloat(document.getElementById('measurement-weight').value);
-                const waist = parseFloat(document.getElementById('measurement-waist').value);
-                const chest = parseFloat(document.getElementById('measurement-chest').value);
-                const arm = parseFloat(document.getElementById('measurement-arm').value);
-                const thigh = parseFloat(document.getElementById('measurement-thigh').value);
-
-                if (!date) {
-                    this.showNotification('Date requise');
-                    return;
-                }
-
-                // Calculer l'IMC si taille et poids sont renseignés
-                let imc = 0;
-                let imcCategory = '';
-                if (height > 0 && weight > 0) {
-                    const heightInMeters = height / 100;
-                    imc = weight / (heightInMeters * heightInMeters);
-                    
-                    // Déterminer la catégorie IMC
-                    if (imc < 18.5) {
-                        imcCategory = 'Insuffisance pondérale';
-                    } else if (imc < 25) {
-                        imcCategory = 'Poids normal';
-                    } else if (imc < 30) {
-                        imcCategory = 'Surpoids';
-                    } else if (imc < 35) {
-                        imcCategory = 'Obésité modérée';
-                    } else if (imc < 40) {
-                        imcCategory = 'Obésité sévère';
-                    } else {
-                        imcCategory = 'Obésité morbide';
-                    }
-                }
-
-                const newMeasurement = {
-                    id: Date.now(),
-                    date,
-                    height: height || 0,
-                    weight: weight || 0,
-                    waist: waist || 0,
-                    chest: chest || 0,
-                    arm: arm || 0,
-                    thigh: thigh || 0,
-                    imc: Math.round(imc * 10) / 10, // Arrondir à 1 décimale
-                    imcCategory: imcCategory
-                };
-
-                appState.measurements.push(newMeasurement);
-                this.clearMeasurementForm();
-                this.saveData();
-                render();
-                
-                if (imc > 0) {
-                    this.showNotification(`Mensuration ajoutée ! IMC: ${newMeasurement.imc} (${imcCategory})`);
-                } else {
-                    this.showNotification('Mensuration ajoutée !');
-                }
-            },
+            // Note: La fonction addMeasurement principale avec gestion des photos est définie plus haut
             
             deleteMeasurement(id) {
                 if (confirm('Supprimer cette mesure ?')) {
@@ -17237,6 +17244,28 @@
         function renderStats() {
             const statsContent = document.getElementById('stats-content');
             
+            if (!statsContent) {
+                console.error('📊 Stats content container not found');
+                return;
+            }
+            
+            // Vérifier s'il y a des données
+            if (!appState.sessions || appState.sessions.length === 0) {
+                statsContent.innerHTML = `
+                    <div class="card">
+                        <div class="empty-state">
+                            <div class="empty-icon">📊</div>
+                            <h3>Aucune donnée disponible</h3>
+                            <p>Commencez par faire quelques séances d'entraînement pour voir vos statistiques.</p>
+                            <button class="btn btn-primary" onclick="actions.showScreen('preparation')">
+                                🚀 Commencer une séance
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
             // STATISTIQUES GÉNÉRALES
             const generalStats = actions.calculateGeneralStats();
             let generalStatsHtml = `
@@ -20562,6 +20591,13 @@
                     }
                 });
             }
+            
+            // Charger immédiatement les statistiques générales
+            setTimeout(() => {
+                if (typeof renderStats === 'function') {
+                    renderStats();
+                }
+            }, 100);
         };
 
         actions.loadAnalyticsDashboard = function() {
