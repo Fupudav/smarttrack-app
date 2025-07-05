@@ -942,25 +942,79 @@
             overflow-x: auto;
             gap: 4px;
             flex-wrap: nowrap;
-            justify-content: center; /* Centrer les onglets dès le départ */
         }
 
         .tab-btn {
             flex: 1;
-            padding: 8px 12px;
+            padding: 12px 8px;
             background: transparent;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 500;
             color: var(--text-secondary);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
-            min-width: 80px;
-            max-width: none; /* Permettre l'expansion */
-            text-overflow: ellipsis;
-            overflow: hidden;
+            min-width: auto;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* Responsive pour les onglets Analytics */
+        @media (max-width: 480px) {
+            .analytics-tabs {
+                padding: 2px;
+                gap: 2px;
+            }
+            
+            .tab-btn {
+                padding: 10px 4px;
+                font-size: 10px;
+                font-weight: 600;
+                flex: 1;
+            }
+            
+            /* Textes plus courts sur mobile */
+            .tab-btn[onclick*="dashboard"] {
+                font-size: 0;
+            }
+            .tab-btn[onclick*="dashboard"]:before {
+                content: "📈 Data";
+                font-size: 10px;
+            }
+            
+            .tab-btn[onclick*="exercises"] {
+                font-size: 0;
+            }
+            .tab-btn[onclick*="exercises"]:before {
+                content: "💪 Exos";
+                font-size: 10px;
+            }
+            
+            .tab-btn[onclick*="progress"] {
+                font-size: 0;
+            }
+            .tab-btn[onclick*="progress"]:before {
+                content: "📊 Prog";
+                font-size: 10px;
+            }
+            
+            .tab-btn[onclick*="insights"] {
+                font-size: 0;
+            }
+            .tab-btn[onclick*="insights"]:before {
+                content: "💡 Info";
+                font-size: 10px;
+            }
+            
+            .tab-btn[onclick*="compare"] {
+                font-size: 0;
+            }
+            .tab-btn[onclick*="compare"]:before {
+                content: "⚖️ Comp";
+                font-size: 10px;
+            }
         }
 
         .tab-btn:hover {
