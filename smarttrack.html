@@ -707,18 +707,20 @@
 
         /* === NAVIGATION === */
         .nav-bar {
-            background: var(--surface);
+            background: var(--surface) !important;
             border-top: 1px solid var(--border);
             padding: 10px 0;
-            display: flex;
+            display: flex !important;
             justify-content: space-around;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            width: 100%;
-            z-index: 100;
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            z-index: 1001 !important;
             box-shadow: 0 -2px 10px var(--shadow);
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         /* Compensation pour le menu fixe en bas */
@@ -19934,21 +19936,36 @@
 
         // Afficher l'écran de suivi de programme
         actions.renderProgramTracking = function() {
+            const screen = document.getElementById('screen-program-tracking');
+            
             if (!appState.currentProgram) {
-                const screen = document.getElementById('screen-program-tracking');
+                // Vérifier s'il y a des programmes disponibles
+                const hasPrograms = appState.programs && appState.programs.length > 0;
+                
                 screen.innerHTML = `
                     <div class="header">
                         <button class="btn btn-small btn-secondary" onclick="actions.showScreen('dashboard')">← Retour</button>
-                        <h1>Aucun programme</h1>
+                        <h1>Suivi de Programme</h1>
                         <div></div>
                     </div>
                     <div class="card" style="text-align: center; padding: 40px;">
                         <div style="font-size: 48px; margin-bottom: 16px;">📚</div>
                         <h3>Aucun programme actif</h3>
-                        <p>Commencez par sélectionner un programme dans l'onglet Programmes.</p>
-                        <button class="btn btn-primary" onclick="actions.showScreen('programmes')">
-                            🏆 Voir les programmes
-                        </button>
+                        <p style="margin: 16px 0;">
+                            ${hasPrograms ? 
+                                'Vous avez des programmes disponibles. Sélectionnez-en un pour commencer le suivi.' : 
+                                'Créez ou choisissez un programme pour commencer votre suivi d\'entraînement.'}
+                        </p>
+                        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
+                            <button class="btn btn-primary" onclick="actions.showScreen('programmes')">
+                                🏆 Voir les programmes
+                            </button>
+                            ${hasPrograms ? `
+                                <button class="btn btn-secondary" onclick="actions.selectFirstAvailableProgram()">
+                                    ⚡ Sélectionner un programme
+                                </button>
+                            ` : ''}
+                        </div>
                     </div>
                 `;
                 return;
@@ -24139,6 +24156,98 @@ Consultez la console pour plus de détails.`;
             // TODO: Implémenter le test
         };
 
+        // === FONCTION DE DIAGNOSTIC ===
+        
+        // Fonction de diagnostic pour vérifier l'état de l'application
+        actions.diagnostic = function() {
+            console.log('=== DIAGNOSTIC SMARTTRACK ===');
+            console.log('État de l\'application:', appState);
+            console.log('Programme actuel:', appState.currentProgram);
+            console.log('Programmes disponibles:', appState.programs);
+            console.log('Écran actuel:', document.querySelector('.screen.active')?.id);
+            
+            // Vérifier si la barre de navigation est masquée
+            const navBar = document.querySelector('.nav-bar');
+            if (navBar) {
+                console.log('Barre navigation - display:', getComputedStyle(navBar).display);
+                console.log('Barre navigation - position:', getComputedStyle(navBar).position);
+                console.log('Barre navigation - z-index:', getComputedStyle(navBar).zIndex);
+                console.log('Barre navigation - bottom:', getComputedStyle(navBar).bottom);
+                console.log('Barre navigation - visibility:', getComputedStyle(navBar).visibility);
+            } else {
+                console.log('❌ Barre de navigation non trouvée dans le DOM');
+            }
+            
+            return {
+                navBarVisible: navBar && getComputedStyle(navBar).display !== 'none',
+                currentProgram: appState.currentProgram,
+                programsCount: appState.programs?.length || 0,
+                currentScreen: document.querySelector('.screen.active')?.id
+            };
+        };
+
+        // Forcer l'affichage de la barre de navigation
+        actions.forceNavBarDisplay = function() {
+            const navBar = document.querySelector('.nav-bar');
+            if (navBar) {
+                navBar.style.display = 'flex';
+                navBar.style.position = 'fixed';
+                navBar.style.bottom = '0';
+                navBar.style.zIndex = '1001';
+                navBar.style.visibility = 'visible';
+                navBar.style.opacity = '1';
+                console.log('✅ Barre de navigation forcée à s\'afficher');
+            } else {
+                console.log('❌ Impossible de trouver la barre de navigation');
+            }
+        };
+
+        // Fonction helper pour sélectionner le premier programme disponible
+        actions.selectFirstAvailableProgram = function() {
+            if (appState.programs && appState.programs.length > 0) {
+                const firstProgram = appState.programs[0];
+                appState.currentProgram = firstProgram;
+                this.saveData();
+                this.renderProgramTracking();
+                this.showNotification(`Programme "${firstProgram.programme_nom}" sélectionné`, 'success');
+            } else {
+                this.showNotification('Aucun programme disponible', 'warning');
+            }
+        };
+
+        // === INITIALISATION ===
+        actions.init = function() {
+            console.log('🚀 Initialisation SmartTrack...');
+            
+            this.loadData();
+            this.renderDashboard();
+            this.renderExercises();
+            this.renderTemplates();
+            this.renderHistory();
+            this.renderBodyData();
+            this.renderProgrammes();
+            this.renderAnalytics();
+            this.renderGamification();
+            this.renderExerciseDatabase();
+            this.renderProgramTracking();
+            
+            // Vérifier l'affichage de la barre de navigation après initialisation
+            setTimeout(() => {
+                const navBar = document.querySelector('.nav-bar');
+                if (!navBar) {
+                    console.log('❌ Barre de navigation non trouvée après initialisation');
+                } else {
+                    const computedStyle = getComputedStyle(navBar);
+                    if (computedStyle.display === 'none' || computedStyle.visibility === 'hidden') {
+                        console.log('⚠️ Barre de navigation non visible après initialisation');
+                        this.forceNavBarDisplay();
+                    } else {
+                        console.log('✅ Barre de navigation visible');
+                    }
+                }
+            }, 100);
+        };
+
         // === FINALISATION ===
         document.addEventListener('DOMContentLoaded', () => {
             console.log('SmartTrack - Initialisation de l\'application');
@@ -24222,6 +24331,14 @@ Consultez la console pour plus de détails.`;
 
             // Ajouter un état initial à l'historique du navigateur
             window.history.replaceState({ screen: 'dashboard' }, '', window.location.href);
+            
+            // Exposer les fonctions de diagnostic globalement pour faciliter le debug
+            window.smartTrackDiagnostic = actions.diagnostic;
+            window.smartTrackFixNavBar = actions.forceNavBarDisplay;
+            
+            console.log('🔧 Fonctions de diagnostic disponibles:');
+            console.log('- smartTrackDiagnostic() : Diagnostic complet');
+            console.log('- smartTrackFixNavBar() : Forcer l\'affichage de la barre de navigation');
         });
 
         // Fermeture des modals en cliquant à l'extérieur
