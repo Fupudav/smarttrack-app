@@ -868,39 +868,6 @@
             display: block;
         }
 
-        /* === BOUTON SCROLL-TO-TOP === */
-        .scroll-to-top {
-            position: fixed;
-            bottom: 80px; /* Au-dessus de la barre de navigation */
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 1000; /* Inférieur aux modales mais supérieur au contenu */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .scroll-to-top.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .scroll-to-top:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
         /* S'assurer que la navigation reste visible */
         .nav-bar {
             z-index: 1001;
@@ -5728,7 +5695,6 @@
 
             <div id="media-upload-section">
                 <div class="media-upload-zone" id="media-drop-zone">
-                    <div style="font-size: 48px; margin-bottom: 12px;">⬆️</div>
                     <div style="font-size: 16px; font-weight: 500; margin-bottom: 8px;">
                         Glissez-déposez vos images ici
                     </div>
@@ -9712,19 +9678,13 @@
                 const savedScreen = storage.load('currentScreen', 'dashboard');
                 appState.currentScreen = savedScreen;
                 
-                // Initialiser le bouton scroll-to-top
-                this.initScrollToTop();
+
                 
                 console.log('✅ SmartTrack initialisé avec succès');
                 render();
             },
             
-            // Initialiser le bouton scroll-to-top (DÉSACTIVÉ - utilisateur préfère le bouton bleu)
-            initScrollToTop() {
-                // Fonction désactivée - l'utilisateur préfère le bouton bleu existant
-                console.log('🔄 Bouton scroll-to-top gris désactivé par préférence utilisateur');
-                // Ne pas créer le bouton gris
-            },
+
             
             loadData() {
                 appState.exercises = storage.load('exercises', []);
