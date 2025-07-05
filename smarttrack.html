@@ -883,6 +883,57 @@
             z-index: 1001;
         }
 
+        /* === BOUTON SCROLL-TO-TOP === */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 90px; /* Au-dessus de la barre de navigation (70px + 20px) */
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000; /* Inférieur à la navigation (1001) */
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .scroll-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+        }
+
+        .scroll-to-top:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive pour scroll-to-top */
+        @media (max-width: 768px) {
+            .scroll-to-top {
+                bottom: 80px;
+                right: 16px;
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+        }
+
         /* Améliorations spécifiques pour mobile */
         @media (max-width: 768px) {
             .contextual-menu {
@@ -965,58 +1016,98 @@
         }
 
         /* Responsive pour les onglets Analytics */
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
             .analytics-tabs {
-                padding: 2px;
+                padding: 3px;
                 gap: 2px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            
+            .analytics-tabs::-webkit-scrollbar {
+                display: none;
             }
             
             .tab-btn {
-                padding: 10px 4px;
-                font-size: 10px;
+                padding: 8px 6px;
+                font-size: 11px;
                 font-weight: 600;
+                flex-shrink: 0;
+                min-width: 70px;
+                max-width: 85px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .analytics-tabs {
+                padding: 2px;
+                gap: 1px;
+                justify-content: space-between;
+            }
+            
+            .tab-btn {
+                padding: 8px 4px;
+                font-size: 9px;
+                font-weight: 700;
                 flex: 1;
+                min-width: 0;
+                max-width: none;
+                line-height: 1.1;
             }
             
             /* Textes plus courts sur mobile */
             .tab-btn[onclick*="dashboard"] {
                 font-size: 0;
             }
-            .tab-btn[onclick*="dashboard"]:before {
-                content: "📈 Data";
-                font-size: 10px;
+            .tab-btn[onclick*="dashboard"]:after {
+                content: "📈\AData";
+                font-size: 9px;
+                white-space: pre;
+                line-height: 1.1;
             }
             
             .tab-btn[onclick*="exercises"] {
                 font-size: 0;
             }
-            .tab-btn[onclick*="exercises"]:before {
-                content: "💪 Exos";
-                font-size: 10px;
+            .tab-btn[onclick*="exercises"]:after {
+                content: "💪\AExos";
+                font-size: 9px;
+                white-space: pre;
+                line-height: 1.1;
             }
             
             .tab-btn[onclick*="progress"] {
                 font-size: 0;
             }
-            .tab-btn[onclick*="progress"]:before {
-                content: "📊 Prog";
-                font-size: 10px;
+            .tab-btn[onclick*="progress"]:after {
+                content: "📊\AProg";
+                font-size: 9px;
+                white-space: pre;
+                line-height: 1.1;
             }
             
             .tab-btn[onclick*="insights"] {
                 font-size: 0;
             }
-            .tab-btn[onclick*="insights"]:before {
-                content: "💡 Info";
-                font-size: 10px;
+            .tab-btn[onclick*="insights"]:after {
+                content: "💡\AInfo";
+                font-size: 9px;
+                white-space: pre;
+                line-height: 1.1;
             }
             
             .tab-btn[onclick*="compare"] {
                 font-size: 0;
             }
-            .tab-btn[onclick*="compare"]:before {
-                content: "⚖️ Comp";
-                font-size: 10px;
+            .tab-btn[onclick*="compare"]:after {
+                content: "⚖️\AComp";
+                font-size: 9px;
+                white-space: pre;
+                line-height: 1.1;
             }
         }
 
@@ -23118,9 +23209,949 @@ Consultez la console pour plus de détails.`;
             return gradient;
         };
 
+        // === FONCTIONS MANQUANTES CRITIQUES ===
+
+        // Afficher les paramètres
+        actions.showSettings = function() {
+            this.showScreen('settings');
+            this.showNotification('⚙️ Accès à la forge personnelle');
+        };
+
+        // Démarrer une nouvelle séance
+        actions.startNewSession = function() {
+            // Sécuriser l'accès à appState
+            if (!appState.sessions) appState.sessions = [];
+            if (!appState.exercises) appState.exercises = [];
+            
+            // Créer une nouvelle séance
+            appState.currentSession = {
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                startTime: Date.now(),
+                exercises: [],
+                notes: '',
+                difficulty: null,
+                endTime: null
+            };
+            
+            this.showScreen('preparation');
+            this.showNotification('⚔️ Nouvelle bataille engagée !', 'success');
+            this.addXP(5, 'Nouvelle séance démarrée');
+        };
+
+        // Reprendre la dernière séance
+        actions.resumeLastSession = function() {
+            try {
+                if (!appState.sessions) appState.sessions = [];
+                
+                if (appState.currentSession) {
+                    this.showScreen('preparation');
+                    this.showNotification('🛡️ Retour au champ de bataille !');
+                    return;
+                }
+                
+                const lastSession = appState.sessions[appState.sessions.length - 1];
+                if (lastSession && !lastSession.endTime) {
+                    appState.currentSession = lastSession;
+                    this.showScreen('preparation');
+                    this.showNotification('🔄 Bataille reprise !', 'success');
+                } else {
+                    this.showNotification('❌ Aucune séance à reprendre', 'warning');
+                    this.startNewSession();
+                }
+            } catch (e) {
+                console.error('Erreur lors de la reprise de séance:', e);
+                this.showNotification('❌ Erreur lors de la reprise, nouvelle bataille lancée');
+                this.startNewSession();
+            }
+        };
+
+        // Ajouter exercice à la séance
+        actions.addExerciseToSession = function() {
+            if (!appState.currentSession) {
+                this.showNotification('❌ Aucune séance en cours', 'warning');
+                return;
+            }
+            
+            this.showScreen('exercise-database');
+            this.showNotification('🔍 Choisissez votre arme pour le combat !');
+        };
+
+        // Démarrer séance live
+        actions.startLiveSession = function() {
+            try {
+                if (!appState.currentSession) {
+                    this.showNotification('❌ Aucune séance préparée', 'warning');
+                    return;
+                }
+                
+                if (!appState.currentSession.exercises || appState.currentSession.exercises.length === 0) {
+                    this.showNotification('❌ Ajoutez des exercices avant de commencer', 'warning');
+                    return;
+                }
+                
+                appState.liveSession = {
+                    active: true,
+                    currentExerciseIndex: 0,
+                    currentSetIndex: 0,
+                    startTime: Date.now(),
+                    isPaused: false
+                };
+                
+                this.showScreen('live');
+                this.showNotification('🚀 Combat engagé ! Bonne chance guerrier !', 'success');
+                this.addXP(10, 'Séance live démarrée');
+            } catch (e) {
+                console.error('Erreur lors du démarrage live:', e);
+                this.showNotification('❌ Erreur lors du démarrage', 'error');
+            }
+        };
+
+        // Sauvegarder séance manuellement
+        actions.saveSessionManually = function() {
+            try {
+                if (!appState.currentSession) {
+                    this.showNotification('❌ Aucune séance à sauvegarder', 'warning');
+                    return;
+                }
+                
+                // Sécuriser l'accès
+                if (!appState.sessions) appState.sessions = [];
+                
+                appState.currentSession.endTime = Date.now();
+                appState.currentSession.duration = Math.round((appState.currentSession.endTime - appState.currentSession.startTime) / 1000 / 60);
+                
+                // Vérifier si la séance existe déjà
+                const existingIndex = appState.sessions.findIndex(s => s.id === appState.currentSession.id);
+                if (existingIndex >= 0) {
+                    appState.sessions[existingIndex] = { ...appState.currentSession };
+                } else {
+                    appState.sessions.push({ ...appState.currentSession });
+                }
+                
+                appState.currentSession = null;
+                this.saveData();
+                this.showScreen('dashboard');
+                this.showNotification('💾 Bataille sauvegardée dans les chroniques !', 'success');
+                this.addXP(25, 'Séance complétée');
+                this.checkBadgeUnlocks();
+            } catch (e) {
+                console.error('Erreur lors de la sauvegarde:', e);
+                this.showNotification('❌ Erreur lors de la sauvegarde', 'error');
+            }
+        };
+
+        // Mettre en pause séance live
+        actions.pauseLiveSession = function() {
+            try {
+                if (appState.liveSession) {
+                    appState.liveSession.isPaused = !appState.liveSession.isPaused;
+                    const status = appState.liveSession.isPaused ? 'en trêve' : 'reprise';
+                    this.showNotification(`⏸️ Séance ${status}`, 'info');
+                } else {
+                    this.showNotification('❌ Aucune séance live en cours', 'warning');
+                }
+            } catch (e) {
+                console.error('Erreur lors de la pause:', e);
+                this.showNotification('❌ Erreur lors de la pause', 'error');
+            }
+        };
+
+        // Arrêter séance live
+        actions.stopLiveSession = function() {
+            try {
+                if (!appState.liveSession) {
+                    this.showNotification('❌ Aucune séance live en cours', 'warning');
+                    return;
+                }
+                
+                if (confirm('🏁 Voulez-vous vraiment terminer cette bataille ?')) {
+                    appState.liveSession = null;
+                    this.saveSessionManually();
+                }
+            } catch (e) {
+                console.error('Erreur lors de l\'arrêt:', e);
+                this.showNotification('❌ Erreur lors de l\'arrêt', 'error');
+            }
+        };
+
+        // Ajouter mesure corporelle
+        actions.addMeasurement = function() {
+            try {
+                const weight = document.getElementById('current-weight')?.value;
+                const bodyFat = document.getElementById('current-body-fat')?.value;
+                
+                if (!weight && !bodyFat) {
+                    this.showNotification('❌ Entrez au moins une mesure', 'warning');
+                    return;
+                }
+                
+                if (!appState.measurements) appState.measurements = [];
+                
+                const measurement = {
+                    id: Date.now(),
+                    date: new Date().toISOString().split('T')[0],
+                    weight: weight ? parseFloat(weight) : null,
+                    bodyFat: bodyFat ? parseFloat(bodyFat) : null
+                };
+                
+                appState.measurements.push(measurement);
+                this.saveData();
+                this.showNotification('📏 Mesures du guerrier mises à jour !', 'success');
+                this.addXP(5, 'Mesures enregistrées');
+                
+                // Réinitialiser les champs
+                if (document.getElementById('current-weight')) {
+                    document.getElementById('current-weight').value = '';
+                }
+                if (document.getElementById('current-body-fat')) {
+                    document.getElementById('current-body-fat').value = '';
+                }
+            } catch (e) {
+                console.error('Erreur lors de l\'ajout de mesure:', e);
+                this.showNotification('❌ Erreur lors de l\'enregistrement', 'error');
+            }
+        };
+
+        // Sauvegarder exercice
+        actions.saveExercise = function() {
+            try {
+                const name = document.getElementById('exercise-name')?.value?.trim();
+                const muscleGroup = document.getElementById('exercise-muscle-group')?.value;
+                const description = document.getElementById('exercise-description')?.value?.trim();
+                
+                if (!name || !muscleGroup) {
+                    this.showNotification('❌ Nom et groupe musculaire requis', 'warning');
+                    return;
+                }
+                
+                if (!appState.exercises) appState.exercises = [];
+                
+                const exercise = {
+                    id: Date.now(),
+                    name: name,
+                    muscle_group: muscleGroup,
+                    description: description || 'Exercice personnalisé',
+                    difficulty: document.getElementById('exercise-difficulty')?.value || 'beginner',
+                    anchor_point: document.getElementById('exercise-anchor')?.value || 'none',
+                    is_unilateral: document.getElementById('exercise-unilateral')?.checked || false,
+                    exercise_mode: document.getElementById('exercise-mode')?.value || 'reps',
+                    default_rest_time: parseInt(document.getElementById('exercise-rest')?.value) || 90,
+                    default_duration: parseInt(document.getElementById('exercise-duration')?.value) || 30,
+                    tags: document.getElementById('exercise-tags')?.value?.split(',').map(t => t.trim()).filter(t => t) || [],
+                    mediaId: appState.currentExerciseMedia?.id || null,
+                    custom: true,
+                    created_at: new Date().toISOString()
+                };
+                
+                appState.exercises.push(exercise);
+                this.saveData();
+                this.showNotification(`⚔️ Nouvel exercice "${name}" ajouté à l'arsenal !`, 'success');
+                this.addXP(15, 'Exercice créé');
+                
+                // Réinitialiser le formulaire
+                this.resetExerciseForm();
+            } catch (e) {
+                console.error('Erreur lors de la sauvegarde d\'exercice:', e);
+                this.showNotification('❌ Erreur lors de la création', 'error');
+            }
+        };
+
+        // Charger exercices prédéfinis
+        actions.loadPredefinedExercises = function() {
+            try {
+                // Les exercices prédéfinis sont déjà dans PREDEFINED_EXERCISES
+                const loadedCount = PREDEFINED_EXERCISES.length;
+                this.showNotification(`📚 ${loadedCount} exercices prédéfinis disponibles`, 'info');
+                this.showScreen('exercise-database');
+            } catch (e) {
+                console.error('Erreur lors du chargement d\'exercices:', e);
+                this.showNotification('❌ Erreur lors du chargement', 'error');
+            }
+        };
+
+        // Sauvegarder template
+        actions.saveTemplate = function() {
+            try {
+                const name = document.getElementById('template-name')?.value?.trim();
+                if (!name) {
+                    this.showNotification('❌ Nom du template requis', 'warning');
+                    return;
+                }
+                
+                if (!appState.currentSession || !appState.currentSession.exercises.length) {
+                    this.showNotification('❌ Préparez une séance d\'abord', 'warning');
+                    return;
+                }
+                
+                if (!appState.templates) appState.templates = [];
+                
+                const template = {
+                    id: Date.now(),
+                    name: name,
+                    exercises: [...appState.currentSession.exercises],
+                    created_at: new Date().toISOString()
+                };
+                
+                appState.templates.push(template);
+                this.saveData();
+                this.showNotification(`📝 Template "${name}" sauvegardé !`, 'success');
+                this.addXP(10, 'Template créé');
+            } catch (e) {
+                console.error('Erreur lors de la sauvegarde de template:', e);
+                this.showNotification('❌ Erreur lors de la sauvegarde', 'error');
+            }
+        };
+
+        // Exporter données
+        actions.exportData = function() {
+            try {
+                const data = {
+                    version: '1.5',
+                    exportDate: new Date().toISOString(),
+                    sessions: appState.sessions || [],
+                    exercises: appState.exercises || [],
+                    programs: appState.programs || [],
+                    templates: appState.templates || [],
+                    gamification: appState.gamification || {},
+                    measurements: appState.measurements || [],
+                    settings: appState.settings || {}
+                };
+                
+                const jsonContent = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonContent], { type: 'application/json' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', `smarttrack_backup_${new Date().toISOString().split('T')[0]}.json`);
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                URL.revokeObjectURL(url);
+                this.showNotification('💾 Données exportées avec succès !', 'success');
+            } catch (e) {
+                console.error('Erreur lors de l\'export:', e);
+                this.showNotification('❌ Erreur lors de l\'export', 'error');
+            }
+        };
+
+        // Afficher modal d'import
+        actions.showImportModal = function() {
+            document.getElementById('import-modal').classList.add('active');
+        };
+
+        // Importer données
+        actions.importData = function() {
+            try {
+                const fileInput = document.getElementById('import-file');
+                const file = fileInput?.files[0];
+                
+                if (!file) {
+                    this.showNotification('❌ Sélectionnez un fichier', 'warning');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        // Validation basique
+                        if (!data.version) {
+                            throw new Error('Format de fichier invalide');
+                        }
+                        
+                        // Importer les données avec sauvegarde
+                        const backup = { ...appState };
+                        
+                        if (data.sessions) appState.sessions = [...(appState.sessions || []), ...data.sessions];
+                        if (data.exercises) appState.exercises = [...(appState.exercises || []), ...data.exercises];
+                        if (data.templates) appState.templates = [...(appState.templates || []), ...data.templates];
+                        if (data.measurements) appState.measurements = [...(appState.measurements || []), ...data.measurements];
+                        if (data.gamification) appState.gamification = { ...appState.gamification, ...data.gamification };
+                        
+                        this.saveData();
+                        this.closeModal('import-modal');
+                        this.showNotification('📥 Données importées avec succès !', 'success');
+                        
+                        // Recharger l'interface
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                        
+                    } catch (parseError) {
+                        console.error('Erreur lors du parsing:', parseError);
+                        this.showNotification('❌ Fichier corrompu ou format invalide', 'error');
+                    }
+                };
+                
+                reader.readAsText(file);
+            } catch (e) {
+                console.error('Erreur lors de l\'import:', e);
+                this.showNotification('❌ Erreur lors de l\'import', 'error');
+            }
+        };
+
+        // Effacer toutes les données
+        actions.clearAllData = function() {
+            if (confirm('⚠️ ATTENTION ! Cette action supprimera TOUTES vos données (séances, exercices, progression, badges...). Cette action est IRRÉVERSIBLE. Voulez-vous vraiment continuer ?')) {
+                if (confirm('🚨 DERNIÈRE CHANCE ! Êtes-vous ABSOLUMENT sûr ? Toutes vos batailles et votre progression seront perdues à jamais !')) {
+                    try {
+                        // Nettoyer localStorage
+                        Object.keys(localStorage).forEach(key => {
+                            if (key.startsWith('smarttrack_')) {
+                                localStorage.removeItem(key);
+                            }
+                        });
+                        
+                        // Réinitialiser appState
+                        Object.keys(appState).forEach(key => {
+                            delete appState[key];
+                        });
+                        
+                        // Réinitialiser l'état de base
+                        this.initializeAppState();
+                        
+                        this.showNotification('🗑️ Toutes les données ont été effacées. L\'aventure recommence !', 'info');
+                        
+                        // Recharger l'application
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                        
+                    } catch (e) {
+                        console.error('Erreur lors du nettoyage:', e);
+                        this.showNotification('❌ Erreur lors du nettoyage', 'error');
+                    }
+                }
+            }
+        };
+
+        // Basculer thème
+        actions.toggleTheme = function() {
+            try {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                
+                // Sauvegarder la préférence
+                if (!appState.settings) appState.settings = {};
+                appState.settings.theme = newTheme;
+                this.saveData();
+                
+                const themeIcon = newTheme === 'dark' ? '🌙' : '☀️';
+                const themeName = newTheme === 'dark' ? 'sombre' : 'clair';
+                this.showNotification(`${themeIcon} Thème ${themeName} activé`, 'success');
+            } catch (e) {
+                console.error('Erreur lors du changement de thème:', e);
+                this.showNotification('❌ Erreur lors du changement de thème', 'error');
+            }
+        };
+
+        // Fonctions utilitaires pour réinitialiser les formulaires
+        actions.resetExerciseForm = function() {
+            try {
+                const fields = ['exercise-name', 'exercise-description', 'exercise-tags'];
+                fields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) field.value = '';
+                });
+                
+                const checkboxes = ['exercise-unilateral'];
+                checkboxes.forEach(checkboxId => {
+                    const checkbox = document.getElementById(checkboxId);
+                    if (checkbox) checkbox.checked = false;
+                });
+                
+                // Réinitialiser les médias temporaires
+                appState.currentExerciseMedia = null;
+            } catch (e) {
+                console.error('Erreur lors de la réinitialisation du formulaire:', e);
+            }
+        };
+
+        // Sécuriser l'accès aux données appState
+        actions.secureAppStateAccess = function() {
+            if (!appState.sessions) appState.sessions = [];
+            if (!appState.exercises) appState.exercises = [];
+            if (!appState.programs) appState.programs = [];
+            if (!appState.templates) appState.templates = [];
+            if (!appState.measurements) appState.measurements = [];
+            if (!appState.settings) appState.settings = {};
+            if (!appState.gamification) {
+                appState.gamification = {
+                    level: 1,
+                    xp: 0,
+                    totalXp: 0,
+                    badges: [],
+                    currentWeeklyChallenge: null,
+                    challengeProgress: {},
+                    streakCurrent: 0,
+                    streakBest: 0,
+                    title: 'Apprenti de la Forge'
+                };
+            }
+        };
+
+        // Initialiser le bouton scroll-to-top
+        actions.initScrollToTop = function() {
+            try {
+                // Créer le bouton
+                const scrollBtn = document.createElement('button');
+                scrollBtn.className = 'scroll-to-top';
+                scrollBtn.innerHTML = '↑';
+                scrollBtn.title = 'Remonter en haut';
+                scrollBtn.setAttribute('aria-label', 'Remonter en haut de la page');
+                
+                scrollBtn.onclick = () => {
+                    window.scrollTo({ 
+                        top: 0, 
+                        behavior: 'smooth' 
+                    });
+                };
+                
+                document.body.appendChild(scrollBtn);
+                
+                // Gérer la visibilité
+                let scrollTimer = null;
+                window.addEventListener('scroll', () => {
+                    // Throttle scroll events
+                    if (scrollTimer) {
+                        clearTimeout(scrollTimer);
+                    }
+                    
+                    scrollTimer = setTimeout(() => {
+                        if (window.scrollY > 300) {
+                            scrollBtn.classList.add('visible');
+                        } else {
+                            scrollBtn.classList.remove('visible');
+                        }
+                    }, 10);
+                });
+                
+                console.log('✅ Bouton scroll-to-top initialisé');
+            } catch (e) {
+                console.error('❌ Erreur lors de l\'initialisation du scroll-to-top:', e);
+            }
+        };
+
+        // === FONCTIONS MANQUANTES SUPPLÉMENTAIRES ===
+
+        // Gestion des tags personnalisés
+        actions.createCustomTag = function() {
+            const tagName = prompt('Nom du nouveau tag :');
+            if (!tagName || !tagName.trim()) return;
+            
+            if (!appState.customTags) appState.customTags = [];
+            
+            const newTag = {
+                id: Date.now(),
+                name: tagName.trim(),
+                color: `#${Math.floor(Math.random()*16777215).toString(16)}`,
+                created: new Date().toISOString()
+            };
+            
+            appState.customTags.push(newTag);
+            this.saveData();
+            this.showNotification(`🏷️ Tag "${tagName}" créé !`, 'success');
+        };
+
+        // Exporter tags
+        actions.exportTags = function() {
+            try {
+                const data = {
+                    customTags: appState.customTags || [],
+                    exerciseTags: appState.exerciseTags || {},
+                    exportDate: new Date().toISOString()
+                };
+                
+                const jsonContent = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonContent], { type: 'application/json' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', `smarttrack_tags_${new Date().toISOString().split('T')[0]}.json`);
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                URL.revokeObjectURL(url);
+                this.showNotification('🏷️ Tags exportés !', 'success');
+            } catch (e) {
+                console.error('Erreur export tags:', e);
+                this.showNotification('❌ Erreur lors de l\'export', 'error');
+            }
+        };
+
+        // Importer tags
+        actions.importTags = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'application/json';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        
+                        if (data.customTags) {
+                            appState.customTags = [...(appState.customTags || []), ...data.customTags];
+                        }
+                        if (data.exerciseTags) {
+                            appState.exerciseTags = { ...(appState.exerciseTags || {}), ...data.exerciseTags };
+                        }
+                        
+                        this.saveData();
+                        this.showNotification('🏷️ Tags importés !', 'success');
+                    } catch (error) {
+                        this.showNotification('❌ Fichier invalide', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        };
+
+        // Reset tous les tags
+        actions.resetAllTags = function() {
+            if (confirm('Supprimer tous les tags personnalisés ?')) {
+                appState.customTags = [];
+                appState.exerciseTags = {};
+                this.saveData();
+                this.showNotification('🏷️ Tags réinitialisés', 'info');
+            }
+        };
+
+        // Sélectionner média depuis la bibliothèque
+        actions.selectMediaFromLibrary = function() {
+            const modal = document.getElementById('media-library-modal');
+            if (modal) {
+                modal.classList.add('active');
+                this.loadMediaLibrary();
+            }
+        };
+
+        // Charger la bibliothèque de médias
+        actions.loadMediaLibrary = function() {
+            const container = document.getElementById('media-library-content');
+            if (!container) return;
+            
+            const mediaItems = appState.mediaLibrary || [];
+            
+            if (mediaItems.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📷</div>
+                        <h3>Bibliothèque vide</h3>
+                        <p>Aucun média dans votre bibliothèque</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = mediaItems.map(media => `
+                <div class="media-item" onclick="actions.selectMedia('${media.id}')">
+                    <img src="${media.data}" alt="${media.name}" class="media-thumbnail">
+                    <div class="media-info">
+                        <div class="media-name">${media.name}</div>
+                        <div class="media-date">${new Date(media.created).toLocaleDateString()}</div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        // Sélectionner un média
+        actions.selectMedia = function(mediaId) {
+            const media = appState.mediaLibrary?.find(m => m.id === mediaId);
+            if (media) {
+                // Associer le média à l'exercice en cours d'édition
+                appState.currentExerciseMedia = media;
+                this.closeModal('media-library-modal');
+                this.showNotification(`📷 Média "${media.name}" sélectionné`, 'success');
+            }
+        };
+
+        // === CRÉATEUR DE PROGRAMME AMÉLIORÉ ===
+
+        // Sauvegarder programme personnalisé
+        actions.saveCustomProgram = function() {
+            try {
+                const name = document.getElementById('program-name')?.value?.trim();
+                const description = document.getElementById('program-description')?.value?.trim();
+                const duration = parseInt(document.getElementById('program-duration')?.value) || 4;
+                const frequency = parseInt(document.getElementById('program-frequency')?.value) || 3;
+                const level = document.getElementById('program-level')?.value || 'beginner';
+                
+                if (!name) {
+                    this.showNotification('❌ Nom du programme requis', 'warning');
+                    return;
+                }
+                
+                // Collecter les jours sélectionnés
+                const selectedDays = [];
+                ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
+                    const checkbox = document.getElementById(`day-${day}`);
+                    if (checkbox && checkbox.checked) {
+                        selectedDays.push(day);
+                    }
+                });
+                
+                if (selectedDays.length === 0) {
+                    this.showNotification('❌ Sélectionnez au moins un jour', 'warning');
+                    return;
+                }
+                
+                // Sécuriser l'accès
+                if (!appState.customPrograms) appState.customPrograms = [];
+                
+                const newProgram = {
+                    id: Date.now(),
+                    name: name,
+                    description: description || 'Programme personnalisé',
+                    duration: duration,
+                    frequency: frequency,
+                    level: level,
+                    trainingDays: selectedDays,
+                    exercises: appState.selectedExercises || [],
+                    created: new Date().toISOString(),
+                    custom: true
+                };
+                
+                appState.customPrograms.push(newProgram);
+                this.saveData();
+                
+                this.showNotification(`🏗️ Programme "${name}" créé avec succès !`, 'success');
+                this.showScreen('programmes');
+                
+                // Réinitialiser le formulaire
+                this.resetProgramCreator();
+                
+            } catch (e) {
+                console.error('Erreur création programme:', e);
+                this.showNotification('❌ Erreur lors de la création', 'error');
+            }
+        };
+
+        // Réinitialiser le créateur de programme
+        actions.resetProgramCreator = function() {
+            try {
+                // Réinitialiser les champs
+                const fields = ['program-name', 'program-description'];
+                fields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) field.value = '';
+                });
+                
+                // Réinitialiser les checkboxes des jours
+                ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
+                    const checkbox = document.getElementById(`day-${day}`);
+                    if (checkbox) checkbox.checked = false;
+                });
+                
+                // Réinitialiser les exercices sélectionnés
+                appState.selectedExercises = [];
+                
+                // Réinitialiser la liste des exercices sélectionnés
+                const container = document.getElementById('selected-exercises');
+                if (container) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Aucun exercice sélectionné</p>';
+                }
+                
+            } catch (e) {
+                console.error('Erreur réinitialisation créateur:', e);
+            }
+        };
+
+        // Mettre à jour les semaines du programme
+        actions.updateProgramWeeks = function() {
+            try {
+                const duration = parseInt(document.getElementById('program-duration')?.value) || 4;
+                const frequency = parseInt(document.getElementById('program-frequency')?.value) || 3;
+                
+                console.log(`📅 Mise à jour programme: ${duration} semaines, ${frequency} séances/semaine`);
+                
+                // Mettre à jour l'affichage du résumé
+                const summaryDuration = document.getElementById('summary-duration');
+                const summaryFrequency = document.getElementById('summary-frequency');
+                const summaryTotal = document.getElementById('summary-total');
+                
+                if (summaryDuration) summaryDuration.textContent = `${duration} semaines`;
+                if (summaryFrequency) summaryFrequency.textContent = `${frequency}/semaine`;
+                if (summaryTotal) summaryTotal.textContent = `${duration * frequency} séances`;
+                
+            } catch (e) {
+                console.error('Erreur mise à jour semaines:', e);
+            }
+        };
+
+        // Ajouter semaine au programme
+        actions.addProgramWeek = function() {
+            this.showNotification('🚧 Fonctionnalité en développement', 'info');
+        };
+
+        // Copier modèle de semaine
+        actions.copyWeekTemplate = function() {
+            this.showNotification('🚧 Fonctionnalité en développement', 'info');
+        };
+
+        // Effacer programme
+        actions.clearProgram = function() {
+            if (confirm('Effacer tout le programme en cours ?')) {
+                this.resetProgramCreator();
+                this.showNotification('🗑️ Programme effacé', 'info');
+            }
+        };
+
+        // Filtrer la bibliothèque d'exercices
+        actions.filterExercisesLibrary = function() {
+            try {
+                const searchTerm = document.getElementById('exercise-search')?.value?.toLowerCase() || '';
+                const muscleFilter = document.getElementById('muscle-filter')?.value || '';
+                
+                const exercises = appState.exercises || [];
+                const filteredExercises = exercises.filter(exercise => {
+                    const nameMatch = exercise.name.toLowerCase().includes(searchTerm);
+                    const muscleMatch = !muscleFilter || exercise.muscle_group === muscleFilter;
+                    return nameMatch && muscleMatch;
+                });
+                
+                this.renderExercisesLibrary(filteredExercises);
+                
+            } catch (e) {
+                console.error('Erreur filtrage exercices:', e);
+            }
+        };
+
+        // Rendre la bibliothèque d'exercices
+        actions.renderExercisesLibrary = function(exercises) {
+            const container = document.getElementById('exercises-library-list');
+            if (!container) return;
+            
+            if (exercises.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💪</div>
+                        <p>Aucun exercice trouvé</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = exercises.map(exercise => `
+                <div class="exercise-library-item" onclick="actions.addExerciseToProgram('${exercise.id}')">
+                    <div class="exercise-info">
+                        <div class="exercise-name">${exercise.name}</div>
+                        <div class="exercise-muscle">${exercise.muscle_group}</div>
+                    </div>
+                    <button class="btn btn-small btn-primary">➕</button>
+                </div>
+            `).join('');
+        };
+
+        // Ajouter exercice au programme
+        actions.addExerciseToProgram = function(exerciseId) {
+            try {
+                if (!appState.selectedExercises) appState.selectedExercises = [];
+                
+                const exercise = appState.exercises.find(e => e.id == exerciseId);
+                if (!exercise) return;
+                
+                // Vérifier si déjà ajouté
+                if (appState.selectedExercises.find(e => e.id == exerciseId)) {
+                    this.showNotification('⚠️ Exercice déjà ajouté', 'warning');
+                    return;
+                }
+                
+                appState.selectedExercises.push({
+                    id: exercise.id,
+                    name: exercise.name,
+                    muscle_group: exercise.muscle_group,
+                    sets: 3,
+                    reps: 10,
+                    rest: 90
+                });
+                
+                this.updateSelectedExercisesList();
+                this.showNotification(`➕ ${exercise.name} ajouté`, 'success');
+                
+            } catch (e) {
+                console.error('Erreur ajout exercice programme:', e);
+            }
+        };
+
+        // Mettre à jour la liste des exercices sélectionnés
+        actions.updateSelectedExercisesList = function() {
+            const container = document.getElementById('selected-exercises');
+            if (!container) return;
+            
+            const selectedExercises = appState.selectedExercises || [];
+            
+            if (selectedExercises.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Aucun exercice sélectionné</p>';
+                return;
+            }
+            
+            container.innerHTML = selectedExercises.map((exercise, index) => `
+                <div class="selected-exercise-item">
+                    <div class="exercise-info">
+                        <div class="exercise-name">${exercise.name}</div>
+                        <div class="exercise-params">${exercise.sets} séries × ${exercise.reps} reps</div>
+                    </div>
+                    <button class="btn btn-small btn-danger" onclick="actions.removeExerciseFromProgram(${index})">
+                        🗑️
+                    </button>
+                </div>
+            `).join('');
+        };
+
+        // Retirer exercice du programme
+        actions.removeExerciseFromProgram = function(index) {
+            if (appState.selectedExercises && appState.selectedExercises[index]) {
+                const exerciseName = appState.selectedExercises[index].name;
+                appState.selectedExercises.splice(index, 1);
+                this.updateSelectedExercisesList();
+                this.showNotification(`➖ ${exerciseName} retiré`, 'info');
+            }
+        };
+
+        // Prévisualiser programme
+        actions.previewProgram = function() {
+            this.showNotification('👁️ Aperçu du programme', 'info');
+            // TODO: Implémenter la prévisualisation
+        };
+
+        // Tester programme
+        actions.testProgram = function() {
+            this.showNotification('🧪 Test du programme', 'info');
+            // TODO: Implémenter le test
+        };
+
         // === FINALISATION ===
         document.addEventListener('DOMContentLoaded', () => {
             console.log('SmartTrack - Initialisation de l\'application');
+            
+            // Sécuriser l'accès aux données dès le démarrage
+            actions.secureAppStateAccess();
+            
+            // Initialiser le système de notifications
+            notificationSystem.init();
+            
+            // Initialiser le bouton scroll-to-top
+            actions.initScrollToTop();
+            
             actions.init();
         
             // === GESTION DU BOUTON RETOUR ===
