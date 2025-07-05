@@ -9751,6 +9751,13 @@
                         this.initializeAnalytics();
                     }, 100);
                 }
+                
+                // Mettre à jour l'évolution de la forge quand on navigue vers l'écran body
+                if (screenName === 'body') {
+                    setTimeout(() => {
+                        this.updateForgeEvolution();
+                    }, 300);
+                }
             },
             
             // Fonction pour naviguer intelligemment vers la séance
@@ -9993,16 +10000,37 @@
 
             // Mettre à jour l'évolution de la forge
             updateForgeEvolution() {
+                console.log('🔍 updateForgeEvolution() appelée');
                 const weightTrendElement = document.getElementById('weight-trend');
                 const muscleTrendElement = document.getElementById('muscle-trend');
                 
-                if (!weightTrendElement || !muscleTrendElement) return;
+                console.log('🔍 Éléments DOM trouvés:', {
+                    weightTrendElement: !!weightTrendElement,
+                    muscleTrendElement: !!muscleTrendElement
+                });
+                
+                if (!weightTrendElement || !muscleTrendElement) {
+                    console.error('❌ Éléments DOM manquants pour l\'évolution de la forge');
+                    return;
+                }
                 
                 const measurements = appState.measurements || [];
+                console.log('🔍 Nombre de mesures:', measurements.length);
                 
-                if (measurements.length < 2) {
-                    weightTrendElement.textContent = 'Données insuffisantes';
+                // Affichage selon le nombre de mesures
+                if (measurements.length === 0) {
+                    weightTrendElement.textContent = 'Aucune mesure';
+                    muscleTrendElement.textContent = 'Aucune mesure';
+                    weightTrendElement.style.color = 'var(--text-secondary)';
+                    muscleTrendElement.style.color = 'var(--text-secondary)';
+                    return;
+                }
+                
+                if (measurements.length === 1) {
+                    weightTrendElement.textContent = 'Première mesure';
                     muscleTrendElement.textContent = 'Ajoutez des mesures';
+                    weightTrendElement.style.color = 'var(--text-secondary)';
+                    muscleTrendElement.style.color = 'var(--text-secondary)';
                     return;
                 }
                 
@@ -10010,6 +10038,11 @@
                 const sortedMeasurements = [...measurements].sort((a, b) => a.date.localeCompare(b.date));
                 const latest = sortedMeasurements[sortedMeasurements.length - 1];
                 const previous = sortedMeasurements[sortedMeasurements.length - 2];
+                
+                console.log('🔍 Dernières mesures:', {
+                    latest: { date: latest.date, weight: latest.weight, arm: latest.arm, chest: latest.chest },
+                    previous: { date: previous.date, weight: previous.weight, arm: previous.arm, chest: previous.chest }
+                });
                 
                 // Calcul évolution poids
                 if (latest.weight && previous.weight) {
@@ -10019,6 +10052,7 @@
                     weightTrendElement.style.color = weightChange > 0 ? 'var(--warning)' : weightChange < 0 ? 'var(--success)' : 'var(--text-secondary)';
                 } else {
                     weightTrendElement.textContent = 'Non renseigné';
+                    weightTrendElement.style.color = 'var(--text-secondary)';
                 }
                 
                 // Calcul évolution masse musculaire (approximation basée sur tour de bras + poitrine)
@@ -10031,7 +10065,10 @@
                     muscleTrendElement.style.color = muscleChange > 0 ? 'var(--success)' : muscleChange < 0 ? 'var(--warning)' : 'var(--text-secondary)';
                 } else {
                     muscleTrendElement.textContent = 'Non renseigné';
+                    muscleTrendElement.style.color = 'var(--text-secondary)';
                 }
+                
+                console.log('✅ Évolution de la forge mise à jour');
             },
 
             // Gestion des photos de progression
@@ -18348,8 +18385,10 @@
             // Rendre la galerie d'évolution
             actions.renderEvolutionGallery();
             
-            // Mettre à jour l'évolution de la forge
-            actions.updateForgeEvolution();
+            // Mettre à jour l'évolution de la forge avec un délai pour s'assurer que le DOM est prêt
+            setTimeout(() => {
+                actions.updateForgeEvolution();
+            }, 200);
         }
 
         function renderExerciseDatabase() {
