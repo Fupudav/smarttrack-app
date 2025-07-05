@@ -5329,6 +5329,9 @@
                             <option value="by-muscle">Par groupe musculaire</option>
                             <option value="by-exercise">Par exercice</option>
                         </select>
+                        <button class="btn btn-secondary" onclick="actions.debugVolumeData()" title="Vérifier les données">
+                            🔍 Debug
+                        </button>
                     </div>
                     <div class="chart-container">
                         <canvas id="volume-chart" width="400" height="200"></canvas>
@@ -9741,6 +9744,13 @@
                 }
                 
                 render();
+                
+                // Initialiser les analytics quand on arrive sur cette page
+                if (screenName === 'analytics') {
+                    setTimeout(() => {
+                        this.initializeAnalytics();
+                    }, 100);
+                }
             },
             
             // Fonction pour naviguer intelligemment vers la séance
@@ -21298,14 +21308,38 @@
 
         actions.calculateTotalVolume = function(sessions) {
             let totalVolume = 0;
-            sessions.forEach(session => {
-                session.exercises.forEach(ex => {
+            
+            if (!sessions || sessions.length === 0) {
+                console.log('⚠️ Aucune séance fournie pour le calcul du volume');
+                return 0;
+            }
+            
+            console.log(`📊 Calcul du volume pour ${sessions.length} séances`);
+            
+            sessions.forEach((session, sessionIndex) => {
+                if (!session.exercises || session.exercises.length === 0) {
+                    console.log(`⚠️ Séance ${sessionIndex} sans exercices`);
+                    return;
+                }
+                
+                session.exercises.forEach((ex, exIndex) => {
                     const exercise = appState.exercises.find(e => e.id === ex.exercise_id);
-                    ex.sets.forEach(set => {
+                    if (!exercise) {
+                        console.log(`⚠️ Exercice ${ex.exercise_id} non trouvé`);
+                        return;
+                    }
+                    
+                    if (!ex.sets || ex.sets.length === 0) {
+                        console.log(`⚠️ Exercice ${exercise.name} sans séries`);
+                        return;
+                    }
+                    
+                    ex.sets.forEach((set, setIndex) => {
                         if (set.type === 'work' && set.exercise_mode !== 'time') {
                             let resistance = 0;
                             let reps = 0;
-                            if (exercise && exercise.is_unilateral) {
+                            
+                            if (exercise.is_unilateral) {
                                 if (typeof set.total_resistance === 'object') {
                                     resistance = (set.total_resistance.left || 0) + (set.total_resistance.right || 0);
                                 } else {
@@ -21316,12 +21350,80 @@
                                 resistance = set.total_resistance || 0;
                                 reps = set.reps || 0;
                             }
-                            totalVolume += (resistance * reps);
+                            
+                            const setVolume = resistance * reps;
+                            totalVolume += setVolume;
+                            
+                            if (setVolume > 0) {
+                                console.log(`✅ ${exercise.name} - Série ${setIndex + 1}: ${resistance}kg x ${reps} = ${setVolume}kg`);
+                            }
                         }
                     });
                 });
             });
+            
+            console.log(`📈 Volume total calculé: ${totalVolume}kg`);
             return totalVolume;
+        };
+
+        // Initialiser les analytics
+        actions.initializeAnalytics = function() {
+            console.log('🔍 Initialisation des analytics...');
+            
+            // Vérifier les données essentielles
+            if (!appState.sessions) {
+                console.log('⚠️ Sessions non initialisées');
+                appState.sessions = [];
+            }
+            
+            if (!appState.exercises) {
+                console.log('⚠️ Exercices non initialisés');
+                appState.exercises = [];
+            }
+            
+            console.log(`📊 ${appState.sessions.length} séances trouvées`);
+            console.log(`💪 ${appState.exercises.length} exercices trouvés`);
+            
+            // Initialiser tous les graphiques et composants
+            this.updateVolumeChart();
+            this.updateFrequencyHeatmap();
+            this.updateMuscleProgressGrid();
+            this.loadAnalyticsInsights();
+        };
+
+        // Fonction de debug pour vérifier les données
+        actions.debugVolumeData = function() {
+            console.log('=== DEBUG VOLUME DATA ===');
+            console.log('Sessions:', appState.sessions?.length || 0);
+            console.log('Exercices:', appState.exercises?.length || 0);
+            
+            if (appState.sessions && appState.sessions.length > 0) {
+                console.log('Dernières séances:');
+                appState.sessions.slice(-5).forEach((session, index) => {
+                    console.log(`  ${index + 1}. ${session.date} - ${session.exercises?.length || 0} exercices`);
+                    
+                    if (session.exercises && session.exercises.length > 0) {
+                        session.exercises.forEach((ex, exIndex) => {
+                            const exercise = appState.exercises.find(e => e.id === ex.exercise_id);
+                            console.log(`    ${exIndex + 1}. ${exercise?.name || 'Exercice inconnu'} - ${ex.sets?.length || 0} séries`);
+                        });
+                    }
+                });
+                
+                // Calculer le volume total
+                const totalVolume = this.calculateTotalVolume(appState.sessions);
+                console.log(`Volume total de toutes les séances: ${totalVolume}kg`);
+            }
+            
+            // Afficher une alerte avec les informations
+            const message = `Debug Volume d'Entraînement:
+- ${appState.sessions?.length || 0} séances enregistrées
+- ${appState.exercises?.length || 0} exercices configurés
+- Volume total: ${this.calculateTotalVolume(appState.sessions || [])}kg
+
+Consultez la console pour plus de détails.`;
+            
+            alert(message);
         };
 
         actions.calculateAverageSessionTime = function(sessions) {
