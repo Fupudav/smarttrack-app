@@ -868,6 +868,44 @@
             display: block;
         }
 
+        /* === BOUTON SCROLL-TO-TOP === */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 80px; /* Au-dessus de la barre de navigation */
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000; /* Inférieur aux modales mais supérieur au contenu */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* S'assurer que la navigation reste visible */
+        .nav-bar {
+            z-index: 1001;
+        }
+
         /* === STYLES ANALYTICS AVANCÉES (v1.4) === */
         
         /* Onglets Analytics */
@@ -880,21 +918,26 @@
             box-shadow: 0 2px 8px var(--shadow);
             border: 1px solid var(--border);
             overflow-x: auto;
+            gap: 4px;
+            flex-wrap: nowrap;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 12px 16px;
+            padding: 8px 12px;
             background: transparent;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--text-secondary);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
-            min-width: 120px;
+            min-width: 100px;
+            max-width: 150px;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
 
         .tab-btn:hover {
@@ -910,10 +953,15 @@
 
         .tab-content {
             display: none;
+            opacity: 0;
+            transform: translateX(0);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .tab-content.active {
             display: block;
+            opacity: 1;
+            transform: translateX(0);
         }
 
         /* Grille de métriques */
@@ -2925,6 +2973,54 @@
             pointer-events: none;
         }
 
+        /* === STYLES SÉLECTION DES JOURS === */
+        .days-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .day-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--background);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .day-item:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .day-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+        }
+
+        .day-item input[type="checkbox"]:checked + label {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .day-item label {
+            margin: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        @media (max-width: 768px) {
+            .days-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         .favorite-btn:hover {
             background: var(--primary);
             transform: scale(1.1);
@@ -4790,6 +4886,41 @@
                         <option value="weight-loss">🔥 Perte de poids</option>
                         <option value="rehab">🩹 Rééducation</option>
                     </select>
+                </div>
+            </div>
+
+            <!-- Sélection des jours -->
+            <div class="card">
+                <h3>📅 Jours d'entraînement</h3>
+                <div class="days-selector">
+                    <div class="day-item" data-day="monday">
+                        <input type="checkbox" id="day-monday" class="checkbox">
+                        <label for="day-monday">Lundi</label>
+                    </div>
+                    <div class="day-item" data-day="tuesday">
+                        <input type="checkbox" id="day-tuesday" class="checkbox">
+                        <label for="day-tuesday">Mardi</label>
+                    </div>
+                    <div class="day-item" data-day="wednesday">
+                        <input type="checkbox" id="day-wednesday" class="checkbox">
+                        <label for="day-wednesday">Mercredi</label>
+                    </div>
+                    <div class="day-item" data-day="thursday">
+                        <input type="checkbox" id="day-thursday" class="checkbox">
+                        <label for="day-thursday">Jeudi</label>
+                    </div>
+                    <div class="day-item" data-day="friday">
+                        <input type="checkbox" id="day-friday" class="checkbox">
+                        <label for="day-friday">Vendredi</label>
+                    </div>
+                    <div class="day-item" data-day="saturday">
+                        <input type="checkbox" id="day-saturday" class="checkbox">
+                        <label for="day-saturday">Samedi</label>
+                    </div>
+                    <div class="day-item" data-day="sunday">
+                        <input type="checkbox" id="day-sunday" class="checkbox">
+                        <label for="day-sunday">Dimanche</label>
+                    </div>
                 </div>
             </div>
 
@@ -9262,11 +9393,50 @@
             }
         };
 
+        // === SYSTÈME DE NOTIFICATIONS AMÉLIORÉ ===
+        const notificationSystem = {
+            shownNotifications: new Set(),
+            
+            // Charger les notifications déjà affichées
+            init() {
+                const saved = localStorage.getItem('smarttrack_shown_notifications');
+                if (saved) {
+                    this.shownNotifications = new Set(JSON.parse(saved));
+                }
+            },
+            
+            // Marquer une notification comme affichée
+            markAsShown(type, id) {
+                const key = `${type}_${id}`;
+                this.shownNotifications.add(key);
+                localStorage.setItem('smarttrack_shown_notifications', JSON.stringify([...this.shownNotifications]));
+            },
+            
+            // Vérifier si une notification a déjà été affichée
+            hasBeenShown(type, id) {
+                const key = `${type}_${id}`;
+                return this.shownNotifications.has(key);
+            },
+            
+            // Nettoyer les anciennes notifications (garder seulement les 100 dernières)
+            cleanup() {
+                if (this.shownNotifications.size > 100) {
+                    const notifications = [...this.shownNotifications];
+                    const recentNotifications = notifications.slice(-100);
+                    this.shownNotifications = new Set(recentNotifications);
+                    localStorage.setItem('smarttrack_shown_notifications', JSON.stringify(recentNotifications));
+                }
+            }
+        };
+
         // === ACTIONS (MODIFICATION DE L'ÉTAT) ===
         const actions = {
             // Initialisation
             init() {
                 console.log('🚀 Initialisation de SmartTrack...');
+                
+                // Initialiser le système de notifications
+                notificationSystem.init();
                 
                 this.loadData();
                 this.initializeMediaSystem();
@@ -9289,8 +9459,41 @@
                 const savedScreen = storage.load('currentScreen', 'dashboard');
                 appState.currentScreen = savedScreen;
                 
+                // Initialiser le bouton scroll-to-top
+                this.initScrollToTop();
+                
                 console.log('✅ SmartTrack initialisé avec succès');
                 render();
+            },
+            
+            // Initialiser le bouton scroll-to-top
+            initScrollToTop() {
+                // Créer le bouton s'il n'existe pas déjà
+                if (document.getElementById('scroll-to-top-btn')) return;
+                
+                const scrollBtn = document.createElement('button');
+                scrollBtn.id = 'scroll-to-top-btn';
+                scrollBtn.className = 'scroll-to-top';
+                scrollBtn.innerHTML = '↑';
+                scrollBtn.title = 'Remonter en haut';
+                scrollBtn.onclick = () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                document.body.appendChild(scrollBtn);
+                
+                // Gérer la visibilité basée sur le scroll
+                let scrollTimeout;
+                window.addEventListener('scroll', () => {
+                    // Debounce pour optimiser les performances
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        if (window.scrollY > 300) {
+                            scrollBtn.classList.add('visible');
+                        } else {
+                            scrollBtn.classList.remove('visible');
+                        }
+                    }, 10);
+                });
             },
             
             loadData() {
@@ -19589,6 +19792,9 @@
         
         // Basculer entre les onglets analytics
         actions.switchAnalyticsTab = function(tab) {
+            // Fermer tous les menus contextuels
+            this.closeContextualMenus();
+            
             appState.analyticsTab = tab;
             
             // Mettre à jour les boutons d'onglets
@@ -19597,8 +19803,8 @@
             });
             document.querySelector(`.analytics-tabs .tab-btn[onclick*="${tab}"]`).classList.add('active');
             
-            // Masquer tous les contenus
-            document.querySelectorAll('.tab-content').forEach(content => {
+            // Masquer tous les contenus des analytics seulement
+            document.querySelectorAll('#screen-analytics .tab-content').forEach(content => {
                 content.classList.remove('active');
             });
             
@@ -19835,6 +20041,14 @@
 
         // Notification de level up
         actions.showLevelUpNotification = function(newLevel, reason) {
+            // Vérifier si cette notification de niveau a déjà été affichée
+            if (notificationSystem.hasBeenShown('level', newLevel)) {
+                return;
+            }
+            
+            // Marquer comme affichée
+            notificationSystem.markAsShown('level', newLevel);
+            
             const title = getTitleForLevel(newLevel);
             
             // Créer une notification spéciale
@@ -20084,6 +20298,14 @@
         // Notification de déblocage de badge
         actions.showBadgeUnlockNotification = function(badges) {
             badges.forEach((badge, index) => {
+                // Vérifier si ce badge a déjà été notifié
+                if (notificationSystem.hasBeenShown('badge', badge.id)) {
+                    return;
+                }
+                
+                // Marquer comme affiché
+                notificationSystem.markAsShown('badge', badge.id);
+                
                 setTimeout(() => {
                     const notification = document.createElement('div');
                     notification.className = 'badge-unlock-notification';
