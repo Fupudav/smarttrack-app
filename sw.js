@@ -13,19 +13,19 @@ const swLogger = {
   
   log: function(message, ...args) {
     if (this.enabled) {
-      swLogger.log(`[SmartTrack SW] ${message}`, ...args);
+      console.log(`[SmartTrack SW] ${message}`, ...args);
     }
   },
   
   warn: function(message, ...args) {
     if (this.enabled) {
-      swLogger.warn(`[SmartTrack SW] ${message}`, ...args);
+      console.warn(`[SmartTrack SW] ${message}`, ...args);
     }
   },
   
   error: function(message, ...args) {
     // Les erreurs sont toujours affichées
-    swLogger.error(`[SmartTrack SW] ${message}`, ...args);
+    console.error(`[SmartTrack SW] ${message}`, ...args);
   }
 };
 

@@ -8544,30 +8544,30 @@
             
             log: function(message, ...args) {
                 if (this.enabled) {
-                    Logger.log(`[SmartTrack] ${message}`, ...args);
+                    console.log(`[SmartTrack] ${message}`, ...args);
                 }
             },
             
             warn: function(message, ...args) {
                 if (this.enabled) {
-                    Logger.warn(`[SmartTrack] ${message}`, ...args);
+                    console.warn(`[SmartTrack] ${message}`, ...args);
                 }
             },
             
             error: function(message, ...args) {
                 // Les erreurs sont toujours affichées
-                Logger.error(`[SmartTrack] ${message}`, ...args);
+                console.error(`[SmartTrack] ${message}`, ...args);
             },
             
             debug: function(message, ...args) {
                 if (this.enabled) {
-                    Logger.debug(`[SmartTrack] ${message}`, ...args);
+                    console.debug(`[SmartTrack] ${message}`, ...args);
                 }
             },
             
             info: function(message, ...args) {
                 if (this.enabled) {
-                    Logger.info(`[SmartTrack] ${message}`, ...args);
+                    console.info(`[SmartTrack] ${message}`, ...args);
                 }
             }
         };
