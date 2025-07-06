@@ -17873,9 +17873,41 @@
 
         // Calculer la progression du programme
         actions.calculerProgression = function(suiviProgramme) {
-            const seancesTotales = suiviProgramme.progression.seances_totales;
-            const seancesRealisees = suiviProgramme.seances_realisees.length;
-            const pourcentage = Math.round((seancesRealisees / seancesTotales) * 100);
+            // Récupérer le programme pour calculer le nombre total de séances
+            const program = PREDEFINED_PROGRAMS[suiviProgramme.programme_id];
+            
+            // Calculer le nombre total de séances avec différentes méthodes de fallback
+            let seancesTotales = 0;
+            
+            // Méthode 1 : Utiliser la progression sauvegardée
+            if (suiviProgramme.progression && suiviProgramme.progression.seances_totales) {
+                seancesTotales = suiviProgramme.progression.seances_totales;
+            }
+            // Méthode 2 : Compter les séances du programme directement
+            else if (program && program.seances && Array.isArray(program.seances)) {
+                seancesTotales = program.seances.length;
+            }
+            // Méthode 3 : Utiliser durée_semaines * seances_par_semaine
+            else if (program && program.duree_semaines && program.seances_par_semaine) {
+                seancesTotales = program.duree_semaines * program.seances_par_semaine;
+            }
+            // Méthode 4 : Valeur par défaut
+            else {
+                seancesTotales = 18; // Valeur par défaut pour "FORGE DU NOVICE"
+            }
+            
+            const seancesRealisees = suiviProgramme.seances_realisees ? suiviProgramme.seances_realisees.length : 0;
+            
+            // Calcul du pourcentage avec vérification pour éviter NaN
+            let pourcentage = 0;
+            if (seancesTotales > 0) {
+                pourcentage = Math.round((seancesRealisees / seancesTotales) * 100);
+            }
+            
+            // Vérifier que le pourcentage est un nombre valide
+            if (isNaN(pourcentage) || !isFinite(pourcentage)) {
+                pourcentage = 0;
+            }
             
             const dateDebut = new Date(suiviProgramme.date_debut);
             const dateFin = new Date(suiviProgramme.date_fin_prevue);
@@ -17884,7 +17916,7 @@
             const joursRestants = Math.max(0, Math.ceil((dateFin - aujourd_hui) / (1000 * 60 * 60 * 24)));
             const semaineActuelle = Math.min(
                 Math.floor((aujourd_hui - dateDebut) / (1000 * 60 * 60 * 24 * 7)) + 1,
-                PREDEFINED_PROGRAMS[suiviProgramme.programme_id].duree_semaines
+                program && program.duree_semaines ? program.duree_semaines : 6
             );
 
             return {
@@ -18097,7 +18129,17 @@
             Object.entries(semainesGroupees).forEach(([semaine, seances]) => {
                 const seancesRealisees = appState.currentProgram.seances_realisees.map(s => s.seance_id);
                 const seancesCompletees = seances.filter(s => seancesRealisees.includes(s.id)).length;
-                const progression = Math.round((seancesCompletees / seances.length) * 100);
+                
+                // Calcul du pourcentage avec vérification pour éviter NaN
+                let progression = 0;
+                if (seances.length > 0) {
+                    progression = Math.round((seancesCompletees / seances.length) * 100);
+                }
+                
+                // Vérifier que le pourcentage est un nombre valide
+                if (isNaN(progression) || !isFinite(progression)) {
+                    progression = 0;
+                }
 
                 const weekDiv = document.createElement('div');
                 weekDiv.className = 'week-accordion';
