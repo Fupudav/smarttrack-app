@@ -4318,7 +4318,10 @@
             <div class="header">
                 <button class="btn btn-small btn-secondary" onclick="actions.showScreen('dashboard')">← Retour</button>
                 <h1 id="program-tracking-title">Mon Programme</h1>
-                <button class="btn btn-small btn-secondary" onclick="actions.showProgramSettings()">⚙️</button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-small btn-secondary" onclick="actions.showProgramSettings()">⚙️</button>
+                    <button class="btn btn-small btn-danger" onclick="actions.showRestartProgramConfirmation()">🔄 Redémarrer</button>
+                </div>
             </div>
             
             <!-- Progression globale -->
@@ -4908,6 +4911,53 @@
                 <button class="btn btn-secondary" onclick="actions.closeModal('program-settings-modal')">Annuler</button>
                 <button class="btn btn-primary" onclick="actions.saveProgramSettings()">
                     💾 Sauvegarder
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal redémarrage de programme -->
+    <div id="restart-program-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔄 Redémarrer le programme</h3>
+                <button class="close-btn" onclick="actions.closeModal('restart-program-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin: 20px 0;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+                    <h4>Êtes-vous sûr de vouloir redémarrer le programme ?</h4>
+                    <p style="color: var(--text-secondary); margin: 16px 0;">
+                        Cette action remettra le programme à zéro, comme si vous commenciez pour la première fois.
+                    </p>
+                    <div style="background: var(--info-light); padding: 16px; border-radius: 8px; margin: 16px 0;">
+                        <div style="font-size: 16px; font-weight: 500; margin-bottom: 8px;">
+                            ✅ Ce qui sera conservé :
+                        </div>
+                        <ul style="text-align: left; margin-left: 20px; color: var(--text-secondary);">
+                            <li>Votre historique complet des séances</li>
+                            <li>Vos statistiques et records</li>
+                            <li>Vos progressions passées</li>
+                        </ul>
+                    </div>
+                    <div style="background: var(--warning-light); padding: 16px; border-radius: 8px; margin: 16px 0;">
+                        <div style="font-size: 16px; font-weight: 500; margin-bottom: 8px;">
+                            🔄 Ce qui sera remis à zéro :
+                        </div>
+                        <ul style="text-align: left; margin-left: 20px; color: var(--text-secondary);">
+                            <li>La progression du programme actuel</li>
+                            <li>Les séances marquées comme terminées</li>
+                            <li>La semaine actuelle (retour à la semaine 1)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="actions.closeModal('restart-program-modal')">
+                    ❌ Non, annuler
+                </button>
+                <button class="btn btn-danger" onclick="actions.restartProgram()">
+                    🔄 Oui, redémarrer le programme
                 </button>
             </div>
         </div>
@@ -18247,6 +18297,59 @@
             this.saveData();
             this.closeModal('program-settings-modal');
             this.showNotification('Paramètres sauvegardés');
+        };
+
+        // Afficher la confirmation de redémarrage du programme
+        actions.showRestartProgramConfirmation = function() {
+            if (!appState.currentProgram) {
+                this.showNotification('Aucun programme actif à redémarrer', 'warning');
+                return;
+            }
+
+            const modal = document.getElementById('restart-program-modal');
+            modal.classList.add('active');
+        };
+
+        // Redémarrer le programme
+        actions.restartProgram = function() {
+            if (!appState.currentProgram) {
+                this.showNotification('Aucun programme actif à redémarrer', 'warning');
+                return;
+            }
+
+            // Récupérer les informations du programme original
+            const program = PREDEFINED_PROGRAMS[appState.currentProgram.programme_id];
+            if (!program) {
+                this.showNotification('Programme introuvable', 'error');
+                return;
+            }
+
+            // Calculer les nouvelles dates
+            const startDate = new Date();
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + (program.duree_semaines * 7));
+
+            // Remettre à zéro la progression du programme (mais pas l'historique)
+            appState.currentProgram.date_debut = startDate.toISOString().split('T')[0];
+            appState.currentProgram.date_fin_prevue = endDate.toISOString().split('T')[0];
+            appState.currentProgram.statut = 'actif';
+            appState.currentProgram.progression = {
+                seances_completees: 0,
+                seances_totales: program.duree_semaines * program.seances_par_semaine,
+                pourcentage: 0,
+                semaine_actuelle: 1
+            };
+            appState.currentProgram.seances_realisees = [];
+
+            // Sauvegarder les modifications
+            this.saveData();
+
+            // Fermer la modal et afficher la confirmation
+            this.closeModal('restart-program-modal');
+            this.showNotification('🔄 Programme redémarré avec succès ! Votre historique est préservé.', 'success');
+
+            // Rafraîchir l'écran de suivi
+            this.renderProgramTracking();
         };
 
         // Marquer une séance comme effectuée
