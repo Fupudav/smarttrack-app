@@ -17891,9 +17891,18 @@
             else if (program && program.duree_semaines && program.seances_par_semaine) {
                 seancesTotales = program.duree_semaines * program.seances_par_semaine;
             }
-            // Méthode 4 : Valeur par défaut
+            // Méthode 4 : Fallback basé sur le programme spécifique ou valeur par défaut générique
             else {
-                seancesTotales = 18; // Valeur par défaut pour "FORGE DU NOVICE"
+                // Utiliser des valeurs par défaut spécifiques selon le programme
+                if (program && program.id === 'forge-novice') {
+                    seancesTotales = 18; // Spécifique à "FORGE DU NOVICE" (6 semaines × 3 séances)
+                } else {
+                    // Pour les autres programmes, utiliser une estimation basée sur la durée standard
+                    const estimatedWeeks = program && program.duree_semaines ? program.duree_semaines : 6;
+                    const estimatedSessionsPerWeek = program && program.seances_par_semaine ? program.seances_par_semaine : 3;
+                    seancesTotales = estimatedWeeks * estimatedSessionsPerWeek;
+                    console.warn(`Calcul de séances estimé pour le programme ${program ? program.id : 'inconnu'}: ${seancesTotales} séances`);
+                }
             }
             
             const seancesRealisees = suiviProgramme.seances_realisees ? suiviProgramme.seances_realisees.length : 0;
