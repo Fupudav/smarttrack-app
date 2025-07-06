@@ -4079,6 +4079,9 @@
                 <button class="btn btn-danger btn-full" onclick="actions.clearAllData()">
                     🗑️ Effacer toutes les données
                 </button>
+                <button class="btn btn-warning btn-full" onclick="actions.restartProgram()">
+                    🔄 Redémarrer à zéro
+                </button>
             </div>
             
             <div class="card">
@@ -4088,6 +4091,9 @@
                 </button>
                 <button class="btn btn-secondary btn-full" onclick="actions.showScreen('templates')">
                     📋 Gérer les modèles
+                </button>
+                <button class="btn btn-warning btn-full" onclick="actions.restartProgram()">
+                    🔄 Redémarrer le programme
                 </button>
             </div>
         </div>
@@ -9245,6 +9251,53 @@
                     
                     this.showNotification('🗑️ Toutes les données ont été effacées !', 'info');
                     render();
+                }
+            },
+
+            restartProgram() {
+                if (confirm('🔄 Êtes-vous sûr de vouloir redémarrer le programme à zéro ? Cette action va :\n\n• Effacer toutes vos données d\'entraînement\n• Supprimer tous vos exercices personnalisés\n• Réinitialiser vos paramètres\n• Remettre l\'application dans son état initial\n\nCette action est irréversible !')) {
+                    // Afficher une notification de confirmation
+                    this.showNotification('🔄 Redémarrage du programme en cours...', 'info');
+                    
+                    // Attendre un peu pour que l'utilisateur voie le message
+                    setTimeout(() => {
+                        // Supprimer toutes les données du localStorage
+                        localStorage.clear();
+                        
+                        // Réinitialiser l'état de l'application
+                        appState.sessions = [];
+                        appState.exercises = [];
+                        appState.measurements = [];
+                        appState.templates = [];
+                        appState.settings = { theme: 'light' };
+                        appState.currentSession = null;
+                        appState.editingExercise = null;
+                        appState.editingTemplate = null;
+                        appState.mediaLibrary = [];
+                        appState.currentExerciseMedia = null;
+                        appState.gamification = {
+                            level: 1,
+                            xp: 0,
+                            achievements: [],
+                            weeklyChallenge: null
+                        };
+                        
+                        // Réinitialiser les éléments de l'interface
+                        document.querySelectorAll('.screen').forEach(screen => {
+                            screen.classList.remove('active');
+                        });
+                        
+                        // Afficher l'écran d'accueil
+                        document.getElementById('screen-dashboard').classList.add('active');
+                        
+                        // Notification de succès
+                        this.showNotification('🎉 Programme redémarré avec succès ! Bienvenue dans votre nouveau commencement !', 'success');
+                        
+                        // Recharger la page pour un redémarrage complet
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    }, 500);
                 }
             },
 
