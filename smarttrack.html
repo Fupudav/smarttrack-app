@@ -793,6 +793,103 @@
             }
         }
 
+        /* === MENU DÉROULANT SUIVI === */
+        .tracking-menu {
+            position: relative;
+        }
+
+        .tracking-dropdown {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 -4px 20px var(--shadow-elevated);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 200px;
+            margin-bottom: 8px;
+        }
+
+        .tracking-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        .tracking-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            margin: 4px;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .tracking-dropdown-item:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .tracking-dropdown-item:first-child {
+            border-radius: 8px 8px 8px 8px;
+        }
+
+        .tracking-dropdown-item:last-child {
+            border-radius: 8px 8px 8px 8px;
+        }
+
+        .tracking-dropdown-item > div:first-child {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .tracking-dropdown-item > div:last-child {
+            font-weight: 500;
+        }
+
+        /* Animation d'ouverture */
+        @keyframes slideUpFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        .tracking-dropdown.show {
+            animation: slideUpFadeIn 0.3s ease-out;
+        }
+
+        /* Overlay transparent pour fermer le menu */
+        .dropdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 190;
+            background: transparent;
+            display: none;
+        }
+
+        .dropdown-overlay.show {
+            display: block;
+        }
+
         /* === STYLES ANALYTICS AVANCÉES (v1.4) === */
         
         /* Onglets Analytics */
@@ -3586,7 +3683,7 @@
         <div id="screen-dashboard" class="screen active">
             <div class="header">
                 <h1 class="epic-title">⚔️ SMARTTRACK ⚔️<br><span class="subtitle-epic">Le QG du Guerrier Moderne</span></h1>
-                <button class="btn btn-small btn-secondary" onclick="actions.showSettings()">⚙️ QG</button>
+                <button class="btn btn-small btn-secondary" onclick="actions.showSettings()">⚙️ Paramètres</button>
             </div>
             
             <div class="quest-card">
@@ -4594,7 +4691,7 @@
             </div>
             <div class="nav-item" onclick="actions.goToSession()">
                 <div>⚔️</div>
-                <div>Bataille</div>
+                <div>Batailles</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('programmes')">
                 <div>🛡️</div>
@@ -4604,23 +4701,32 @@
                 <div>🗡️</div>
                 <div>Techniques</div>
             </div>
-            <div class="nav-item" onclick="actions.showScreen('history')">
-                <div>📜</div>
-                <div>Chroniques</div>
-            </div>
-            <div class="nav-item" onclick="actions.showScreen('analytics')">
-                <div>📊</div>
-                <div>Bilan</div>
-            </div>
-            <div class="nav-item" onclick="actions.showScreen('gamification')">
-                <div>🏆</div>
-                <div>Exploits</div>
-            </div>
-            <div class="nav-item" onclick="actions.showScreen('body')">
-                <div>🏋️</div>
-                <div>Condition Physique</div>
+            <div class="nav-item tracking-menu" onclick="actions.toggleTrackingMenu(event)">
+                <div>📈</div>
+                <div>Suivi</div>
+                <div class="tracking-dropdown" id="tracking-dropdown">
+                    <div class="tracking-dropdown-item" onclick="actions.showScreen('history'); event.stopPropagation();">
+                        <div>📜</div>
+                        <div>Chroniques</div>
+                    </div>
+                    <div class="tracking-dropdown-item" onclick="actions.showScreen('analytics'); event.stopPropagation();">
+                        <div>📊</div>
+                        <div>Bilan</div>
+                    </div>
+                    <div class="tracking-dropdown-item" onclick="actions.showScreen('gamification'); event.stopPropagation();">
+                        <div>🏆</div>
+                        <div>Exploits</div>
+                    </div>
+                    <div class="tracking-dropdown-item" onclick="actions.showScreen('body'); event.stopPropagation();">
+                        <div>🏋️</div>
+                        <div>Condition Physique</div>
+                    </div>
+                </div>
             </div>
         </nav>
+        
+        <!-- Overlay pour fermer le menu déroulant -->
+        <div class="dropdown-overlay" id="dropdown-overlay" onclick="actions.closeTrackingMenu()"></div>
     </div>
 
     <!-- Modals -->
@@ -8794,6 +8900,31 @@
             showSettings() {
                 appState.currentScreen = 'settings';
                 render();
+            },
+
+            // Gestion du menu déroulant Suivi
+            toggleTrackingMenu(event) {
+                event.stopPropagation();
+                const dropdown = document.getElementById('tracking-dropdown');
+                const overlay = document.getElementById('dropdown-overlay');
+                
+                if (dropdown.classList.contains('show')) {
+                    this.closeTrackingMenu();
+                } else {
+                    dropdown.classList.add('show');
+                    overlay.classList.add('show');
+                    
+                    // Fermer le menu si on clique ailleurs
+                    document.addEventListener('click', this.closeTrackingMenu.bind(this), { once: true });
+                }
+            },
+
+            closeTrackingMenu() {
+                const dropdown = document.getElementById('tracking-dropdown');
+                const overlay = document.getElementById('dropdown-overlay');
+                
+                if (dropdown) dropdown.classList.remove('show');
+                if (overlay) overlay.classList.remove('show');
             },
 
             // === ACTIONS MANQUANTES POUR L'INTERFACE ===
@@ -15175,23 +15306,23 @@
                     break;
                 case 'history':
                     renderHistory();
-                    document.querySelectorAll('.nav-item')[4].classList.add('active');
+                    document.querySelectorAll('.nav-item')[4].classList.add('active'); // Onglet Suivi
                     break;
                 case 'analytics':
                     renderAnalytics();
-                    document.querySelectorAll('.nav-item')[5].classList.add('active');
+                    document.querySelectorAll('.nav-item')[4].classList.add('active'); // Onglet Suivi
                     break;
                 case 'gamification':
                     renderGamification();
-                    document.querySelectorAll('.nav-item')[6].classList.add('active');
+                    document.querySelectorAll('.nav-item')[4].classList.add('active'); // Onglet Suivi
                     break;
                 case 'body':
                     renderBody();
-                    document.querySelectorAll('.nav-item')[7].classList.add('active');
+                    document.querySelectorAll('.nav-item')[4].classList.add('active'); // Onglet Suivi
                     break;
                 case 'exercise-database':
                     renderExerciseDatabase();
-                    document.querySelectorAll('.nav-item')[3].classList.add('active');
+                    document.querySelectorAll('.nav-item')[3].classList.add('active'); // Onglet Techniques
                     break;
                 case 'exercises':
                     renderExercises();
@@ -15207,7 +15338,7 @@
                     break;
                 case 'programmes':
                     renderProgrammes();
-                    document.querySelectorAll('.nav-item')[2].classList.add('active');
+                    document.querySelectorAll('.nav-item')[2].classList.add('active'); // Onglet Campagnes
                     break;
                 case 'program-details':
                     // Pas de rendu spécial, géré par actions.showProgramDetails
