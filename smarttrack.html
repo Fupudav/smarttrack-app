@@ -3582,11 +3582,11 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Écran 0: SmartTrack - Forge du Guerrier -->
+        <!-- Écran 0: SmartTrack - QG du Guerrier -->
         <div id="screen-dashboard" class="screen active">
             <div class="header">
-                <h1 class="epic-title">⚔️ SMARTTRACK ⚔️<br><span class="subtitle-epic">La Forge du Guerrier Moderne</span></h1>
-                <button class="btn btn-small btn-secondary" onclick="actions.showSettings()">⚙️ Forge</button>
+                <h1 class="epic-title">⚔️ SMARTTRACK ⚔️<br><span class="subtitle-epic">Le QG du Guerrier Moderne</span></h1>
+                <button class="btn btn-small btn-secondary" onclick="actions.showSettings()">⚙️ QG</button>
             </div>
             
             <div class="quest-card">
@@ -3689,7 +3689,7 @@
         <!-- Écran 4: Gamification & Motivation -->
         <div id="screen-gamification" class="screen">
             <div class="header">
-                <h1 class="epic-title">🏆 HALL DE GLOIRE</h1>
+                <h1 class="epic-title">🏆 HALL DES EXPLOITS</h1>
                 <button class="btn btn-small btn-secondary" onclick="actions.refreshGamification()">🔄 Actualiser</button>
             </div>
             
@@ -3779,7 +3779,7 @@
         <!-- Écran 5: Suivi Corporel -->
         <div id="screen-body" class="screen">
             <div class="header">
-                <h1 class="epic-title">🏋️ MESURES DU GUERRIER</h1>
+                <h1 class="epic-title">🏋️ CONDITION PHYSIQUE</h1>
             </div>
             
             <div class="card">
@@ -3857,7 +3857,7 @@
             </div>
             
             <div class="card">
-                <h3>📊 Évolution de votre forge</h3>
+                <h3>📊 Évolution de votre QG</h3>
                 <div class="chart-container">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
                         <div class="stat-card">
@@ -4337,10 +4337,10 @@
             <div id="program-weeks-container"></div>
         </div>
 
-        <!-- Écran Statistiques Fusionné (Analytics + Reliques) -->
+        <!-- Écran Bilan Fusionné (Analytics + Reliques) -->
         <div id="screen-analytics" class="screen">
             <div class="header">
-                <h1>📊 Statistiques & Analytics</h1>
+                <h1>📊 Bilan & Analytics</h1>
                 <button class="btn btn-small btn-secondary" onclick="actions.refreshAnalytics()">🔄 Actualiser</button>
             </div>
 
@@ -4587,7 +4587,7 @@
         <nav class="nav-bar">
             <div class="nav-item active" onclick="actions.showScreen('dashboard')">
                 <div>🏰</div>
-                <div>Forge</div>
+                <div>QG</div>
             </div>
             <div class="nav-item" onclick="actions.goToSession()">
                 <div>⚔️</div>
@@ -4595,11 +4595,11 @@
             </div>
             <div class="nav-item" onclick="actions.showScreen('programmes')">
                 <div>🛡️</div>
-                <div>Quêtes</div>
+                <div>Campagnes</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('exercise-database')">
                 <div>🗡️</div>
-                <div>Arsenal</div>
+                <div>Techniques</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('history')">
                 <div>📜</div>
@@ -4607,15 +4607,15 @@
             </div>
             <div class="nav-item" onclick="actions.showScreen('analytics')">
                 <div>📊</div>
-                <div>Statistiques</div>
+                <div>Bilan</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('gamification')">
                 <div>🏆</div>
-                <div>Gloire</div>
+                <div>Exploits</div>
             </div>
             <div class="nav-item" onclick="actions.showScreen('body')">
                 <div>🏋️</div>
-                <div>Mesures</div>
+                <div>Condition Physique</div>
             </div>
         </nav>
     </div>
@@ -8891,7 +8891,7 @@
                 appState.measurements.push(newMeasurement);
                 
                 this.saveData();
-                this.showNotification('🏋️ Mesures du guerrier enregistrées !', 'success');
+                this.showNotification('🏋️ Condition physique enregistrée !', 'success');
                 
                 // Effacer le formulaire et photos temporaires
                 document.getElementById('measurement-date').value = '';
