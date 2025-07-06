@@ -4780,19 +4780,19 @@
                 <div>📈</div>
                 <div>Suivi</div>
                 <div class="tracking-dropdown" id="tracking-dropdown">
-                    <div class="tracking-dropdown-item" onclick="actions.showScreen('history'); event.stopPropagation();">
+                    <div class="tracking-dropdown-item" onclick="actions.navigateFromTrackingMenu('history')">
                         <div>📜</div>
                         <div>Chroniques</div>
                     </div>
-                    <div class="tracking-dropdown-item" onclick="actions.showScreen('analytics'); event.stopPropagation();">
+                    <div class="tracking-dropdown-item" onclick="actions.navigateFromTrackingMenu('analytics')">
                         <div>📊</div>
                         <div>Bilan</div>
                     </div>
-                    <div class="tracking-dropdown-item" onclick="actions.showScreen('gamification'); event.stopPropagation();">
+                    <div class="tracking-dropdown-item" onclick="actions.navigateFromTrackingMenu('gamification')">
                         <div>🏆</div>
                         <div>Exploits</div>
                     </div>
-                    <div class="tracking-dropdown-item" onclick="actions.showScreen('body'); event.stopPropagation();">
+                    <div class="tracking-dropdown-item" onclick="actions.navigateFromTrackingMenu('body')">
                         <div>🏋️</div>
                         <div>Condition Physique</div>
                     </div>
@@ -9000,6 +9000,12 @@
                 
                 if (dropdown) dropdown.classList.remove('show');
                 if (overlay) overlay.classList.remove('show');
+            },
+
+            // Fonction pour naviguer et fermer le menu
+            navigateFromTrackingMenu(screenName) {
+                this.closeTrackingMenu();
+                this.showScreen(screenName);
             },
 
             // === ACTIONS MANQUANTES POUR L'INTERFACE ===
