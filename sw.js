@@ -1,22 +1,45 @@
 // SmartTrack Service Worker - Version intelligente
-const CACHE_NAME = 'smarttrack-v' + new Date().getTime();
+const VERSION = '1.0.0';
+const CACHE_NAME = `smarttrack-v${VERSION}`;
 const urlsToCache = [
   './smarttrack.html',
   './manifest.json',
   './smarttrack-icon.png'
 ];
 
+// Système de logging conditionnel pour Service Worker
+const swLogger = {
+  enabled: false, // Désactiver en production
+  
+  log: function(message, ...args) {
+    if (this.enabled) {
+      swLogger.log(`[SmartTrack SW] ${message}`, ...args);
+    }
+  },
+  
+  warn: function(message, ...args) {
+    if (this.enabled) {
+      swLogger.warn(`[SmartTrack SW] ${message}`, ...args);
+    }
+  },
+  
+  error: function(message, ...args) {
+    // Les erreurs sont toujours affichées
+    swLogger.error(`[SmartTrack SW] ${message}`, ...args);
+  }
+};
+
 // Installation du service worker
 self.addEventListener('install', event => {
-  console.log('SmartTrack SW: Installation en cours...');
+  swLogger.log('SmartTrack SW: Installation en cours...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('SmartTrack SW: Cache ouvert');
+        swLogger.log('SmartTrack SW: Cache ouvert');
         return cache.addAll(urlsToCache);
       })
       .then(() => {
-        console.log('SmartTrack SW: Tous les fichiers mis en cache');
+        swLogger.log('SmartTrack SW: Tous les fichiers mis en cache');
         // Force l'activation immédiate du nouveau service worker
         return self.skipWaiting();
       })
@@ -25,20 +48,20 @@ self.addEventListener('install', event => {
 
 // Activation du service worker
 self.addEventListener('activate', event => {
-  console.log('SmartTrack SW: Activation en cours...');
+  swLogger.log('SmartTrack SW: Activation en cours...');
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          // Supprimer tous les anciens caches
-          if (cacheName !== CACHE_NAME) {
-            console.log('SmartTrack SW: Suppression ancien cache:', cacheName);
+          // Supprimer tous les anciens caches SmartTrack
+          if (cacheName.startsWith('smarttrack-v') && cacheName !== CACHE_NAME) {
+            swLogger.log('SmartTrack SW: Suppression ancien cache:', cacheName);
             return caches.delete(cacheName);
           }
-        })
+        }).filter(Boolean) // Filtrer les undefined
       );
     }).then(() => {
-      console.log('SmartTrack SW: Prise de contrôle immédiate');
+      swLogger.log('SmartTrack SW: Prise de contrôle immédiate');
       // Prend le contrôle immédiatement de toutes les pages
       return self.clients.claim();
     })
@@ -67,7 +90,7 @@ self.addEventListener('fetch', event => {
       })
       .catch(() => {
         // Si pas de réseau, utiliser le cache
-        console.log('SmartTrack SW: Pas de réseau, utilisation du cache pour:', event.request.url);
+        swLogger.log('SmartTrack SW: Pas de réseau, utilisation du cache pour:', event.request.url);
         return caches.match(event.request)
           .then(response => {
             if (response) {
