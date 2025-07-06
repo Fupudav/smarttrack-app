@@ -7655,12 +7655,12 @@
                 const cacheKey = { query, exercisesCount: exercises.length };
                 const cached = smartCache.get('exerciseSearch', cacheKey);
                 if (cached) {
-                    console.log('🔍 Résultats de recherche récupérés du cache');
+                    Logger.log('🔍 Résultats de recherche récupérés du cache');
                     this.addToHistory(query);
                     return cached;
                 }
                 
-                console.log('🔍 Recherche d\'exercices...');
+                Logger.log('🔍 Recherche d\'exercices...');
                 this.addToHistory(query);
 
                 const results = exercises.filter(exercise => {
@@ -7829,7 +7829,7 @@
                 try {
                     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 } catch (e) {
-                    console.log('Audio non supporté');
+                    Logger.log('Audio non supporté');
                 }
             }
             
@@ -7941,7 +7941,7 @@
                     oscillator.start(this.audioContext.currentTime);
                     oscillator.stop(this.audioContext.currentTime + duration / 1000);
                 } catch (e) {
-                    console.log('Erreur audio:', e);
+                    Logger.log('Erreur audio:', e);
                 }
             }
             
@@ -8537,6 +8537,41 @@
             }
         }
 
+        // === SYSTÈME DE LOGGING CONDITIONNEL ===
+        const Logger = {
+            // Activer/désactiver les logs (false en production)
+            enabled: false, // Changer à true pour activer en développement
+            
+            log: function(message, ...args) {
+                if (this.enabled) {
+                    Logger.log(`[SmartTrack] ${message}`, ...args);
+                }
+            },
+            
+            warn: function(message, ...args) {
+                if (this.enabled) {
+                    Logger.warn(`[SmartTrack] ${message}`, ...args);
+                }
+            },
+            
+            error: function(message, ...args) {
+                // Les erreurs sont toujours affichées
+                Logger.error(`[SmartTrack] ${message}`, ...args);
+            },
+            
+            debug: function(message, ...args) {
+                if (this.enabled) {
+                    Logger.debug(`[SmartTrack] ${message}`, ...args);
+                }
+            },
+            
+            info: function(message, ...args) {
+                if (this.enabled) {
+                    Logger.info(`[SmartTrack] ${message}`, ...args);
+                }
+            }
+        };
+
         // === ARCHITECTURE RÉACTIVE: ÉTAT CENTRAL ===
         let appState = {
             currentScreen: 'dashboard',
@@ -8604,7 +8639,7 @@
             
             save(key, data) {
                 if (!this.isAvailable()) {
-                console.warn('localStorage non disponible');
+                Logger.warn('localStorage non disponible');
                 return false;
                 }
                 try {
@@ -8612,19 +8647,19 @@
                 return true;
                 } catch (e) {
                 if (e.name === 'QuotaExceededError') {
-                    console.warn('localStorage quota exceeded, attempting cleanup');
+                    Logger.warn('localStorage quota exceeded, attempting cleanup');
                     this.cleanupOldData();
                     try {
                         localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(data));
                         actions.showNotification('💾 Espace nettoyé et données sauvegardées');
                         return true;
                     } catch (retryError) {
-                        console.error('Erreur de sauvegarde après nettoyage:', retryError);
+                        Logger.error('Erreur de sauvegarde après nettoyage:', retryError);
                         actions.showNotification('❌ Erreur: Espace de stockage insuffisant');
                         return false;
                     }
                 } else {
-                    console.error('Erreur de sauvegarde:', e);
+                    Logger.error('Erreur de sauvegarde:', e);
                     actions.showNotification('❌ Erreur de sauvegarde');
                     return false;
                 }
@@ -8638,7 +8673,7 @@
                     if (sessions.length > 100) {
                         const recentSessions = sessions.slice(-100);
                         this.save('sessions', recentSessions);
-                        console.log(`🧹 Nettoyage: ${sessions.length - 100} anciennes sessions supprimées`);
+                        Logger.log(`🧹 Nettoyage: ${sessions.length - 100} anciennes sessions supprimées`);
                     }
                     
                     // Nettoyer les médias non utilisés
@@ -8653,7 +8688,7 @@
                     
                     if (cleanedMedia.length < mediaLibrary.length) {
                         this.save('mediaLibrary', cleanedMedia);
-                        console.log(`🧹 Nettoyage: ${mediaLibrary.length - cleanedMedia.length} médias non utilisés supprimés`);
+                        Logger.log(`🧹 Nettoyage: ${mediaLibrary.length - cleanedMedia.length} médias non utilisés supprimés`);
                     }
                     
                     // Nettoyer le cache
@@ -8661,7 +8696,7 @@
                     
                     return true;
                 } catch (e) {
-                    console.error('Erreur lors du nettoyage:', e);
+                    Logger.error('Erreur lors du nettoyage:', e);
                     return false;
                 }
             },
@@ -8674,7 +8709,7 @@
                 const item = localStorage.getItem(STORAGE_PREFIX + key);
                 return item ? JSON.parse(item) : defaultValue;
                 } catch (e) {
-                console.error('Erreur de chargement:', e);
+                Logger.error('Erreur de chargement:', e);
                 return defaultValue;
                 }
             },
@@ -8687,7 +8722,7 @@
                 localStorage.removeItem(STORAGE_PREFIX + key);
                 return true;
                 } catch (e) {
-                console.error('Erreur de suppression:', e);
+                Logger.error('Erreur de suppression:', e);
                 return false;
                 }
             },
@@ -8704,7 +8739,7 @@
                 });
                 return true;
                 } catch (e) {
-                console.error('Erreur de nettoyage:', e);
+                Logger.error('Erreur de nettoyage:', e);
                 return false;
                 }
             }
@@ -8802,7 +8837,7 @@
         const actions = {
             // Initialisation
             init() {
-                console.log('🚀 Initialisation de SmartTrack...');
+                Logger.log('🚀 Initialisation de SmartTrack...');
                 
                 this.loadData();
                 this.initializeMediaSystem();
@@ -8825,7 +8860,7 @@
                 const savedScreen = storage.load('currentScreen', 'dashboard');
                 appState.currentScreen = savedScreen;
                 
-                console.log('✅ SmartTrack initialisé avec succès');
+                Logger.log('✅ SmartTrack initialisé avec succès');
                 render();
             },
             
@@ -8839,10 +8874,10 @@
                 appState.currentScreen = storage.load('currentScreen', 'dashboard');
                 appState.mediaLibrary = storage.load('mediaLibrary', []);
                 appState.exerciseFavorites = storage.load('exerciseFavorites', []);
-                console.log('📚 Médias chargés:', appState.mediaLibrary?.length || 0, 'images');
+                Logger.log('📚 Médias chargés:', appState.mediaLibrary?.length || 0, 'images');
                 appState.customTags = storage.load('customTags', []);
                 appState.exerciseTags = storage.load('exerciseTags', {});
-                console.log('🏷️ Tags chargés:', appState.customTags?.length || 0, 'tags personnalisés');
+                Logger.log('🏷️ Tags chargés:', appState.customTags?.length || 0, 'tags personnalisés');
                 // Charger les données de programmes
                 appState.currentProgram = storage.load('currentProgram', null);
                 appState.programTab = storage.load('programTab', 'predefined');
@@ -9521,13 +9556,13 @@
             saveExerciseMedia(exercise) {
                 if (!appState.currentExerciseMedia) return;
 
-                console.log('💾 Sauvegarde média pour:', exercise.name);
-                console.log('📊 Données média:', appState.currentExerciseMedia);
+                Logger.log('💾 Sauvegarde média pour:', exercise.name);
+                Logger.log('📊 Données média:', appState.currentExerciseMedia);
 
                 if (appState.currentExerciseMedia.libraryId) {
                     // Image vient de la bibliothèque
                     exercise.mediaId = appState.currentExerciseMedia.libraryId;
-                    console.log('✅ MediaId assigné depuis bibliothèque:', exercise.mediaId);
+                    Logger.log('✅ MediaId assigné depuis bibliothèque:', exercise.mediaId);
                 } else if (appState.currentExerciseMedia.file || appState.currentExerciseMedia.preview) {
                     // Nouvelle image uploadée
                     if (!appState.mediaLibrary) {
@@ -9549,8 +9584,8 @@
                     appState.mediaLibrary.push(media);
                     exercise.mediaId = media.id;
                     
-                    console.log('✅ Nouveau média ajouté:', media);
-                    console.log('✅ MediaId assigné:', exercise.mediaId);
+                    Logger.log('✅ Nouveau média ajouté:', media);
+                    Logger.log('✅ MediaId assigné:', exercise.mediaId);
                 }
 
                 // Nettoyer les données temporaires
@@ -9640,14 +9675,14 @@
             },
             
             debugExerciseMedia(exercise) {
-                console.log('🔍 Debug exercice:', exercise.name);
-                console.log('📊 MediaId:', exercise.mediaId);
-                console.log('📚 MediaLibrary:', appState.mediaLibrary);
-                console.log('🔄 Recherche media avec ID:', exercise.mediaId);
+                Logger.log('🔍 Debug exercice:', exercise.name);
+                Logger.log('📊 MediaId:', exercise.mediaId);
+                Logger.log('📚 MediaLibrary:', appState.mediaLibrary);
+                Logger.log('🔄 Recherche media avec ID:', exercise.mediaId);
                 
                 if (exercise.mediaId && appState.mediaLibrary) {
                     const media = appState.mediaLibrary.find(m => m.id === exercise.mediaId);
-                    console.log('🖼️ Media trouvé:', media);
+                    Logger.log('🖼️ Media trouvé:', media);
                 }
                 
                 return this.getExerciseMediaDisplay(exercise);
@@ -9918,7 +9953,7 @@
                             // Vérifier si l'image est encore utilisée
                             const isUsed = appState.exercises.some(ex => ex.mediaId === media.id);
                             if (!isUsed) {
-                                console.log(`🧹 Nettoyage de l'URL orpheline: ${media.name}`);
+                                Logger.log(`🧹 Nettoyage de l'URL orpheline: ${media.name}`);
                             }
                         }
                     });
@@ -10252,7 +10287,7 @@
                 const container = document.getElementById('template-selected-exercises');
                 
                 if (!container) {
-                    console.error('Container template-selected-exercises not found');
+                    Logger.error('Container template-selected-exercises not found');
                     return;
                 }
                 
@@ -10639,7 +10674,7 @@
                 // Sécurisation de l'accès aux arrays
                 if (!appState.manualSession.exercises || 
                     !appState.manualSession.exercises[appState.manualSession.currentExerciseIndex]) {
-                    console.error('Exercise index out of bounds');
+                    Logger.error('Exercise index out of bounds');
                     this.showNotification('❌ Erreur : Exercice non trouvé');
                     return;
                 }
@@ -10648,7 +10683,7 @@
                 const exercise = appState.exercises.find(e => e.id === currentExercise.exercise_id);
                 
                 if (!exercise) {
-                    console.error('Exercise not found in database');
+                    Logger.error('Exercise not found in database');
                     this.showNotification('❌ Erreur : Exercice non trouvé dans la base');
                     return;
                 }
@@ -11384,7 +11419,7 @@
                 const numericExerciseId = parseInt(exerciseId);
                 const exercise = appState.exercises.find(e => e.id === numericExerciseId);
                 if (!exercise) {
-                    console.log(`Exercise not found for ID: ${exerciseId}`);
+                    Logger.log(`Exercise not found for ID: ${exerciseId}`);
                     return null;
                 }
                 
@@ -11394,7 +11429,7 @@
                     .sort((a, b) => b.date.localeCompare(a.date));
                     
                 if (sessionsWithExercise.length === 0) {
-                    console.log(`No sessions found for exercise ID: ${exerciseId}`);
+                    Logger.log(`No sessions found for exercise ID: ${exerciseId}`);
                     return null;
                 }
                 
@@ -11402,14 +11437,14 @@
                 const exerciseData = lastSession.exercises.find(ex => parseInt(ex.exercise_id) === numericExerciseId);
                 
                 if (!exerciseData || !exerciseData.sets || exerciseData.sets.length === 0) {
-                    console.log(`No exercise data or sets found for exercise ID: ${exerciseId}`);
+                    Logger.log(`No exercise data or sets found for exercise ID: ${exerciseId}`);
                     return null;
                 }
                 
                 // Récupérer TOUTES les séries de travail de la dernière séance
                 const workSets = exerciseData.sets.filter(set => set.type === 'work' || !set.type);
                 if (workSets.length === 0) {
-                    console.log(`No work sets found for exercise ID: ${exerciseId}`);
+                    Logger.log(`No work sets found for exercise ID: ${exerciseId}`);
                     return null;
                 }
                 
@@ -11433,7 +11468,7 @@
                     }
                 });
                 
-                console.log(`Found ${allSets.length} sets for exercise ${exercise.name}`);
+                Logger.log(`Found ${allSets.length} sets for exercise ${exercise.name}`);
                 return {
                     date: lastSession.date,
                     sets: allSets,
@@ -11555,7 +11590,7 @@
             },
 
             generateMeasurementsChart() {
-                console.log('Measurements data:', appState.measurements); // LIGNE DE DEBUG
+                Logger.log('Measurements data:', appState.measurements); // LIGNE DE DEBUG
                 if (appState.measurements.length === 0) {
                     return '<p style="text-align: center; color: var(--text-secondary);">Aucune donnée disponible</p>';
                 }
@@ -11773,7 +11808,7 @@
             
             // Statistiques
             updateStats(exerciseId) {
-                console.log('Updating stats for exercise:', exerciseId);
+                Logger.log('Updating stats for exercise:', exerciseId);
                 // Pas besoin de render() complet, juste re-rendre les stats
                 renderStats();
             },
@@ -11784,11 +11819,11 @@
                 const cacheKey = { sessionsCount: appState.sessions.length, today: new Date().toISOString().split('T')[0] };
                 const cached = smartCache.get('generalStats', cacheKey);
                 if (cached) {
-                    console.log('📊 Stats générales récupérées du cache');
+                    Logger.log('📊 Stats générales récupérées du cache');
                     return cached;
                 }
                 
-                console.log('📊 Calcul des stats générales...');
+                Logger.log('📊 Calcul des stats générales...');
                 const now = new Date();
                 const today = now.toISOString().split('T')[0];
 
@@ -12316,7 +12351,7 @@
             
             // Vérifier et réparer la sanité de l'application
             performHealthCheck() {
-                console.log('🔧 Diagnostic de l\'application...');
+                Logger.log('🔧 Diagnostic de l\'application...');
                 let issuesFound = 0;
                 let issuesFixed = 0;
                 
@@ -12346,7 +12381,7 @@
                     // 3. Vérifier les données de localStorage
                     const storageSize = JSON.stringify(appState).length;
                     if (storageSize > 4 * 1024 * 1024) { // 4MB
-                        console.warn('⚠️ Données localStorage importantes');
+                        Logger.warn('⚠️ Données localStorage importantes');
                         // Déclencher un nettoyage automatique
                         storage.cleanupOldData();
                         issuesFound++;
@@ -12357,7 +12392,7 @@
                     if (appState.currentProgram) {
                         const program = PREDEFINED_PROGRAMS[appState.currentProgram.programme_id];
                         if (!program) {
-                            console.warn('Programme actuel introuvable, nettoyage...');
+                            Logger.warn('Programme actuel introuvable, nettoyage...');
                             appState.currentProgram = null;
                             issuesFound++;
                             issuesFixed++;
@@ -12384,7 +12419,7 @@
                         this.saveData();
                     }
                     
-                    console.log(`✅ Diagnostic terminé: ${issuesFound} problèmes détectés, ${issuesFixed} corrigés`);
+                    Logger.log(`✅ Diagnostic terminé: ${issuesFound} problèmes détectés, ${issuesFixed} corrigés`);
                     
                     return {
                         issuesFound,
@@ -12393,7 +12428,7 @@
                     };
                     
                 } catch (error) {
-                    console.error('❌ Erreur lors du diagnostic:', error);
+                    Logger.error('❌ Erreur lors du diagnostic:', error);
                     return { issuesFound: 1, issuesFixed: 0, status: 'error', error };
                 }
             },
@@ -14333,7 +14368,7 @@
                     return;
                 }
 
-                console.log('🔍 Exercice à afficher:', exercise.name, 'MediaId:', exercise.mediaId);
+                Logger.log('🔍 Exercice à afficher:', exercise.name, 'MediaId:', exercise.mediaId);
 
                 const enrichedData = this.getExerciseEnrichedData(exercise);
                 const fullExercise = { ...exercise, ...enrichedData };
@@ -14763,7 +14798,7 @@
                             const optimizedFile = new File([blob], originalName, { type: 'image/webp' });
                             const preview = URL.createObjectURL(blob);
                             
-                            console.log(`🎯 Compression terminée: ${blob.size} bytes (${Math.round(blob.size/1024)}KB) avec qualité ${quality}`);
+                            Logger.log(`🎯 Compression terminée: ${blob.size} bytes (${Math.round(blob.size/1024)}KB) avec qualité ${quality}`);
                             callback(optimizedFile, preview);
                         } else {
                             // Réduire la qualité et réessayer
@@ -15278,7 +15313,7 @@
 
         // === FONCTION DE RENDU UNIQUE ===
         function render() {
-            console.log('Rendu pour l\'écran:', appState.currentScreen);
+            Logger.log('Rendu pour l\'écran:', appState.currentScreen);
             
             // Mettre à jour la navigation active
             document.querySelectorAll('.nav-item').forEach(item => {
@@ -15400,12 +15435,12 @@
             const cachedCalendar = smartCache.get('calendar', calendarCacheKey);
 
             if (cachedCalendar) {
-                console.log('📅 Calendrier récupéré du cache');
+                Logger.log('📅 Calendrier récupéré du cache');
                 calendarGrid.innerHTML = cachedCalendar;
                 return;
             }
 
-            console.log('📅 Génération du calendrier...');
+            Logger.log('📅 Génération du calendrier...');
             // Créer le calendrier
             calendarGrid.innerHTML = '';
             calendarGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
@@ -15628,8 +15663,8 @@
             const liveContent = document.getElementById('live-content');
             
             // AJOUTEZ CES LIGNES DE DEBUG
-            console.log('Live session state:', appState.liveSession);
-            console.log('Current session:', appState.currentSession);
+            Logger.log('Live session state:', appState.liveSession);
+            Logger.log('Current session:', appState.currentSession);
 
             if (!appState.liveSession) {
                 liveContent.innerHTML = '<p>Aucune séance en cours</p>';
@@ -18082,7 +18117,7 @@
                     const estimatedWeeks = program && program.duree_semaines ? program.duree_semaines : 6;
                     const estimatedSessionsPerWeek = program && program.seances_par_semaine ? program.seances_par_semaine : 3;
                     seancesTotales = estimatedWeeks * estimatedSessionsPerWeek;
-                    console.warn(`Calcul de séances estimé pour le programme ${program ? program.id : 'inconnu'}: ${seancesTotales} séances`);
+                    Logger.warn(`Calcul de séances estimé pour le programme ${program ? program.id : 'inconnu'}: ${seancesTotales} séances`);
                 }
             }
             
@@ -18251,7 +18286,7 @@
                     
                     appState.exercises.push(newExercise);
                     this.saveData();
-                    console.log(`✅ Exercice créé: ${newExercise.name} (${newExercise.category}, ${newExercise.muscle_group})`);
+                    Logger.log(`✅ Exercice créé: ${newExercise.name} (${newExercise.category}, ${newExercise.muscle_group})`);
                     return newExercise.id;
                 }
             }
@@ -18273,7 +18308,7 @@
                 
                 appState.exercises.push(newExercise);
                 this.saveData();
-                console.log(`✅ Exercice d'échauffement créé: ${newExercise.name}`);
+                Logger.log(`✅ Exercice d'échauffement créé: ${newExercise.name}`);
                 return newExercise.id;
             }
 
@@ -18293,7 +18328,7 @@
             
             appState.exercises.push(newExercise);
             this.saveData();
-            console.log(`✅ Exercice générique créé: ${newExercise.name}`);
+            Logger.log(`✅ Exercice générique créé: ${newExercise.name}`);
             return newExercise.id;
         };
 
@@ -20608,7 +20643,7 @@
 
         // === FINALISATION ===
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('SmartTrack - Initialisation de l\'application');
+            Logger.log('SmartTrack - Initialisation de l\'application');
             actions.init();
         
             // === GESTION DU BOUTON RETOUR ===
@@ -20696,7 +20731,7 @@
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
           .then(registration => {
-            console.log('SmartTrack SW: Enregistré avec succès');
+            Logger.log('SmartTrack SW: Enregistré avec succès');
             
             // Écouter les mises à jour
             registration.addEventListener('updatefound', () => {
@@ -20704,14 +20739,14 @@
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                   // Nouvelle version disponible
-                  console.log('SmartTrack: Nouvelle version disponible');
+                  Logger.log('SmartTrack: Nouvelle version disponible');
                   // Optionnel: afficher une notification à l'utilisateur
                 }
               });
             });
           })
           .catch(error => {
-            console.log('SmartTrack SW: Échec d\'enregistrement', error);
+            Logger.log('SmartTrack SW: Échec d\'enregistrement', error);
           });
       });
     }
