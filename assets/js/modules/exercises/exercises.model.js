@@ -5,7 +5,7 @@
 
 const ExercisesModel = (function() {
     let exercises = [];
-    let isLoaded = false;
+    let loaded = false;
 
     /**
      * Initialiser le modèle
@@ -37,7 +37,7 @@ const ExercisesModel = (function() {
         try {
             const data = await Storage.get(STORAGE_KEYS.EXERCISES);
             exercises = data || [];
-            isLoaded = true;
+            loaded = true;
             
             // Émettre événement de chargement
             if (typeof EventBus !== 'undefined') {
@@ -77,7 +77,7 @@ const ExercisesModel = (function() {
      * Obtenir tous les exercices
      */
     function getAll() {
-        if (!isLoaded) {
+        if (!loaded) {
             console.warn('⚠️ Exercices non chargés, retour d\'un tableau vide');
             return [];
         }
@@ -504,7 +504,7 @@ const ExercisesModel = (function() {
      * Vérifier si les exercices sont chargés
      */
     function isLoaded() {
-        return isLoaded;
+        return loaded;
     }
 
     /**
