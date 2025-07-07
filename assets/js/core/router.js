@@ -321,7 +321,18 @@ const Router = (function() {
 
             // Afficher l'écran correspondant
             const screenId = getScreenId(path);
-            const screen = document.getElementById(screenId);
+            let screen = document.getElementById(screenId);
+
+            // Rechercher d'abord par ID, puis en fallback par classe
+            if (!screen) {
+                screen = document.querySelector(`.${path}-screen`);
+
+                // Si on le trouve, on lui ajoute l'ID standard pour les prochaines navigations
+                if (screen) {
+                    screen.id = screenId;
+                }
+            }
+
             if (screen) {
                 screen.classList.add('active');
             } else {
