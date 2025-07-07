@@ -97,6 +97,8 @@ class SmartTrackApp {
         if (typeof Router !== 'undefined') {
             this.modules.router = Router;
             await Router.init();
+            // Exposer le router globalement après son initialisation
+            window.router = Router;
             console.log('✓ Router initialisé');
         }
         

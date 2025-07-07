@@ -486,7 +486,10 @@ const Storage = (function() {
         clear,
         hasUnsavedChanges: hasChanges,
         getStats,
-        getStorageSize
+        getStorageSize,
+        // Alias pour compatibilité avec d'anciens appels
+        getItem: get,
+        setItem: set
     };
 })();
 
