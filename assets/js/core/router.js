@@ -55,6 +55,13 @@ const Router = (function() {
             icon: '⚔️'
         });
 
+        // Route exercices
+        define('exercises', {
+            render: renderExercises,
+            title: 'Arsenal d\'Exercices',
+            icon: '🏋️'
+        });
+
         // Route séance live
         define(ROUTES.LIVE_SESSION, {
             render: renderLiveSession,
@@ -399,16 +406,36 @@ const Router = (function() {
     }
 
     /**
-     * Fonctions de rendu par défaut (seront remplacées par les modules)
+     * Fonctions de rendu par défaut (utilisent les contrôleurs)
      */
     async function renderDashboard(params, options) {
         console.log('🏰 Rendu Dashboard');
-        // Le module dashboard prendra le relais
+        if (typeof DashboardController !== 'undefined') {
+            await DashboardController.renderDashboard();
+        } else {
+            console.warn('⚠️ DashboardController non disponible');
+            renderFallbackScreen('Dashboard', '🏰');
+        }
     }
 
     async function renderPreparation(params, options) {
         console.log('⚔️ Rendu Préparation');
-        // Le module sessions prendra le relais
+        if (typeof PreparationController !== 'undefined') {
+            await PreparationController.renderPreparation();
+        } else {
+            console.warn('⚠️ PreparationController non disponible');
+            renderFallbackScreen('Préparation', '⚔️');
+        }
+    }
+
+    async function renderExercises(params, options) {
+        console.log('🏋️ Rendu Exercices');
+        if (typeof ExercisesController !== 'undefined') {
+            await ExercisesController.renderExercisesScreen();
+        } else {
+            console.warn('⚠️ ExercisesController non disponible');
+            renderFallbackScreen('Exercices', '🏋️');
+        }
     }
 
     async function renderLiveSession(params, options) {
@@ -454,6 +481,27 @@ const Router = (function() {
                     <div class="card">
                         <h3>Paramètres de l'application</h3>
                         <p>Interface en cours de développement...</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    /**
+     * Rendre un écran de secours
+     */
+    function renderFallbackScreen(moduleName, icon) {
+        const content = document.getElementById('app-content');
+        if (content) {
+            content.innerHTML = `
+                <div class="screen active">
+                    <div class="error-content">
+                        <div class="error-icon">${icon}</div>
+                        <h2>Module ${moduleName} non disponible</h2>
+                        <p>Ce module n'est pas encore chargé ou a rencontré une erreur.</p>
+                        <button class="btn btn-primary" onclick="location.reload()">
+                            Recharger l'application
+                        </button>
                     </div>
                 </div>
             `;

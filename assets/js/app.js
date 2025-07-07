@@ -193,6 +193,31 @@ class SmartTrackApp {
             console.log('✓ ChartsManager initialisé');
         }
         
+        // Initialiser les contrôleurs (Phase 4)
+        console.log('🎮 Initialisation des contrôleurs...');
+        
+        const controllersList = [
+            { name: 'DashboardController', key: 'dashboard' },
+            { name: 'ExercisesController', key: 'exercises' },
+            { name: 'PreparationController', key: 'preparation' }
+        ];
+        
+        for (const controller of controllersList) {
+            try {
+                if (typeof window[controller.name] !== 'undefined') {
+                    this.modules[controller.key] = window[controller.name];
+                    if (typeof window[controller.name].init === 'function') {
+                        await window[controller.name].init();
+                    }
+                    console.log(`✓ ${controller.name} initialisé`);
+                } else {
+                    console.warn(`⚠️ Contrôleur ${controller.name} non trouvé`);
+                }
+            } catch (error) {
+                console.error(`❌ Erreur lors de l'initialisation de ${controller.name} :`, error);
+            }
+        }
+        
         // Configurer les gestionnaires d'événements globaux
         this.setupGlobalEventHandlers();
         
