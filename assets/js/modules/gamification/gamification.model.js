@@ -214,7 +214,7 @@ const GamificationModel = (function() {
      * Calculer l'XP requis pour le prochain niveau
      */
     function getXpForNextLevel(level = null) {
-        const currentLevel = level || playerData.level;
+        const currentLevel = level || (playerData ? playerData.level : 1);
         const nextLevel = currentLevel + 1;
         return Math.pow(nextLevel - 1, 2) * 100;
     }
@@ -223,7 +223,7 @@ const GamificationModel = (function() {
      * Calculer l'XP requis pour le niveau actuel
      */
     function getXpForCurrentLevel(level = null) {
-        const currentLevel = level || playerData.level;
+        const currentLevel = level || (playerData ? playerData.level : 1);
         if (currentLevel <= 1) return 0;
         return Math.pow(currentLevel - 1, 2) * 100;
     }

@@ -38,7 +38,7 @@ const DashboardView = (function() {
         await loadDashboardData();
 
         container.innerHTML = `
-            <div class="screen dashboard-screen">
+            <div class="screen dashboard-screen" id="screen-dashboard">
                 <header class="dashboard-header">
                     <div class="welcome-section">
                         <h1 class="welcome-title">

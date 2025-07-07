@@ -19,27 +19,34 @@ class SmartTrackApp {
             this.showLoadingScreen();
             
             // Phase 1 : Modules core
+            console.log('Phase 1: Initialisation des modules core...');
             await this.initCoreModules();
             
             // Phase 2 : Chargement des données
+            console.log('Phase 2: Chargement des données...');
             await this.loadAppData();
             
             // Phase 3 : Modules métier
+            console.log('Phase 3: Initialisation des modules métier...');
             await this.initBusinessModules();
             
             // Phase 4 : Interface utilisateur
+            console.log('Phase 4: Initialisation de l\'interface utilisateur...');
             await this.initUI();
             
             // Phase 5 : Finalisation
+            console.log('Phase 5: Finalisation...');
             await this.finalize();
             
             this.initialized = true;
+            console.log('Masquage de l\'écran de chargement...');
             this.hideLoadingScreen();
             
             console.log('✅ SmartTrack initialisé avec succès');
             
         } catch (error) {
             console.error('❌ Erreur lors de l\'initialisation :', error);
+            console.error('Stack trace:', error.stack);
             this.showError('Erreur d\'initialisation', error.message);
         }
     }
@@ -463,7 +470,7 @@ const app = new SmartTrackApp();
 
 // Interface globale pour compatibilité
 window.SmartTrack = app;
-window.router = app.getModule('router');
+// Le router sera exposé globalement après l'initialisation dans initCoreModules()
 window.ui = {
     toggleTrackingMenu: () => {
         const dropdown = document.getElementById('tracking-dropdown');
