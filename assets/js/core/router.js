@@ -471,7 +471,142 @@ const Router = (function() {
 
     async function renderHistory(params, options) {
         console.log('📜 Rendu Historique');
-        // Le module sessions prendra le relais
+        
+        // Créer l'interface d'historique
+        const content = document.getElementById('app-content');
+        if (content) {
+            // Structure HTML pour l'historique
+            content.innerHTML = `
+                <div class="screen active" id="screen-history">
+                    <div class="header">
+                        <h1>📜 Historique des Batailles</h1>
+                        <button class="btn btn-secondary" onclick="history.back()">
+                            ← Retour
+                        </button>
+                    </div>
+                    <div id="history-content" class="content">
+                        <div class="loading-spinner">
+                            Chargement de l'historique...
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Charger les données d'historique
+            try {
+                if (typeof SessionsModel !== 'undefined') {
+                    const sessions = await SessionsModel.getAllSessions();
+                    const completedSessions = sessions.filter(s => s.status === 'completed');
+                    renderHistoryList(completedSessions);
+                } else {
+                    console.warn('⚠️ SessionsModel non disponible pour l\'historique');
+                    renderHistoryFallback();
+                }
+            } catch (error) {
+                console.error('❌ Erreur chargement historique :', error);
+                renderHistoryError();
+            }
+        }
+    }
+
+    /**
+     * Rendre la liste d'historique
+     */
+    function renderHistoryList(sessions) {
+        const contentEl = document.getElementById('history-content');
+        if (!contentEl) return;
+
+        if (sessions.length === 0) {
+            contentEl.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📜</div>
+                    <h3>Aucune bataille terminée</h3>
+                    <p>Vos victoires apparaîtront ici une fois que vous aurez terminé vos premières séances.</p>
+                    <button class="btn btn-primary" onclick="router.navigate('preparation')">
+                        Commencer une bataille
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        // Trier par date décroissante
+        const sortedSessions = sessions.sort((a, b) => new Date(b.endDate) - new Date(a.endDate));
+
+        const historyHTML = `
+            <div class="history-stats">
+                <div class="stat-card">
+                    <div class="stat-value">${sessions.length}</div>
+                    <div class="stat-label">Batailles Terminées</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${Math.round(sessions.reduce((acc, s) => acc + (s.duration || 0), 0) / 60000)}min</div>
+                    <div class="stat-label">Temps Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${sessions.reduce((acc, s) => acc + (s.totalSets || 0), 0)}</div>
+                    <div class="stat-label">Séries Réalisées</div>
+                </div>
+            </div>
+            <div class="history-list">
+                ${sortedSessions.map(session => `
+                    <div class="history-item card">
+                        <div class="session-header">
+                            <div class="session-title">
+                                <strong>${session.name || 'Séance'}</strong>
+                                <span class="session-date">${new Date(session.endDate).toLocaleDateString('fr-FR')}</span>
+                            </div>
+                            <div class="session-stats">
+                                <span class="stat">${Math.round((session.duration || 0) / 60000)}min</span>
+                                <span class="stat">${session.exercisesCount || 0} exercices</span>
+                                <span class="stat">${session.totalSets || 0} séries</span>
+                            </div>
+                        </div>
+                        ${session.xpEarned ? `<div class="xp-badge">+${session.xpEarned} XP</div>` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        contentEl.innerHTML = historyHTML;
+    }
+
+    /**
+     * Rendre un état de fallback pour l'historique
+     */
+    function renderHistoryFallback() {
+        const contentEl = document.getElementById('history-content');
+        if (contentEl) {
+            contentEl.innerHTML = `
+                <div class="error-state">
+                    <div class="error-icon">⚠️</div>
+                    <h3>Module d'historique temporairement indisponible</h3>
+                    <p>Les données d'historique ne peuvent pas être chargées pour le moment.</p>
+                    <button class="btn btn-secondary" onclick="location.reload()">
+                        Recharger
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    /**
+     * Rendre un état d'erreur pour l'historique
+     */
+    function renderHistoryError() {
+        const contentEl = document.getElementById('history-content');
+        if (contentEl) {
+            contentEl.innerHTML = `
+                <div class="error-state">
+                    <div class="error-icon">❌</div>
+                    <h3>Erreur de chargement</h3>
+                    <p>Une erreur est survenue lors du chargement de l'historique.</p>
+                    <button class="btn btn-secondary" onclick="router.reload()">
+                        Réessayer
+                    </button>
+                </div>
+            `;
+        }
     }
 
     async function renderGamification(params, options) {
@@ -486,11 +621,11 @@ const Router = (function() {
 
     async function renderBody(params, options) {
         console.log('🏋️ Rendu Condition Physique');
-        if (typeof PhotosView !== 'undefined') {
-            await PhotosView.render();
+        if (typeof PhotosController !== 'undefined') {
+            await PhotosController.renderPhotos();
         } else {
-            console.warn('⚠️ PhotosView non disponible');
-            renderFallbackScreen('Photos de Progression', '📸');
+            console.warn('⚠️ PhotosController non disponible');
+            renderFallbackScreen('Condition Physique', '🏋️');
         }
     }
 
@@ -516,20 +651,20 @@ const Router = (function() {
 
     async function renderTemplates(params, options) {
         console.log('📝 Rendu Templates');
-        if (typeof TemplatesView !== 'undefined') {
-            await TemplatesView.render();
+        if (typeof TemplatesController !== 'undefined') {
+            await TemplatesController.renderTemplates();
         } else {
-            console.warn('⚠️ TemplatesView non disponible');
+            console.warn('⚠️ TemplatesController non disponible');
             renderFallbackScreen('Templates', '📝');
         }
     }
 
     async function renderPhotos(params, options) {
         console.log('📸 Rendu Photos');
-        if (typeof PhotosView !== 'undefined') {
-            await PhotosView.render();
+        if (typeof PhotosController !== 'undefined') {
+            await PhotosController.renderPhotos();
         } else {
-            console.warn('⚠️ PhotosView non disponible');
+            console.warn('⚠️ PhotosController non disponible');
             renderFallbackScreen('Photos', '📸');
         }
     }
