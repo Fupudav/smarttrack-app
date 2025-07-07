@@ -201,7 +201,9 @@ class SmartTrackApp {
             { name: 'ExercisesController', key: 'exercises' },
             { name: 'PreparationController', key: 'preparation' },
             { name: 'LiveSessionController', key: 'liveSession' },
-            { name: 'AnalyticsController', key: 'analytics' }
+            { name: 'AnalyticsController', key: 'analytics' },
+            { name: 'GamificationController', key: 'gamification' },
+            { name: 'ProgramsController', key: 'programs' }
         ];
         
         for (const controller of controllersList) {

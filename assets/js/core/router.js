@@ -462,7 +462,12 @@ const Router = (function() {
 
     async function renderGamification(params, options) {
         console.log('🏆 Rendu Gamification');
-        // Le module gamification prendra le relais
+        if (typeof GamificationController !== 'undefined') {
+            await GamificationController.renderGamification();
+        } else {
+            console.warn('⚠️ GamificationController non disponible');
+            renderFallbackScreen('Gamification', '🏆');
+        }
     }
 
     async function renderBody(params, options) {
@@ -482,7 +487,12 @@ const Router = (function() {
 
     async function renderPrograms(params, options) {
         console.log('📋 Rendu Programmes');
-        // Le module programs prendra le relais
+        if (typeof ProgramsController !== 'undefined') {
+            await ProgramsController.renderPrograms();
+        } else {
+            console.warn('⚠️ ProgramsController non disponible');
+            renderFallbackScreen('Programmes', '📋');
+        }
     }
 
     async function renderSettings(params, options) {
