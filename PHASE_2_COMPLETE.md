@@ -95,25 +95,29 @@
 - `prompt(message, defaultValue)` - Saisie (Promise)
 - `loading(message)` - Chargement
 
-## 💾 Données par Défaut
+## 💾 Données SmartWorkout
 
 ### 📋 DefaultData (`assets/js/data/default-data.js`)
-- **342 lignes** - Initialisation des données de base
-- **32 exercices** prêts à l'emploi
+- **450 lignes** - Initialisation des **86 exercices SmartWorkout**
+- Base de données complète des exercices originaux
 - Données de gamification initiales
 - Paramètres par défaut
-- Template d'entraînement découverte
+- Template d'entraînement SmartWorkout
 
-**Exercices inclus :**
-- **Échauffement** : Jumping Jacks, Rotations bras, Balancement jambes
-- **Pectoraux** : Pompes (classiques, diamant, inclinées)
-- **Biceps** : Curl biceps, marteau, concentration
-- **Triceps** : Dips, extension, kickback
-- **Épaules** : Développé, élévations latérales/frontales
-- **Dos** : Tractions, rowing (bilatéral/unilatéral)
-- **Jambes** : Squats, fentes, mollets, chaise murale
-- **Élastiques** : Développé, tirage, curl, extension
-- **Stretching** : Étirements par groupe musculaire
+**86 Exercices SmartWorkout inclus :**
+- **Échauffement (15)** : Jumping Jacks, Montées de genoux, Burpees, Planche, Mountain climbers, etc.
+- **Biceps (7)** : Curl biceps, Curl marteau, variations avec poulie
+- **Triceps (6)** : Extensions, Kickbacks, variations d'ancrage
+- **Épaules (11)** : Cuban press, Développé arnold, Élévations, Reverse fly, etc.
+- **Dos (16)** : Face Pull, Rowing, Tirages (vertical, horizontal, unilatéral), etc.
+- **Jambes (17)** : Squats, Fentes, Extensions mollets, Hip thrust, Leg curl, etc.
+- **Pectoraux (14)** : Développés (incliné, décliné, joint), Écartés, variations d'ancrage
+
+**Métadonnées complètes :**
+- Points d'ancrage : `none`, `door-low`, `door-middle`, `door-high`, `floor`, `body`
+- Exercices unilatéraux/bilatéraux marqués
+- Mode temps/répétitions selon l'exercice
+- Catégories warmup/strength appropriées
 
 ## 🔄 Intégration
 
@@ -139,9 +143,9 @@
 | Router | 481 | 9 routes + Gardes | ✅ |
 | Notifications | 488 | 4 types + Animations | ✅ |
 | Modales | 565 | 4 types + Accessibilité | ✅ |
-| DefaultData | 342 | 32 exercices + Config | ✅ |
+| DefaultData | 450 | **86 exercices SmartWorkout** | ✅ |
 
-**Total : 3,069 lignes de code JavaScript**
+**Total : 3,177 lignes de code JavaScript**
 
 ## 🎯 Prochaines Étapes - Phase 3
 
@@ -161,7 +165,7 @@
 - ✅ Notifications utilisateur
 - ✅ Modales interactives
 - ✅ Utilitaires complets
-- ✅ Données de base chargées
+- ✅ **86 exercices SmartWorkout** chargés
 
 ## 🧪 Test de l'Application
 
@@ -169,7 +173,7 @@ L'application peut maintenant être testée en ouvrant `index.html` :
 
 1. **Écran de chargement** s'affiche
 2. **Modules core** s'initialisent
-3. **Données par défaut** se chargent
+3. **86 exercices SmartWorkout** se chargent
 4. **Navigation** fonctionne entre les écrans
 5. **Interface de base** est opérationnelle
 
@@ -189,8 +193,8 @@ L'application peut maintenant être testée en ouvrant `index.html` :
 ✓ Utils disponible
 📊 Chargement des données...
 📋 Initialisation des données par défaut...
-🏋️ Création des exercices par défaut...
-✓ 32 exercices par défaut créés
+🏋️ Création des 86 exercices SmartWorkout...
+✓ 86 exercices SmartWorkout créés
 🎮 Initialisation des données de gamification...
 ✓ Données de gamification initialisées
 ⚙️ Initialisation des paramètres...
@@ -202,10 +206,10 @@ L'application peut maintenant être testée en ouvrant `index.html` :
 ## 🏆 Phase 2 : Mission Accomplie
 
 ✅ **Architecture solide** - Modules core opérationnels  
-✅ **Base de données** - 32 exercices + configuration  
+✅ **Base SmartWorkout** - 86 exercices authentiques + configuration  
 ✅ **Interface moderne** - Notifications + modales  
 ✅ **Navigation fluide** - Router avec 9 routes  
 ✅ **Performance** - Cache + optimisations  
 ✅ **Robustesse** - Gestion d'erreurs complète  
 
-**L'application SmartTrack a maintenant une fondation technique solide pour construire les modules métier de la Phase 3.**
+**L'application SmartTrack a maintenant une fondation technique solide avec tous les vrais exercices SmartWorkout pour construire les modules métier de la Phase 3.**
