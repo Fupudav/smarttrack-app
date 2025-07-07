@@ -264,6 +264,13 @@ const Router = (function() {
                     options,
                     timestamp: Date.now()
                 });
+                
+                // Émettre événement spécifique à la route
+                EventBus.emit(`route:${path}`, {
+                    params,
+                    options,
+                    timestamp: Date.now()
+                });
             }
 
             console.log(`✓ Navigation vers ${path} terminée`);
@@ -440,7 +447,12 @@ const Router = (function() {
 
     async function renderLiveSession(params, options) {
         console.log('🎯 Rendu Session Live');
-        // Le module sessions prendra le relais
+        if (typeof LiveSessionController !== 'undefined') {
+            await LiveSessionController.renderLiveSession();
+        } else {
+            console.warn('⚠️ LiveSessionController non disponible');
+            renderFallbackScreen('Session Live', '🎯');
+        }
     }
 
     async function renderHistory(params, options) {
@@ -460,7 +472,12 @@ const Router = (function() {
 
     async function renderAnalytics(params, options) {
         console.log('📈 Rendu Analytics');
-        // Le module analytics prendra le relais
+        if (typeof AnalyticsController !== 'undefined') {
+            await AnalyticsController.renderAnalytics();
+        } else {
+            console.warn('⚠️ AnalyticsController non disponible');
+            renderFallbackScreen('Analytics', '📈');
+        }
     }
 
     async function renderPrograms(params, options) {

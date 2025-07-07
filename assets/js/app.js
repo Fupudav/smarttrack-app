@@ -199,7 +199,9 @@ class SmartTrackApp {
         const controllersList = [
             { name: 'DashboardController', key: 'dashboard' },
             { name: 'ExercisesController', key: 'exercises' },
-            { name: 'PreparationController', key: 'preparation' }
+            { name: 'PreparationController', key: 'preparation' },
+            { name: 'LiveSessionController', key: 'liveSession' },
+            { name: 'AnalyticsController', key: 'analytics' }
         ];
         
         for (const controller of controllersList) {
