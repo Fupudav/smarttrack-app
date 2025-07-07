@@ -193,6 +193,12 @@ class SmartTrackApp {
             console.log('✓ ChartsManager initialisé');
         }
         
+        if (typeof ConfettiManager !== 'undefined') {
+            this.modules.confetti = ConfettiManager;
+            ConfettiManager.init();
+            console.log('✓ ConfettiManager initialisé');
+        }
+        
         // Initialiser les contrôleurs (Phase 4)
         console.log('🎮 Initialisation des contrôleurs...');
         

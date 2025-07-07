@@ -517,6 +517,14 @@ const DashboardView = (function() {
                     <p>Voir vos progrès et statistiques</p>
                 </div>
             </div>
+            
+            <div class="quick-action" onclick="DashboardView.testConfetti()">
+                <div class="action-icon">🎉</div>
+                <div class="action-info">
+                    <h4>Test Confetti</h4>
+                    <p>Tester les animations de célébration</p>
+                </div>
+            </div>
         `;
     }
 
@@ -668,6 +676,30 @@ const DashboardView = (function() {
         console.log('Add exercise to session:', exerciseId);
     }
 
+    function testConfetti() {
+        if (typeof ConfettiManager !== 'undefined') {
+            // Tester différents types de confetti avec un délai
+            ConfettiManager.trigger('victory');
+            
+            setTimeout(() => {
+                ConfettiManager.trigger('levelUp');
+            }, 800);
+            
+            setTimeout(() => {
+                ConfettiManager.trigger('badge');
+            }, 1600);
+            
+            if (typeof NotificationManager !== 'undefined') {
+                NotificationManager.show('🎉 Confettis de test lancés !', 'info');
+            }
+        } else {
+            console.warn('⚠️ ConfettiManager non disponible');
+            if (typeof NotificationManager !== 'undefined') {
+                NotificationManager.show('⚠️ Module confetti non disponible', 'warning');
+            }
+        }
+    }
+
     // Fonctions utilitaires
     function getStatusIcon(status) {
         const icons = {
@@ -744,7 +776,8 @@ const DashboardView = (function() {
         pauseSession,
         continueProgram,
         pauseProgram,
-        addExerciseToSession
+        addExerciseToSession,
+        testConfetti
     };
 })();
 
