@@ -560,6 +560,18 @@ const Utils = (function() {
         return element;
     }
 
+    /**
+     * Obtenir le début de la semaine (lundi)
+     */
+    function getStartOfWeek(date) {
+        const d = new Date(date);
+        const day = d.getDay();
+        const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+        d.setDate(diff);
+        d.setHours(0, 0, 0, 0);
+        return d;
+    }
+
     // Interface publique
     return {
         validateNumber,
@@ -599,7 +611,8 @@ const Utils = (function() {
         calculateLevel,
         getXpForNextLevel,
         spring,
-        createElement
+        createElement,
+        getStartOfWeek
     };
 })();
 
