@@ -133,16 +133,22 @@ const Router = (function() {
     function setupGuards() {
         // Garde pour les séances live
         guard(ROUTES.LIVE_SESSION, () => {
-            // Vérifier qu'une séance est en cours
+            // Vérifier qu'une séance au statut "active" existe
             return Storage.get(STORAGE_KEYS.SESSIONS)
                 .then(sessions => {
-                    const hasActivSession = sessions && sessions.some(s => s.isActive);
-                    if (!hasActivSession) {
+                    const hasActiveSession = Array.isArray(sessions) && sessions.some(s => s.status === 'active');
+
+                    if (!hasActiveSession) {
                         console.warn('⚠️ Tentative d\'accès à une séance live sans session active');
                         navigate(ROUTES.PREPARATION);
                         return false;
                     }
+
                     return true;
+                })
+                .catch(err => {
+                    console.error('❌ Erreur vérification session active :', err);
+                    return false;
                 });
         });
     }
