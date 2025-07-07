@@ -142,13 +142,13 @@ class SmartTrackApp {
         console.log('🔧 Initialisation des modules métier...');
         
         const modulesList = [
-            { name: 'ExercisesController', key: 'exercises' },
-            { name: 'SessionsController', key: 'sessions' },
-            { name: 'GamificationController', key: 'gamification' },
-            { name: 'ProgramsController', key: 'programs' },
-            { name: 'AnalyticsController', key: 'analytics' },
-            { name: 'TemplatesController', key: 'templates' },
-            { name: 'PhotosController', key: 'photos' }
+            { name: 'ExercisesModel', key: 'exercises' },
+            { name: 'SessionsModel', key: 'sessions' },
+            { name: 'GamificationModel', key: 'gamification' },
+            { name: 'TemplatesModel', key: 'templates' },
+            { name: 'ProgramsModel', key: 'programs' },
+            { name: 'PhotosModel', key: 'photos' },
+            { name: 'AnalyticsModel', key: 'analytics' }
         ];
         
         for (const module of modulesList) {
