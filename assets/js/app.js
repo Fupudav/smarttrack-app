@@ -203,7 +203,9 @@ class SmartTrackApp {
             { name: 'LiveSessionController', key: 'liveSession' },
             { name: 'AnalyticsController', key: 'analytics' },
             { name: 'GamificationController', key: 'gamification' },
-            { name: 'ProgramsController', key: 'programs' }
+            { name: 'ProgramsController', key: 'programs' },
+            { name: 'TemplatesController', key: 'templates' },
+            { name: 'PhotosController', key: 'photos' }
         ];
         
         for (const controller of controllersList) {

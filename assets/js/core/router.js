@@ -105,6 +105,20 @@ const Router = (function() {
             icon: '📋'
         });
 
+        // Route templates
+        define('templates', {
+            render: renderTemplates,
+            title: 'Modèles de Session',
+            icon: '📝'
+        });
+
+        // Route photos
+        define('photos', {
+            render: renderPhotos,
+            title: 'Photos de Progression',
+            icon: '📸'
+        });
+
         // Route paramètres
         define(ROUTES.SETTINGS, {
             render: renderSettings,
@@ -472,7 +486,12 @@ const Router = (function() {
 
     async function renderBody(params, options) {
         console.log('🏋️ Rendu Condition Physique');
-        // Le module photos prendra le relais
+        if (typeof PhotosView !== 'undefined') {
+            await PhotosView.render();
+        } else {
+            console.warn('⚠️ PhotosView non disponible');
+            renderFallbackScreen('Photos de Progression', '📸');
+        }
     }
 
     async function renderAnalytics(params, options) {
@@ -492,6 +511,26 @@ const Router = (function() {
         } else {
             console.warn('⚠️ ProgramsController non disponible');
             renderFallbackScreen('Programmes', '📋');
+        }
+    }
+
+    async function renderTemplates(params, options) {
+        console.log('📝 Rendu Templates');
+        if (typeof TemplatesView !== 'undefined') {
+            await TemplatesView.render();
+        } else {
+            console.warn('⚠️ TemplatesView non disponible');
+            renderFallbackScreen('Templates', '📝');
+        }
+    }
+
+    async function renderPhotos(params, options) {
+        console.log('📸 Rendu Photos');
+        if (typeof PhotosView !== 'undefined') {
+            await PhotosView.render();
+        } else {
+            console.warn('⚠️ PhotosView non disponible');
+            renderFallbackScreen('Photos', '📸');
         }
     }
 
