@@ -1,10 +1,11 @@
 // SmartTrack Service Worker - Version intelligente
-const VERSION = '1.0.0';
+const VERSION = '1.0.1';
 const CACHE_NAME = `smarttrack-v${VERSION}`;
 const urlsToCache = [
   './smarttrack.html',
   './manifest.json',
-  './smarttrack-icon.png'
+  './smarttrack-icon.png',
+  'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js'
 ];
 
 // Système de logging conditionnel pour Service Worker
