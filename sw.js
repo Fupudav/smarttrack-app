@@ -1,5 +1,6 @@
 // SmartTrack Service Worker - Version intelligente
 const VERSION = '1.0.1';
+// TEST COMMENT
 const CACHE_NAME = `smarttrack-v${VERSION}`;
 const urlsToCache = [
   './smarttrack.html',
