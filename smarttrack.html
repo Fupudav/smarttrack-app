@@ -2508,6 +2508,234 @@
             color: var(--text-secondary);
         }
 
+        /* === STYLES POUR LES DÉTAILS DE SÉANCE === */
+        .session-details {
+            display: none;
+            padding: 20px;
+            background: var(--background);
+            border-top: 1px solid var(--border);
+            margin: 0;
+        }
+
+        .session-details.active {
+            display: block;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .session-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .session-meta-item {
+            padding: 12px;
+            background: var(--surface);
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .session-meta-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .session-meta-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .session-philosophy {
+            background: var(--gradient-forge);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--forge-secondary);
+        }
+
+        .session-philosophy h4 {
+            margin-bottom: 8px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .session-philosophy p {
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .warmup-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .warmup-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--warning);
+        }
+
+        .warmup-exercises {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .warmup-exercises li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .warmup-exercises li:last-child {
+            border-bottom: none;
+        }
+
+        .exercises-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .exercises-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .exercise-card {
+            background: var(--background);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .exercise-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 12px;
+        }
+
+        .exercise-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .exercise-group {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .exercise-resistance {
+            background: var(--primary);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .exercise-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .exercise-detail {
+            text-align: center;
+            padding: 8px;
+            background: var(--surface);
+            border-radius: 6px;
+            border: 1px solid var(--border-light);
+        }
+
+        .exercise-detail-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .exercise-detail-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .exercise-advice {
+            background: var(--info-light);
+            border-left: 3px solid var(--info);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.3;
+        }
+
+        .details-toggle-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            margin-left: 8px;
+        }
+
+        .details-toggle-btn:hover {
+            background: var(--primary-light);
+        }
+
+        /* === RESPONSIVE POUR LES DÉTAILS === */
+        @media (max-width: 768px) {
+            .session-meta {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .exercise-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            
+            .exercise-details {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         .quick-action-btn {
             padding: 12px 16px;
             border-radius: 8px;
@@ -18384,15 +18612,21 @@
                             const statusIcon = isCompleted ? '✅' : (seance.jour <= 3 ? '🟡' : '⭕');
                             
                             return `
-                                <div class="session-item ${statusClass}" onclick="actions.chargerSeance('${seance.id}')">
-                                    <div>
+                                <div class="session-item ${statusClass}">
+                                    <div onclick="actions.chargerSeance('${seance.id}')" style="flex: 1; cursor: pointer;">
                                         <div class="session-day">Jour ${seance.jour}</div>
                                         <div class="session-name">${seance.nom}</div>
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <div class="session-duration">${seance.duree_minutes} min</div>
+                                        <button class="details-toggle-btn" onclick="event.stopPropagation(); actions.toggleSessionDetails('${seance.id}', ${semaine})">
+                                            📋 Détails
+                                        </button>
                                         <div class="session-status ${statusClass}">${statusIcon}</div>
                                     </div>
+                                </div>
+                                <div class="session-details" id="session-details-${seance.id}">
+                                    ${actions.renderSessionDetails(seance)}
                                 </div>
                             `;
                         }).join('')}
@@ -18417,6 +18651,111 @@
                 header.classList.add('active');
                 header.querySelector('div:last-child').textContent = '▲';
             }
+        };
+
+        // Basculer l'affichage des détails d'une séance
+        actions.toggleSessionDetails = function(sessionId, weekNumber) {
+            const details = document.getElementById(`session-details-${sessionId}`);
+            const button = document.querySelector(`button[onclick*="'${sessionId}'"]`);
+            
+            if (details.classList.contains('active')) {
+                details.classList.remove('active');
+                button.textContent = '📋 Détails';
+            } else {
+                // Fermer tous les autres détails de la semaine
+                document.querySelectorAll(`#week-${weekNumber} .session-details.active`).forEach(other => {
+                    other.classList.remove('active');
+                });
+                document.querySelectorAll(`#week-${weekNumber} .details-toggle-btn`).forEach(btn => {
+                    btn.textContent = '📋 Détails';
+                });
+                
+                // Ouvrir les détails de cette séance
+                details.classList.add('active');
+                button.textContent = '📋 Masquer';
+            }
+        };
+
+        // Générer le HTML des détails d'une séance
+        actions.renderSessionDetails = function(seance) {
+            const program = PREDEFINED_PROGRAMS[appState.currentProgram.programme_id];
+            
+            return `
+                <div class="session-meta">
+                    <div class="session-meta-item">
+                        <div class="session-meta-label">Durée</div>
+                        <div class="session-meta-value">${seance.duree_minutes} min</div>
+                    </div>
+                    <div class="session-meta-item">
+                        <div class="session-meta-label">Type</div>
+                        <div class="session-meta-value">${seance.type === 'strength' ? 'Force' : seance.type === 'fullbody' ? 'Corps entier' : 'Mixte'}</div>
+                    </div>
+                    <div class="session-meta-item">
+                        <div class="session-meta-label">Difficulté</div>
+                        <div class="session-meta-value">${'★'.repeat(seance.difficulte)}${'☆'.repeat(5-seance.difficulte)}</div>
+                    </div>
+                    <div class="session-meta-item">
+                        <div class="session-meta-label">Exercices</div>
+                        <div class="session-meta-value">${seance.exercices.length}</div>
+                    </div>
+                </div>
+                
+                ${seance.philosophie ? `
+                    <div class="session-philosophy">
+                        <h4>💭 Philosophie de la séance</h4>
+                        <p>${seance.philosophie}</p>
+                    </div>
+                ` : ''}
+
+                ${seance.phase_eveil ? `
+                    <div class="warmup-section">
+                        <div class="warmup-title">
+                            🔥 Phase d'éveil - ${seance.phase_eveil.duree}
+                        </div>
+                        <ul class="warmup-exercises">
+                            ${seance.phase_eveil.exercices.map(ex => `<li>${ex}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+
+                <div class="exercises-section">
+                    <div class="exercises-title">
+                        ⚔️ Exercices principaux
+                    </div>
+                    ${seance.exercices.map(exercise => `
+                        <div class="exercise-card">
+                            <div class="exercise-header">
+                                <div>
+                                    <div class="exercise-name">${exercise.nom}</div>
+                                    <div class="exercise-group">${exercise.groupe}</div>
+                                </div>
+                                <div class="exercise-resistance">${exercise.resistance}</div>
+                            </div>
+                            
+                            <div class="exercise-details">
+                                <div class="exercise-detail">
+                                    <div class="exercise-detail-label">Séries</div>
+                                    <div class="exercise-detail-value">${exercise.series}</div>
+                                </div>
+                                <div class="exercise-detail">
+                                    <div class="exercise-detail-label">Répétitions</div>
+                                    <div class="exercise-detail-value">${exercise.repetitions}</div>
+                                </div>
+                                <div class="exercise-detail">
+                                    <div class="exercise-detail-label">Repos</div>
+                                    <div class="exercise-detail-value">${exercise.temps_repos}</div>
+                                </div>
+                            </div>
+                            
+                            ${exercise.conseil ? `
+                                <div class="exercise-advice">
+                                    💡 ${exercise.conseil}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         };
 
         // Afficher les paramètres du programme
