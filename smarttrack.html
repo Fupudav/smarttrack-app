@@ -18656,7 +18656,21 @@
         // Basculer l'affichage des détails d'une séance
         actions.toggleSessionDetails = function(sessionId, weekNumber) {
             const details = document.getElementById(`session-details-${sessionId}`);
-            const button = document.querySelector(`button[onclick*="'${sessionId}'"]`);
+            
+            // Échapper les caractères spéciaux CSS pour éviter les erreurs de sélecteur
+            const escapedSessionId = sessionId.replace(/['"\\]/g, '\\$&');
+            const button = document.querySelector(`button[onclick*="'${escapedSessionId}'"]`);
+            
+            // Vérifier que les éléments existent avant de les manipuler
+            if (!details) {
+                console.error(`Session details element not found for ID: ${sessionId}`);
+                return;
+            }
+            
+            if (!button) {
+                console.error(`Toggle button not found for session ID: ${sessionId}`);
+                return;
+            }
             
             if (details.classList.contains('active')) {
                 details.classList.remove('active');
@@ -18692,7 +18706,13 @@
                     </div>
                     <div class="session-meta-item">
                         <div class="session-meta-label">Difficulté</div>
-                        <div class="session-meta-value">${'★'.repeat(seance.difficulte)}${'☆'.repeat(5-seance.difficulte)}</div>
+                        <div class="session-meta-value">${(() => {
+                            // Valider et corriger la difficulté pour éviter les erreurs de String.repeat()
+                            const difficulte = Math.max(0, Math.min(5, parseInt(seance.difficulte) || 0));
+                            const filledStars = '★'.repeat(difficulte);
+                            const emptyStars = '☆'.repeat(5 - difficulte);
+                            return filledStars + emptyStars;
+                        })()}</div>
                     </div>
                     <div class="session-meta-item">
                         <div class="session-meta-label">Exercices</div>
