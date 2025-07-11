@@ -18419,10 +18419,39 @@
             }
 
             // Créer une nouvelle session basée sur la séance du programme
-            const newSession = {
-                date: new Date().toISOString().split('T')[0],
-                notes: `${seance.nom} - ${program.nom}${seance.philosophie ? '\n\n💭 "' + seance.philosophie + '"' : ''}`,
-                exercises: seance.exercices.map(ex => ({
+            const exercisesList = [];
+            
+            // Ajouter les exercices d'échauffement s'ils existent
+            if (seance.phase_eveil && seance.phase_eveil.exercices) {
+                seance.phase_eveil.exercices.forEach(warmupExercise => {
+                    exercisesList.push({
+                        exercise_id: this.findOrCreateExercise(warmupExercise),
+                        planned_sets: 1, // Généralement 1 série pour l'échauffement
+                        rest_time: 30, // Temps de repos court pour l'échauffement
+                        duration: 30,
+                        sets: [],
+                        program_exercise: {
+                            nom: warmupExercise,
+                            groupe: 'Échauffement',
+                            resistance: 'Poids du corps',
+                            conseil: 'Exercice d\'échauffement pour préparer le corps',
+                            repetitions: '30 secondes',
+                            series: 1,
+                            temps_repos: '30 secondes'
+                        },
+                        program_info: {
+                            groupe: 'Échauffement',
+                            resistance: 'Poids du corps',
+                            conseil: 'Exercice d\'échauffement pour préparer le corps',
+                            repetitions: '30 secondes'
+                        }
+                    });
+                });
+            }
+            
+            // Ajouter les exercices principaux
+            seance.exercices.forEach(ex => {
+                exercisesList.push({
                     exercise_id: this.findOrCreateExercise(ex.nom),
                     planned_sets: ex.series || 2,
                     rest_time: this.parseRestTime(ex.temps_repos),
@@ -18435,7 +18464,13 @@
                         conseil: ex.conseil,
                         repetitions: ex.repetitions
                     }
-                })),
+                });
+            });
+            
+            const newSession = {
+                date: new Date().toISOString().split('T')[0],
+                notes: `${seance.nom} - ${program.nom}${seance.philosophie ? '\n\n💭 "' + seance.philosophie + '"' : ''}`,
+                exercises: exercisesList,
                 globalSettings: {
                     restBetweenExercises: 120,
                     restBetweenSets: 90
