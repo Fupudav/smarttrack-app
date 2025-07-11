@@ -1,0 +1,24 @@
+/* Programme – styles d’accordéon des séances */
+
+.session-arrow{
+  font-size:14px;
+  opacity:.6;
+}
+
+.session-details{
+  display:none;
+  padding:16px;
+  background:var(--surface);
+  border-left:4px solid var(--primary);
+  border-bottom:1px solid var(--border);
+}
+.session-details.active{display:block;}
+
+.session-detail-exercise{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 0;
+  font-size:13px;
+  border-bottom:1px dashed var(--border-light);
+}
+.session-detail-exercise:last-child{border-bottom:none;}
