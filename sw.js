@@ -70,86 +70,58 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Stratégie de récupération des fichiers
+// === INJECTION DYNAMIQUE DE program.css / program.js ===
+async function injectDependencies(response) {
+  try {
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('text/html')) return response;
+    const text = await response.text();
+    // Vérifier si déjà injecté
+    if (text.includes('program.js') || text.includes('program.css')) {
+      return new Response(text, { headers: response.headers });
+    }
+    // Inject <link rel="stylesheet" ...> après meta theme-color
+    let modified = text.replace(
+      /<meta[^>]*name=["']theme-color["'][^>]*>/i,
+      match => `${match}\n    <link rel="stylesheet" href="program.css">`
+    );
+    // Inject <script src="program.js"></script> avant </body>
+    modified = modified.replace(
+      /<\/body>/i,
+      `  <script src="program.js"></script>\n</body>`
+    );
+    return new Response(modified, { headers: response.headers });
+  } catch (e) {
+    swLogger.error('Injection failed', e);
+    return response; // Fallback original
+  }
+}
+
+// Modifier le fetch handler existant (Network First)
 self.addEventListener('fetch', event => {
   // Stratégie: Network First, puis Cache
-  // Parfait pour une app qui se met à jour souvent
   event.respondWith(
     fetch(event.request)
-      .then(response => {
-        // Si la requête réseau réussit
+      .then(async response => {
+        // Injection si document HTML
+        const finalResp = await injectDependencies(response.clone());
+        // Mettre à jour le cache comme avant
         if (response && response.status === 200) {
-          // Cloner la réponse car elle ne peut être lue qu'une fois
           const responseToCache = response.clone();
-          
-          // Mettre à jour le cache avec la nouvelle version
-          caches.open(CACHE_NAME)
-            .then(cache => {
-              cache.put(event.request, responseToCache);
-            });
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseToCache);
+          });
         }
-        return response;
+        return finalResp;
       })
       .catch(() => {
-        // Si pas de réseau, utiliser le cache
         swLogger.log('SmartTrack SW: Pas de réseau, utilisation du cache pour:', event.request.url);
-        return caches.match(event.request)
-          .then(response => {
-            if (response) {
-              return response;
-            }
-            // Si pas trouvé dans le cache, retourner une page d'erreur simple
-            if (event.request.destination === 'document') {
-              return new Response(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                  <title>SmartTrack - Hors ligne</title>
-                  <meta charset="UTF-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <style>
-                    body { 
-                      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-                      text-align: center; 
-                      padding: 50px; 
-                      background: #F2F2F7;
-                    }
-                    .offline-msg {
-                      background: white;
-                      padding: 30px;
-                      border-radius: 16px;
-                      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                    }
-                    .emoji { font-size: 48px; margin-bottom: 20px; }
-                    h1 { color: #007AFF; margin-bottom: 10px; }
-                    p { color: #666; }
-                    button {
-                      background: #007AFF;
-                      color: white;
-                      border: none;
-                      padding: 12px 24px;
-                      border-radius: 8px;
-                      font-size: 16px;
-                      margin-top: 20px;
-                      cursor: pointer;
-                    }
-                  </style>
-                </head>
-                <body>
-                  <div class="offline-msg">
-                    <div class="emoji">📱</div>
-                    <h1>SmartTrack</h1>
-                    <p>Vous êtes hors ligne.</p>
-                    <p>Reconnectez-vous à internet pour accéder à l'application.</p>
-                    <button onclick="window.location.reload()">Réessayer</button>
-                  </div>
-                </body>
-                </html>
-              `, {
-                headers: { 'Content-Type': 'text/html' }
-              });
-            }
-          });
+        return caches.match(event.request).then(response => {
+          if (response) return response;
+          if (event.request.destination === 'document') {
+            return caches.match('./smarttrack.html').then(injectDependencies);
+          }
+        });
       })
   );
 });
